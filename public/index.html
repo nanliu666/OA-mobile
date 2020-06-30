@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <meta name="format-detection" content="telephone=no" />
+  <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1857563_slk3r5ru0f9.css">
+  <link rel="icon" href="<%= BASE_URL %>favicon.png" />
+  <title></title>
+  <style>
+    html,
+    body,
+    #app {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+  <!--开发环境使用本地npm依赖-->
+  <% if (htmlWebpackPlugin.options.isProduction) { %>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>
+  <script src="https://unpkg.com/vuex@3.4.0/dist/vuex.js" charset="utf-8"></script>
+  <script src="https://unpkg.com/vue-router@3.2.0/dist/vue-router.js" charset="utf-8"></script>
+  <script src="https://unpkg.com/axios@0.19.2/dist/axios.min.js"></script>
+  <% } %>
+  <script src="//g.alicdn.com/fdilab/lib3rd/viewport-units-buggyfill/0.6.2/??viewport-units-buggyfill.hacks.min.js,viewport-units-buggyfill.min.js"></script>
+</head>
+
+<body>
+  <noscript>
+    <strong>
+      很抱歉，如果没有 JavaScript 支持，网站将不能正常工作。请启用浏览器的 JavaScript 然后继续。
+    </strong>
+  </noscript>
+  <div id="app">
+  </div>
+  <!-- built files will be auto injected -->
+</body>
+<script>
+  window.onload = function () {
+    window.viewportUnitsBuggyfill.init({ hacks: window.viewportUnitsBuggyfillHacks });
+  } 
+</script>
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.0.0/animate.min.css"
+/>
+</html>

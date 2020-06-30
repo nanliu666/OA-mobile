@@ -1,0 +1,95 @@
+<template>
+  <div>
+    <van-field
+      ref="vanField"
+      :value="showingLabel"
+      v-bind="$attrs"
+      readonly
+      is-link
+      @click="show = !show"
+    />
+    <van-popup
+      v-model="show"
+      position="bottom"
+    >
+      <van-picker
+        :columns="columns"
+        show-toolbar
+        :title="$attrs.label"
+        :value-key="columnLabel"
+        @cancel="show = !show"
+        @confirm="onConfirm"
+      />
+    </van-popup>
+  </div>
+</template>
+
+<script>
+export default {
+  model: {
+    prop: 'value',
+    event: 'change'
+  },
+  props: {
+    columns: {
+      type: Array,
+      default: () => []
+    },
+    columnLabel: {
+      type: String,
+      default: 'label'
+    },
+    columnValue: {
+      type: String,
+      default: 'value'
+    },
+    value: {
+      type: [String, Number, Boolean],
+      default: ''
+    }
+  },
+  data() {
+    return {
+      show: false,
+      selectItem: {}
+    }
+  },
+  computed: {
+    showingLabel() {
+      return this.selectItem[this.columnLabel] || ''
+    }
+  },
+  watch: {
+    value: {
+      handler(val) {
+        this.selectItem = this.columns.find((item) => item[this.columnValue] === val) || ''
+      },
+      immediate: true
+    }
+  },
+  methods: {
+    onConfirm(item) {
+      let value = item[this.columnValue]
+
+      this.$emit('change', value)
+      this.selectItem = item
+      this.show = !this.show
+    }
+  }
+}
+</script>
+
+<style lang="less" scoped>
+/deep/ .van-cell:last-child::after {
+  position: absolute;
+  box-sizing: border-box;
+  content: ' ';
+  pointer-events: none;
+  right: 0;
+  bottom: 0;
+  left: 4.26667vw;
+  border-bottom: 1px solid #ebedf0;
+  -webkit-transform: scaleY(0.5);
+  transform: scaleY(0.5);
+}
+</style>
