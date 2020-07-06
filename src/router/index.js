@@ -1,7 +1,7 @@
 import VueRouter from 'vue-router'
 import Vue from 'vue'
 import routes from './routes' // 页面路由
-// import store from '@/store/'
+import store from '@/store/'
 // import { loginWxgzh } from '@/api/common.js'
 // import { appId } from '@/config/const.js'
 
@@ -9,7 +9,7 @@ Vue.use(VueRouter)
 
 const router = new VueRouter({
   mode: 'history',
-  base: '/helper/',
+  // base: '/helper/',
   // https://router.vuejs.org/zh/guide/advanced/scroll-behavior.html#%E5%BC%82%E6%AD%A5%E6%BB%9A%E5%8A%A8
   // 这个方法 是控制滚动条
   // 如果 retuen falsy || {} ,则不发生滚动
@@ -32,7 +32,15 @@ const router = new VueRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
-  
+  if(to.meta.title){
+
+    document.title = to.meta.title
+    
+    }
+    if(!store.state.user.userInfo.user_id && ['/login', '/forget'].indexOf(to.path) === -1){
+      next('/login')
+      // location.reload()
+    }
   next()
 })
 

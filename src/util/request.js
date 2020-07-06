@@ -29,7 +29,8 @@ instance.interceptors.request.use(
     const meta = config.meta || {}
     const isToken = meta.isToken === false
     config.headers['Tenant-Id'] = store.state.user.userInfo.tenantId || ''
-    config.headers.appId = 'WXGZH'
+    // config.headers.appId = 'OAMobile'
+    config.headers.appId = 'Admin'
     const tokenType = store.state.user.userInfo.token_type || ''
     const accessToken = store.state.user.userInfo.access_token || ''
     config.headers.accessToken = tokenType + ' ' + accessToken
@@ -42,6 +43,12 @@ instance.interceptors.request.use(
     if (getToken() && !isToken) {
       //让每个请求携带token--['Authorization']为自定义key 请根据实际情况自行修改
       config.headers.accessToken = 'bearer' + ' ' + getToken()
+    }
+    if(config.method.toLowerCase() === 'post' && String.prototype.endsWith.call(config.url, '/oauth/token')){
+      config.params = config.data
+      config.headers['Tenant-Id'] = config.data.tenantId
+      config.headers['Captcha-Key'] = config.data.key
+      config.headers['Captcha-Code'] = config.data.code
     }
     // 展示全局loading
     if (config.showLoading && !loadingToast) {
@@ -69,7 +76,7 @@ instance.interceptors.response.use(
     let message = res.data.resMsg || res.data.error_description || '网络错误'
     //如果是401则跳转到登录页面
     if (status === 401) {
-      router.push({ path: '/welcome' })
+      // router.push({ path: '/login' })
       message = '授权失败'
     }
     // 如果请求为非200否者默认统一处理

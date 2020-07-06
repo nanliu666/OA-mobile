@@ -6,6 +6,6 @@
 
 
 export const client = {
-  clientId: 'wxgzh',
-  client_secret: 'wxgzh_secret'
+  clientId: 'saber',
+  client_secret: 'saber_secret'
 }

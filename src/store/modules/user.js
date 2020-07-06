@@ -2,7 +2,8 @@ import { setStore, getStore } from '@/util/store'
 
 const user = {
   state: {
-    userInfo: getStore({ name: 'userInfo' }) || {}
+    userInfo: getStore({ name: 'userInfo' }) || {},
+    userDetail: getStore({ name: 'userDetail' }) || {}
   },
   actions: {
     
@@ -16,6 +17,10 @@ const user = {
     SET_TENANRID: (state, tenantId) => {
       state.userInfo.tenantId = tenantId
       setStore({ name: 'userInfo', content: state.userInfo })
+    },
+    SET_USER_DETAIL:(state, data)=>{
+      state.userDetail = data
+      setStore({ name: 'userDetail', content: state.userDetail })
     }
   }
 }
