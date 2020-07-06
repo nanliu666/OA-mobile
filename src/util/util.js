@@ -430,3 +430,17 @@ export const getFormDifferent = (arr, originArr, key = 'id') => {
     })
   return [...deleteList, ...addList, ...updateList]
 }
+
+
+// 获取组织路径
+export const getOrgPath = (orgTree) =>{
+  function deep(arr, pathArr = []){
+    arr.forEach(item =>{
+      item.orgPath = [...pathArr,{orgId: item.orgId, orgName: item.orgName}]
+      if(item.children && item.children.length > 0){
+        deep(item.children, item.orgPath)
+      }
+    })
+  }
+  deep(orgTree)
+}

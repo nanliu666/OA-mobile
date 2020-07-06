@@ -1,7 +1,7 @@
 const isProduction = process.env.NODE_ENV === 'production'
 const path = require('path')
-const autoprefixer = require('autoprefixer')
-const pxtoviewport = require('postcss-px-to-viewport')
+// const autoprefixer = require('autoprefixer')
+// const pxtoviewport = require('postcss-px-to-viewport')
 
 function resolve(dir) {
   return path.join(__dirname, dir)
@@ -36,14 +36,6 @@ module.exports = {
   },
   css: {
     loaderOptions: {
-      postcss: {
-        plugins: [
-          autoprefixer(),
-          pxtoviewport({
-            viewportWidth: 375
-          })
-        ]
-      },
       less: {
         lessOptions: {
           modifyVars: {
@@ -61,7 +53,8 @@ module.exports = {
     proxy: {
       '/api': {
         // 本地环境
-        target: 'http://192.168.1.100:8000/',
+        // target: 'http://192.168.1.100:8000/',
+        target: 'http://192.168.1.37/',
 
         // 开发环境
         // target: 'http://122.112.183.186/',

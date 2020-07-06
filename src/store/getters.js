@@ -1,5 +1,6 @@
 const getters = {
   userInfo: (state) => state.user.userInfo,
-  userId: (state) => state.user.userInfo.user_id
+  org_user_tree: (state) => state.orgUserTree,
+  userDetail: (state) => state.user.userDetail
 }
 export default getters

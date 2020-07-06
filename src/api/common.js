@@ -1,4 +1,4 @@
-import { get,post } from '@/util/request'
+import { get } from '@/util/request'
 /**
  * 七牛云上传凭证获取接口
  * @param {Object} params
@@ -20,7 +20,7 @@ export const getDict = (params) => {
  * @param {Object} params
  * */
 export const getTenantId = (params) => {
-  return get('/helper/v1/tenant/info', params)
+  return get('/sys/v1/domain/info', params)
 }
 
 /**
@@ -31,16 +31,5 @@ export const getAttachmentCategory = (params) => {
   return get('/user/v1/user/attachment/category', params)
 }
 
-
-
-
-
-/**
- * 短信验证码下发接口
- * @param {Object} params
- * */
-export const sendSms = (params) => {
-  return post('/common/v1/sms/send', params)
-}
 
 
