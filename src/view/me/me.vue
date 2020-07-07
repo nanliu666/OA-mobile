@@ -17,7 +17,7 @@
           />
           <div class="title">
             <div class="title-top">
-              <span class="custom-title">{{ userInfo.name + '（' +userInfo.workNo + '）' }}</span>
+              <span class="custom-title">{{ (userInfo.name || '') + '（' +(userInfo.workNo || '') + '）' }}</span>
               <van-tag
                 type="primary"
                 plain
@@ -26,7 +26,7 @@
               </van-tag>
             </div>
             <div class="title-bottom">
-              <span class="custom-title">{{ userInfo.orgName + ' | '+ userInfo.jobName }}</span>
+              <span class="custom-title">{{ (userInfo.orgName || '') + ' | '+ (userInfo.jobName || '') }}</span>
             </div>
           </div>
         </div>

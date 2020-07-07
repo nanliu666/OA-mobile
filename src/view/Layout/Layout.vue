@@ -1,14 +1,17 @@
 <template>
   <div
+    v-if="['/work/index', '/addressBook/index', '/message/index', '/me/index'].indexOf($route.path) > -1"
     data-title="百利宏移动办公"
     class="home"
   >
     <div class="tab-contain">
-      <router-view />
-      <work v-if="active === 'work'" />
+      <keep-alive>
+        <router-view />
+      </keep-alive>
+      <!-- <work v-if="active === 'work'" />
       <address-book v-if="active === 'addressBook'" />
       <me v-if="active === 'me'" />
-      <message v-if="active === 'message'" />
+      <message v-if="active === 'message'" /> -->
     </div>
     <van-tabbar v-model="active">
       <van-tabbar-item
@@ -45,15 +48,13 @@
       </van-tabbar-item>
     </van-tabbar>
   </div>
+  <router-view v-else />
 </template>
 <script>
-import AddressBook from './addressBook'
-import Me from './me'
-import Message from './message'
-import Work from './work'
+
 export default {
   name: 'Home',
-  components:{AddressBook,Me,Message,Work},
+
  data() {
     return {
       active: 'work',

@@ -1,17 +1,12 @@
 import addressBook from './addressBook'
 import me from './me'
 import work from './work'
+import Layout from '@/view/Layout/Layout'
 
 export default [
   {
     path: '/',
     redirect: '/login'
-  },
-  {
-    path: '/home',
-    name: '百利宏移动办公',
-    component: () => import(/* webpackChunkName: "view" */ '@/view/home/home.vue'),
-    meta: { title: '百利宏移动办公' }
   },
   {
     path: '/login',
@@ -28,8 +23,17 @@ export default [
   {
     path: '/message',
     name: '消息',
-    component: () => import(/* webpackChunkName: "view" */ '@/view/home/home.vue'),
-    meta: { title: '消息' }
+    redirect: '/message/index',
+    component: Layout,
+    meta: { title: '消息' },
+    children:[
+      {
+        path: '/message/index',
+        name: '消息',
+        component: () => import(/* webpackChunkName: "view" */ '@/view/message/message.vue'),
+        meta: { title: '消息' }
+      },
+    ],
   },
   addressBook,
   me,

@@ -135,7 +135,7 @@ export default {
         userLogin(params).then(res =>{
             this.$store.commit('SET_USER_INFO', res)
             this.loading = false
-            this.$router.replace('/home')
+            this.$router.replace('/work/index')
         }).catch(() =>{
             this.loading = false
             this.getOauthCaptcha()

@@ -1,6 +1,15 @@
-import home from '@/view/home/home'
+import Layout from '@/view/Layout/Layout'
 export default
-  { path: '/me', component: home, children:[
+  { path: '/me', component: Layout, 
+  redirect: '/me/index',
+  children:[
+    {
+      path: '/me/index',
+      name: '百利宏移动办公',
+      component: () =>
+        import(/* webpackChunkName: "view" */ '@/view/me/me.vue'),
+      meta: { title: '个人中心' }
+    },
     {
       path: '/me/feedback',
       name: '意见反馈',

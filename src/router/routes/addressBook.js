@@ -1,9 +1,16 @@
-import home from '@/view/home/home'
+import Layout from '@/view/Layout/Layout'
 
 export default {
   path: '/addressBook',
-  component: home,
+  redirect: '/addressBook/index',
+  component: Layout,
   children: [
+    {
+      path: '/addressBook/index',
+      name: '通讯录',
+      component: () => import(/* webpackChunkName: "view" */ '@/view/addressBook/addressBook.vue'),
+      meta: { title: '百利宏移动办公' }
+    },
     {
       path: '/addressBook/findOrgUser',
       name: '通讯录搜索',
