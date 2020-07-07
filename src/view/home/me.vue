@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="page">
     <van-cell
       is-link
       class="userInfo"
@@ -86,6 +86,9 @@ export default {
 </script>
 
 <style lang='less' scoped>
+.page{
+  background-color: #F5F6F6;
+}
 .userInfo{
   height: 100px;
   padding: 20px 16px;

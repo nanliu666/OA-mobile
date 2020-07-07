@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="page">
     <van-sticky>
       <van-search
         v-model="search"
@@ -101,11 +101,15 @@ this.$router.push('/addressBook/userDetail/'+ item.userId)
 </script>
 
 <style lang='less' scoped>
+.page{
+  background-color: #F5F6F6;
+}
 .van-search {
   height: 44px;
   padding: 8px 9px;
   .van-search__content {
     height: 28px;
+    background-color: #fff;
     .van-cell {
       line-height: 18px;
     }

@@ -4,6 +4,7 @@
     class="home"
   >
     <div class="tab-contain">
+      <router-view />
       <work v-if="active === 'work'" />
       <address-book v-if="active === 'addressBook'" />
       <me v-if="active === 'me'" />
@@ -14,25 +15,33 @@
         name="work"
         icon="home-o"
       >
-        工作
+        <router-link to="/work">
+          工作
+        </router-link>
       </van-tabbar-item>
       <van-tabbar-item
         name="addressBook"
         icon="search"
       >
-        通讯录
+        <router-link to="/addressBook">
+          通讯录
+        </router-link>
       </van-tabbar-item>
       <van-tabbar-item
         name="message"
         icon="friends-o"
       >
-        消息
+        <router-link to="/message">
+          消息
+        </router-link>
       </van-tabbar-item>
       <van-tabbar-item
         name="me"
         icon="setting-o"
       >
-        我的
+        <router-link to="/me">
+          我的
+        </router-link>
       </van-tabbar-item>
     </van-tabbar>
   </div>
@@ -59,9 +68,26 @@ export default {
 }
 .tab-contain{
   height: calc(100% - 53px);
-  background-color: #F5F6F6;
+  // background-color: #F5F6F6;
 }
 .van-tabbar--fixed{
   height: 53px;
+}
+
+.van-tabbar-item{
+  color: #979797;
+  .van-tabbar-item__text{
+    a{
+      color: #979797;
+    }
+  }
+}
+.van-tabbar-item--active{
+  color: #207efa;
+  .van-tabbar-item__text{
+    a{
+      color: #207efa;
+    }
+  }
 }
 </style>
