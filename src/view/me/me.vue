@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="page">
     <van-cell
       is-link
       class="userInfo"
@@ -7,9 +7,7 @@
     >
       <!-- 使用 title 插槽来自定义标题 -->
       <template #title>
-        <div
-          class="person-cell"
-        >
+        <div class="person-cell">
           <van-image
             round
             class="avatarClass"
@@ -17,7 +15,9 @@
           />
           <div class="title">
             <div class="title-top">
-              <span class="custom-title">{{ userInfo.name + '（' +userInfo.workNo + '）' }}</span>
+              <span class="custom-title">{{
+                (userInfo.name || '') + '（' + (userInfo.workNo || '') + '）'
+              }}</span>
               <van-tag
                 type="primary"
                 plain
@@ -26,7 +26,9 @@
               </van-tag>
             </div>
             <div class="title-bottom">
-              <span class="custom-title">{{ userInfo.orgName + ' | '+ userInfo.jobName }}</span>
+              <span class="custom-title">{{
+                (userInfo.orgName || '') + ' | ' + (userInfo.jobName || '')
+              }}</span>
             </div>
           </div>
         </div>
@@ -50,7 +52,7 @@
   </div>
 </template>
 <script>
-import {getUserInfo} from '@/api/user'
+import { getUserInfo } from '@/api/user'
 export default {
   data() {
     return {
@@ -61,35 +63,37 @@ export default {
         Try: '试用期',
         WaitLeave: '待离职',
         Leaved: '已离职'
-      },
+      }
     }
   },
-  created(){
-    getUserInfo({userId:this.$store.state.user.userInfo.user_id}).then(res =>{
+  created() {
+    getUserInfo({ userId: this.$store.state.user.userInfo.user_id }).then((res) => {
       this.userInfo = res
       this.$store.commit('SET_USER_DETAIL', res)
     })
-    
   },
-  methods:{
-    toFeedback(){
+  methods: {
+    toFeedback() {
       this.$router.push('/me/feedback')
     },
-    toSetting(){
+    toSetting() {
       this.$router.push('/me/setting')
     },
-    toPersonalInfo(){
+    toPersonalInfo() {
       this.$router.push('/me/personalInfo')
     }
   }
 }
 </script>
 
-<style lang='less' scoped>
-.userInfo{
+<style lang="less" scoped>
+.page {
+  background-color: #f5f6f6;
+}
+.userInfo {
   height: 100px;
   padding: 20px 16px;
-  .van-icon-arrow{
+  .van-icon-arrow {
     line-height: 60px;
   }
 }
@@ -103,10 +107,10 @@ export default {
       margin-bottom: 6px;
       .custom-title {
         font-size: 17px;
-       
+
         margin-right: 11px;
       }
-      .van-tag{
+      .van-tag {
         padding: 5px 12px;
         font-size: 12px;
       }
@@ -120,7 +124,7 @@ export default {
   width: 60px;
   height: 60px;
 }
-.setting{
+.setting {
   margin-top: 8px;
 }
 </style>
