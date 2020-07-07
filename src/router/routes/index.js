@@ -1,6 +1,7 @@
 import addressBook from './addressBook'
 import me from './me'
 import work from './work'
+import task from './task'
 import Layout from '@/view/Layout/Layout'
 
 export default [
@@ -37,5 +38,6 @@ export default [
   },
   addressBook,
   me,
-  work
+  work,
+  ...task
 ]

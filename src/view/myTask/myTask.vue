@@ -243,7 +243,7 @@ export default {
     goToDetail({ bizId, type }) {
       if (type === 'Recruitment') {
         return this.$router.push({
-          path: '/me/taskDetail',
+          path: '/my/taskDetail',
           query: {
             bizId
           }
