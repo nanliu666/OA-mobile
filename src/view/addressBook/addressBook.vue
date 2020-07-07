@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="page">
     <van-sticky>
       <van-search
         v-model="search"
@@ -40,6 +40,7 @@
                     class="avatarClass"
                     :src="item.avatarUrl"
                   />
+            
                   <div class="title">
                     <div class="title-top">
                       <span class="custom-title">{{ item.name }}</span>
@@ -56,9 +57,6 @@
                     </div>
                   </div>
                 </div>
-              </template>
-              <template v-slot:error>
-                加载失败
               </template>
             </van-cell>
           </template>
@@ -101,11 +99,15 @@ this.$router.push('/addressBook/userDetail/'+ item.userId)
 </script>
 
 <style lang='less' scoped>
+.page{
+  background-color: #F5F6F6;
+}
 .van-search {
   height: 44px;
   padding: 8px 9px;
   .van-search__content {
     height: 28px;
+    background-color: #fff;
     .van-cell {
       line-height: 18px;
     }
@@ -126,13 +128,13 @@ this.$router.push('/addressBook/userDetail/'+ item.userId)
     height: 70px;
     .person-cell {
       display: flex;
-      align-content: center;
+      align-items: center;
       .title {
         margin-left: 14px;
         .title-top {
           margin-bottom: 6px;
           .custom-title {
-            font-size: 17px;
+            font-size: 16px;
             margin-right: 11px;
           }
         }

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="page">
     <van-cell
       is-link
       class="userInfo"
@@ -17,7 +17,7 @@
           />
           <div class="title">
             <div class="title-top">
-              <span class="custom-title">{{ userInfo.name + '（' +userInfo.workNo + '）' }}</span>
+              <span class="custom-title">{{ (userInfo.name || '') + '（' +(userInfo.workNo || '') + '）' }}</span>
               <van-tag
                 type="primary"
                 plain
@@ -26,7 +26,7 @@
               </van-tag>
             </div>
             <div class="title-bottom">
-              <span class="custom-title">{{ userInfo.orgName + ' | '+ userInfo.jobName }}</span>
+              <span class="custom-title">{{ (userInfo.orgName || '') + ' | '+ (userInfo.jobName || '') }}</span>
             </div>
           </div>
         </div>
@@ -86,6 +86,9 @@ export default {
 </script>
 
 <style lang='less' scoped>
+.page{
+  background-color: #F5F6F6;
+}
 .userInfo{
   height: 100px;
   padding: 20px 16px;

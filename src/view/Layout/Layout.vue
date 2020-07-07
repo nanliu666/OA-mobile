@@ -1,50 +1,60 @@
 <template>
   <div
+    v-if="['/work/index', '/addressBook/index', '/message/index', '/me/index'].indexOf($route.path) > -1"
     data-title="百利宏移动办公"
     class="home"
   >
     <div class="tab-contain">
-      <work v-if="active === 'work'" />
+      <keep-alive>
+        <router-view />
+      </keep-alive>
+      <!-- <work v-if="active === 'work'" />
       <address-book v-if="active === 'addressBook'" />
       <me v-if="active === 'me'" />
-      <message v-if="active === 'message'" />
+      <message v-if="active === 'message'" /> -->
     </div>
     <van-tabbar v-model="active">
       <van-tabbar-item
         name="work"
         icon="home-o"
       >
-        工作
+        <router-link to="/work">
+          工作
+        </router-link>
       </van-tabbar-item>
       <van-tabbar-item
         name="addressBook"
         icon="search"
       >
-        通讯录
+        <router-link to="/addressBook">
+          通讯录
+        </router-link>
       </van-tabbar-item>
       <van-tabbar-item
         name="message"
         icon="friends-o"
       >
-        消息
+        <router-link to="/message">
+          消息
+        </router-link>
       </van-tabbar-item>
       <van-tabbar-item
         name="me"
         icon="setting-o"
       >
-        我的
+        <router-link to="/me">
+          我的
+        </router-link>
       </van-tabbar-item>
     </van-tabbar>
   </div>
+  <router-view v-else />
 </template>
 <script>
-import AddressBook from './addressBook'
-import Me from './me'
-import Message from './message'
-import Work from './work'
+
 export default {
   name: 'Home',
-  components:{AddressBook,Me,Message,Work},
+
  data() {
     return {
       active: 'work',
@@ -59,9 +69,26 @@ export default {
 }
 .tab-contain{
   height: calc(100% - 53px);
-  background-color: #F5F6F6;
+  // background-color: #F5F6F6;
 }
 .van-tabbar--fixed{
   height: 53px;
+}
+
+.van-tabbar-item{
+  color: #979797;
+  .van-tabbar-item__text{
+    a{
+      color: #979797;
+    }
+  }
+}
+.van-tabbar-item--active{
+  color: #207efa;
+  .van-tabbar-item__text{
+    a{
+      color: #207efa;
+    }
+  }
 }
 </style>
