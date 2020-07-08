@@ -7,7 +7,7 @@ export default [
   },
   {
     path: '/my/taskDetail',
-    name: '我的任务',
+    name: '任务详情',
     component: () => import(/* webpackChunkName: "view" */ '@/view/myTask/taskDetail'),
     meta: { title: '任务详情' }
   }

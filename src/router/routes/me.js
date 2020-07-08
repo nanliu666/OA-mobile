@@ -45,12 +45,6 @@ export default {
       name: '个人信息',
       component: () => import(/* webpackChunkName: "view" */ '@/view/me/personalInfo.vue'),
       meta: { title: '个人中心' }
-    },
-    {
-      path: '/me/taskDetail',
-      name: '我的任务',
-      component: () => import(/* webpackChunkName: "view" */ '@/view/me/myTask/taskDetail'),
-      meta: { title: '任务详情' }
     }
   ]
 }

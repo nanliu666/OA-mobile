@@ -46,6 +46,7 @@ export default ({ mock }) => {
       //  workProperty: '工作性质，字典组：WorkProperty',
       workProperty: 'FullTime',
       // emerType: '紧急程度，字典组：EmerType',
+      'status|1': ['UnHandle', 'Handled'],
       emerType: 'common',
       needNum: '需求人数123112',
       entryNum: '已入职人数21321',
