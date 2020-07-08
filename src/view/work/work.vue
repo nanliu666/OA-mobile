@@ -307,7 +307,6 @@ export default {
   },
   methods: {
     toTudo(){
-      console.log(1)
       this.$router.push('/work/todo')
     },
     getTodoList() {

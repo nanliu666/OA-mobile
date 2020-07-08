@@ -6,7 +6,7 @@
  * isToken是否需要token
  */
 import axios from 'axios'
-import router from '@/router/'
+// import router from '@/router/'
 import store from '@/store/'
 import { getToken } from '@/util/auth'
 import { Toast } from 'vant'
