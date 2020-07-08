@@ -56,20 +56,36 @@ export default {
   },
   computed: {
     showingLabel() {
-      return this.selectItem[this.columnLabel] || ''
+      if(this.columns.every(item =>{return Object.prototype.toString.call(item) === '[object Object]'})){
+        return this.selectItem[this.columnLabel] || ''
+      }else{
+        return this.selectItem
+      }
     }
   },
   watch: {
     value: {
       handler(val) {
-        this.selectItem = this.columns.find((item) => item[this.columnValue] === val) || ''
+        if(this.columns.every(item =>{return Object.prototype.toString.call(item) === '[object Object]'})){
+          this.selectItem = this.columns.find((item) => item[this.columnValue] === val) || ''
+        }else{
+          this.selectItem = val
+        }
       },
       immediate: true
     }
   },
   methods: {
     onConfirm(item) {
-      let value = item[this.columnValue]
+      let value
+      this.columns.every(item =>{
+        return Object.prototype.toString.call(item) === '[object Object]'
+      })
+      if(this.columns.every(item =>{return Object.prototype.toString.call(item) === '[object Object]'})){
+        value =  item[this.columnValue]
+      }else{
+        value = item
+      }
 
       this.$emit('change', value)
       this.selectItem = item
