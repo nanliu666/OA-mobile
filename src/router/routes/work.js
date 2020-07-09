@@ -48,5 +48,11 @@ export default {
       component: () => import(/* webpackChunkName: "view" */ '@/view/work/interview/interviewEvaluation.vue'),
       meta: { title: '百利宏移动办公' }
     },
+    {
+      path: '/todo/allotRecruitment',
+      name: '分配招聘需求',
+      component: () => import(/* webpackChunkName: "view" */ '@/view/work/todo/allotRecruitment.vue'),
+      meta: { title: '百利宏移动办公' }
+    },
   ]
 }

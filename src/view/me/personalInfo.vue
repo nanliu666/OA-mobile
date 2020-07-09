@@ -382,6 +382,14 @@ export default {
     font-size: 14px;
   }
 }
+.addBtn {
+  display: flex;
+  align-items: center;
+  /deep/ .van-icon {
+    margin-right: 8px;
+    color: #207efa;
+  }
+}
 .nextBox {
   margin: 16px auto 0px;
   /deep/ .van-button {

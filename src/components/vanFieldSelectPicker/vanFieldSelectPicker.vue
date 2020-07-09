@@ -19,6 +19,7 @@
         :value-key="columnLabel"
         @cancel="show = !show"
         @confirm="onConfirm"
+        @change="onChange"
       />
     </van-popup>
   </div>
@@ -56,17 +57,20 @@ export default {
   },
   computed: {
     showingLabel() {
-      if(this.columns.every(item =>{return Object.prototype.toString.call(item) === '[object Object]'})){
+      if(this.columnsItemIsObj){
         return this.selectItem[this.columnLabel] || ''
       }else{
         return this.selectItem
       }
+    },
+    columnsItemIsObj(){
+      return this.columns.every(item =>{return Object.prototype.toString.call(item) === '[object Object]'})
     }
   },
   watch: {
     value: {
       handler(val) {
-        if(this.columns.every(item =>{return Object.prototype.toString.call(item) === '[object Object]'})){
+        if(this.columnsItemIsObj){
           this.selectItem = this.columns.find((item) => item[this.columnValue] === val) || ''
         }else{
           this.selectItem = val
@@ -78,10 +82,7 @@ export default {
   methods: {
     onConfirm(item) {
       let value
-      this.columns.every(item =>{
-        return Object.prototype.toString.call(item) === '[object Object]'
-      })
-      if(this.columns.every(item =>{return Object.prototype.toString.call(item) === '[object Object]'})){
+      if(this.columnsItemIsObj){
         value =  item[this.columnValue]
       }else{
         value = item
@@ -90,6 +91,11 @@ export default {
       this.$emit('change', value)
       this.selectItem = item
       this.show = !this.show
+    },
+    onChange(picker, value, index){
+      if(index > this.columns.length - 5){
+        this.$emit('willToBottom')
+      }
     }
   }
 }

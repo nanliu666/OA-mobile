@@ -41,7 +41,7 @@ export const getPersonInfo = (params) => {
   }
 
   /**
- * 候选人人员详情查询接口
+ * 招聘需求详情查询接口
  * @param {Object} params
  * */
 export const getRecruitmentDetail = (params) => {
@@ -78,4 +78,20 @@ export const getInterviewInfo = (params) => {
  * */
 export const postInterviewEvaluation = (params) => {
   return post('/user/v1/person/interview/info', params)
+}
+
+  /**
+ * 在职员工查询接口
+ * @param {Object} params
+ * */
+export const getWorkList= (params) => {
+  return get('/user/v1/user/work/list', params)
+}
+
+/**
+ * 招聘任务分配接口
+ * @param {Object} params
+ * */
+export const postRecruitmentTask = (params) => {
+  return post('/user/v1/recruitment/task', params)
 }
