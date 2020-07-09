@@ -104,7 +104,6 @@
 </template>
 <script>
 import { getTodoList } from '@/api/work'
-import { getMsgNotifyList } from '@/api/message'
 import StickyHeader from '@/components/stickyHeader/stickyHeader'
 import moment from 'moment'
 
@@ -161,7 +160,7 @@ export default {
       }
       this.toduStatus.loading = true
 
-        getMsgNotifyList(params).then((res) => {
+        getTodoList(params).then((res) => {
         if (res.data.length > 0) {
           if (this.toduStatus.refreshing) this.workMsgList = []
           this.workMsgList.push(...res.data)
@@ -185,7 +184,7 @@ export default {
         type: 'Finished'
       }
       this.didList.loading = true
-      getMsgNotifyList(params).then((res) => {
+      getTodoList(params).then((res) => {
         if (res.data.length > 0) {
           if (this.didList.refreshing) this.systemMsgList = []
           this.systemMsgList.push(...res.data)
@@ -231,6 +230,10 @@ export default {
           color: #888888;
           font-size: 14px;
         } 
+      }
+      .matterIcon{
+          height: 32px;
+          width: 32px;
       }
     }
 

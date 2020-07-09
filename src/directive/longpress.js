@@ -13,6 +13,7 @@ export default {
                     if (compName) {
                         warn += `Found in component '${compName}' `
                     }
+                    // eslint-disable-next-line
                     console.warn(warn)
                 }
                 var startX, startY, startTime

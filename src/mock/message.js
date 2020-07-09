@@ -3,7 +3,7 @@ import Mock from 'mockjs'
 export default ({ mock }) => {
     if (!mock) return
 
-    Mock.mock(new RegExp('/api/msg/v1/msg/notify/list' + '.*'), 'get', (options) => {
+    Mock.mock(new RegExp('/api/msg/v1/msg/notify/list' + '.*'), 'get', () => {
         let data = []
         for (let i = 0; i < 21; i++){
             data.push(

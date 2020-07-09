@@ -106,7 +106,7 @@
                   加载失败
                 </template>
               </van-image>
-              <div class="title">
+              <div class="title needWidth">
                 <div class="title-top">
                   <span class="custom-title">{{ item.title }}</span>
                 </div>
@@ -115,7 +115,10 @@
                 </div>
                 <div class="title-bottom">
                   <span class="custom-title">当前审批人：{{ item.approveName || '' }}</span>
-                  <span style="color: #207EFA;">催一下</span>
+                  <span
+                    class="press"
+                    style="color: #207EFA;"
+                  >催一下</span>
                 </div>
               </div>
             </div>
@@ -237,13 +240,16 @@
                 <div class="title-top">
                   <span class="custom-title">{{ item.title }}</span><span class="emerType">{{ item.emerType }}</span>
                 </div>
+                <div class="title-bottom">
+                  <span class="custom-title">{{ item.brief }}</span>
+                </div>
                 <div class="percent">
                   <div class="percentNum">
-                    {{ item.completeNum/item.totalNum || 0 }}%
+                    {{ parseInt((item.completeNum/item.totalNum || 0) * 100) }}%
                   </div>
                   <div class="percentInfo">
                     <van-progress
-                      :percentage="item.completeNum/item.totalNum || 0"
+                      :percentage="parseInt((item.completeNum/item.totalNum || 0) * 100)"
                       pivot-text
                     />
                     <div class="percentInfo-bottom">
@@ -279,7 +285,8 @@ export default {
           title: '张三今天办理离职',
           emerType: 'Super',
           beginDate: '2020-07-06',
-          status: 'Approve'
+          status: 'Approve',
+          brief: 'kjahf'
         }
       ],
       approveStatusWork: {
@@ -307,7 +314,6 @@ export default {
   },
   methods: {
     toTudo(){
-      console.log(1)
       this.$router.push('/work/todo')
     },
     getTodoList() {
@@ -438,6 +444,9 @@ export default {
       align-items: center;
       .title {
         margin-left: 14px;
+        &.needWidth{
+          width: 224px;
+        }
         .title-top {
           // margin-bottom: 6px;
           .custom-title {
@@ -457,6 +466,9 @@ export default {
         .title-bottom {
           color: #888888;
           font-size: 14px;
+          .press{
+            margin-left: 8px;
+          }
         }
         .percent {
           display: flex;
