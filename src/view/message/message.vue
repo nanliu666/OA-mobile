@@ -8,8 +8,13 @@
     >
       <van-tab title="工作消息">
         <template #title>
-          工作消息<div
-            v-if="workMsgList.findIndex(item => {return item.isRead === 0}) > -1"
+          工作消息
+          <div
+            v-if="
+              workMsgList.findIndex((item) => {
+                return item.isRead === 0
+              }) > -1
+            "
             class="dot"
           />
         </template>
@@ -36,7 +41,7 @@
                 />
                 <div
                   class="msgContent"
-                  :class="item.isRead === 0 ? 'unreadMsg':''"
+                  :class="item.isRead === 0 ? 'unreadMsg' : ''"
                 >
                   <div class="content">
                     {{ item.content }}
@@ -52,8 +57,13 @@
       </van-tab>
       <van-tab title="系统消息">
         <template #title>
-          系统消息<div
-            v-if="systemMsgList.findIndex(item => {return item.isRead === 0}) > -1"
+          系统消息
+          <div
+            v-if="
+              systemMsgList.findIndex((item) => {
+                return item.isRead === 0
+              }) > -1
+            "
             class="dot"
           />
         </template>
@@ -78,7 +88,7 @@
                 />
                 <div
                   class="msgContent"
-                  :class="item.isRead === 0 ? 'unreadMsg':''"
+                  :class="item.isRead === 0 ? 'unreadMsg' : ''"
                 >
                   <div class="content">
                     {{ item.content }}
@@ -126,12 +136,12 @@ export default {
     this.getSystemMsgList()
   },
   methods: {
-    handleClick(item){
-      const params ={
-        userId : this.$store.state.user.userInfo.user_id,
+    handleClick(item) {
+      const params = {
+        userId: this.$store.state.user.userInfo.user_id,
         id: item.id
       }
-      readMsgNotify(params).then(() =>{
+      readMsgNotify(params).then(() => {
         item.isRead = 1
       })
     },
@@ -146,7 +156,7 @@ export default {
       }
       this.workMessage.loading = true
 
-        getMsgNotifyList(params).then((res) => {
+      getMsgNotifyList(params).then((res) => {
         if (res.data.length > 0) {
           if (this.workMessage.refreshing) this.workMsgList = []
           this.workMsgList.push(...res.data)
@@ -158,7 +168,6 @@ export default {
         this.workMessage.loading = false
         this.workMessage.refreshing = false
       })
-      
     },
     getSystemMsgList(pageNo) {
       if (this.systemMessage.loading) return
@@ -187,24 +196,24 @@ export default {
 }
 </script>
 
-<style lang='less' scoped>
-.page{
+<style lang="less" scoped>
+.page {
   height: 100%;
 }
 /deep/ .van-tabs__line {
   width: 50% !important;
-  
+
   background-color: #207efa;
 }
 /deep/.van-tab--active {
   color: #207efa;
 }
-.dot{
+.dot {
   display: inline-block;
   height: 6px;
   width: 6px;
   border-radius: 3px;
-  margin:0 0 3px 6px;
+  margin: 0 0 3px 6px;
   background: #ff6464;
 }
 // /deep/ .van-tabs{

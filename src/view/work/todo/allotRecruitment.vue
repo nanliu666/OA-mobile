@@ -208,7 +208,7 @@ export default {
 }
 </script>
 
-<style lang='less' scoped>
+<style lang="less" scoped>
 .page {
   background-color: #f5f6f6;
   min-height: 100%;

@@ -1,6 +1,8 @@
 import addressBook from './addressBook'
 import me from './me'
 import work from './work'
+import task from './task'
+import todo from './todo'
 import Layout from '@/view/Layout/Layout'
 
 export default [
@@ -26,16 +28,18 @@ export default [
     redirect: '/message/index',
     component: Layout,
     meta: { title: '消息' },
-    children:[
+    children: [
       {
         path: '/message/index',
         name: '消息',
         component: () => import(/* webpackChunkName: "view" */ '@/view/message/message.vue'),
         meta: { title: '消息' }
-      },
-    ],
+      }
+    ]
   },
   addressBook,
   me,
-  work
+  work,
+  ...task,
+  ...todo
 ]

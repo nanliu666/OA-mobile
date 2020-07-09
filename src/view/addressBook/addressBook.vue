@@ -20,7 +20,9 @@
             @click="handleClickOrg(item)"
           >
             <template #title>
-              <span class="custom-title">{{ item.orgName + (item.users.length > 0 ? `（${item.users.length +1}）` : '' ) }}</span>
+              <span class="custom-title">{{
+                item.orgName + (item.users.length > 0 ? `（${item.users.length + 1}）` : '')
+              }}</span>
             </template>
           </van-cell>
         </template>
@@ -40,7 +42,7 @@
                     class="avatarClass"
                     :src="item.avatarUrl"
                   />
-            
+
                   <div class="title">
                     <div class="title-top">
                       <span class="custom-title">{{ item.name }}</span>
@@ -67,40 +69,40 @@
 </template>
 
 <script>
-import {getOrgUserTree} from '@/api/addressBook'
+import { getOrgUserTree } from '@/api/addressBook'
 export default {
-  name:'AddressBook',
+  name: 'AddressBook',
   data() {
     return {
       search: '',
-      orgData:[]
+      orgData: []
     }
   },
-  created(){
-    getOrgUserTree().then(res =>{
+  created() {
+    getOrgUserTree().then((res) => {
       this.$store.commit('SET_ORG_USER_TREE', res)
-      if(res[0]){
+      if (res[0]) {
         this.orgData = res[0].children
       }
     })
   },
-  methods:{
-    toSearch(){
+  methods: {
+    toSearch() {
       this.$router.push('/addressBook/findOrgUser')
     },
-    handleClickOrg(item){
-      this.$router.push('/addressBook/orgDetail/'+ item.orgId)
+    handleClickOrg(item) {
+      this.$router.push('/addressBook/orgDetail/' + item.orgId)
     },
-    toUserDetail(item){
-this.$router.push('/addressBook/userDetail/'+ item.userId)
+    toUserDetail(item) {
+      this.$router.push('/addressBook/userDetail/' + item.userId)
     }
   }
 }
 </script>
 
-<style lang='less' scoped>
-.page{
-  background-color: #F5F6F6;
+<style lang="less" scoped>
+.page {
+  background-color: #f5f6f6;
 }
 .van-search {
   height: 44px;
@@ -145,7 +147,7 @@ this.$router.push('/addressBook/userDetail/'+ item.userId)
     }
   }
 }
-.avatarClass{
+.avatarClass {
   width: 50px;
   height: 50px;
 }

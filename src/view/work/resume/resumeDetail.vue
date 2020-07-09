@@ -3,11 +3,15 @@
     <stickyHeader title="简历审核" />
     <div class="content">
       <div>
-        <span class="title">{{ personInfo.name || ' ' }}（{{ recruitmentInfo.jobName || ' ' }}）的简历审核</span>
+        <span
+          class="title"
+        >{{ personInfo.name || ' ' }}（{{ recruitmentInfo.jobName || ' ' }}）的简历审核</span>
         <span
           class="status"
           :class="resumeCheckInfo.status"
-        >{{ statusWord[resumeCheckInfo.status] }}</span>
+        >{{
+          statusWord[resumeCheckInfo.status]
+        }}</span>
         <info-show :columns="initiateColumns" />
       </div>
     </div>
@@ -23,13 +27,13 @@
       </div>
       <info-show :columns="personColums">
         <template #sex="{value}">
-          <span>{{ value === 1? '男':'女' }}</span>
+          <span>{{ value === 1 ? '男' : '女' }}</span>
         </template>
         <template #age="{value}">
           <span>{{ value + '岁' }}</span>
         </template>
         <template #provinceCode>
-          <span>{{ (personInfo.proviceName + personInfo.cityName) || '' }}</span>
+          <span>{{ personInfo.proviceName + personInfo.cityName || '' }}</span>
         </template>
         <template #educationalLevel="{value}">
           <span>{{ EducationalLevel[value] }}</span>
@@ -108,15 +112,15 @@ export default {
         { prop: 'phonenum', label: '手机号码', value: '' },
         { prop: 'email', label: '邮箱', value: '' },
         { prop: 'provinceCode', label: '目前所在地', value: '', slot: true },
-        { prop: 'educationalLevel', label: '最高学历', value: '', slot:true },
+        { prop: 'educationalLevel', label: '最高学历', value: '', slot: true },
         { prop: 'university', label: '毕业学校', value: '' },
         { prop: 'major', label: '毕业专业', value: '' },
         { prop: 'workAge', label: '工作年限', value: '' },
         { prop: 'lastCompany', label: '最近工作单位', value: '' },
         { prop: 'monthSalary', label: '期望薪资', value: '' },
-        { prop: 'recruitment', label: '应聘渠道', value: '',slot:true },
-        { prop: 'resumeUrl', label: '简历', value: '',slot:true },
-        { prop: 'attachmentUrl', label: '附件', value: '',slot:true },
+        { prop: 'recruitment', label: '应聘渠道', value: '', slot: true },
+        { prop: 'resumeUrl', label: '简历', value: '', slot: true },
+        { prop: 'attachmentUrl', label: '附件', value: '', slot: true },
         { prop: 'remark', label: '备注', value: '' }
       ],
       statusWord: {
@@ -125,8 +129,8 @@ export default {
         Reject: '淘汰',
         Cancel: '已撤销'
       },
-      EducationalLevel:{},
-      RecruitmentChannel:{}
+      EducationalLevel: {},
+      RecruitmentChannel: {}
     }
   },
   created() {
@@ -153,12 +157,12 @@ export default {
       })
     })
     this.$store.dispatch('CommonDict', 'EducationalLevel').then((res) => {
-       res.forEach(item =>{
+      res.forEach((item) => {
         this.EducationalLevel[item.dictKey] = item.dictValue
       })
     })
     this.$store.dispatch('CommonDict', 'RecruitmentChannel').then((res) => {
-       res.forEach(item =>{
+      res.forEach((item) => {
         this.RecruitmentChannel[item.dictKey] = item.dictValue
       })
     })
@@ -174,7 +178,7 @@ export default {
 }
 </script>
 
-<style lang='less' scoped>
+<style lang="less" scoped>
 .page {
   background-color: #f5f6f6;
   min-height: 100%;
@@ -185,10 +189,10 @@ export default {
   border-bottom: 1px solid #ebedf0;
   border-top: 1px solid #ebedf0;
   background-color: #fff;
-  .content-title{
+  .content-title {
     font-size: 17px;
-color: #000000;
-margin-bottom: 8px;
+    color: #000000;
+    margin-bottom: 8px;
   }
   .title {
     margin-bottom: 8px;

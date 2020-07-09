@@ -88,7 +88,7 @@
           v-if="index < 3"
           :key="item.id"
           :value="approveStatusWork[item.status]"
-          :class="index === 2 ? 'noBorderBottom': ''"
+          :class="index === 2 ? 'noBorderBottom' : ''"
           style="align-items: flex-start"
           is-link
         >
@@ -245,15 +245,19 @@
                 </div>
                 <div class="percent">
                   <div class="percentNum">
-                    {{ parseInt((item.completeNum/item.totalNum || 0) * 100) }}%
+                    {{ parseInt((item.completeNum / item.totalNum || 0) * 100) }}%
                   </div>
                   <div class="percentInfo">
                     <van-progress
-                      :percentage="parseInt((item.completeNum/item.totalNum || 0) * 100)"
+                      :percentage="parseInt((item.completeNum / item.totalNum || 0) * 100)"
                       pivot-text
                     />
                     <div class="percentInfo-bottom">
-                      <span class="custom-title">计划招聘{{ item.totalNum || ' ' }}人 已入职{{ item.completeNum || ' ' }}人</span>
+                      <span
+                        class="custom-title"
+                      >计划招聘{{ item.totalNum || ' ' }}人 已入职{{
+                        item.completeNum || ' '
+                      }}人</span>
                     </div>
                   </div>
                 </div>
@@ -304,7 +308,7 @@ export default {
       this.$store.commit('SET_USER_DETAIL', res)
     })
     this.$store.dispatch('CommonDict', 'EmerType').then((res) => {
-       res.forEach(item =>{
+      res.forEach((item) => {
         this.EmerType[item.dictKey] = item.dictValue
       })
     })
@@ -313,7 +317,7 @@ export default {
     this.getMyApproveList()
   },
   methods: {
-    toTudo(){
+    toTudo() {
       this.$router.push('/work/todo')
     },
     getTodoList() {
@@ -357,12 +361,12 @@ export default {
     },
     getWarnText(row) {
       return moment().diff(moment(row.beginDate), 'days')
-    },
+    }
   }
 }
 </script>
 
-<style lang='less' scoped>
+<style lang="less" scoped>
 .page {
   height: 100%;
   background-color: #f5f6f6;
@@ -444,7 +448,7 @@ export default {
       align-items: center;
       .title {
         margin-left: 14px;
-        &.needWidth{
+        &.needWidth {
           width: 224px;
         }
         .title-top {
@@ -454,11 +458,11 @@ export default {
             margin-right: 11px;
             color: #000;
           }
-          .emerType{
+          .emerType {
             display: inline-block;
             padding: 0px 12px;
-            color:  #FF6464;
-            border: 1px solid #FF6464;
+            color: #ff6464;
+            border: 1px solid #ff6464;
             border-radius: 3px;
             font-size: 12px;
           }
@@ -466,7 +470,7 @@ export default {
         .title-bottom {
           color: #888888;
           font-size: 14px;
-          .press{
+          .press {
             margin-left: 8px;
           }
         }
@@ -478,12 +482,12 @@ export default {
             color: #78859c;
             margin-right: 15px;
           }
-          .percentInfo{
-            .van-progress{
+          .percentInfo {
+            .van-progress {
               width: 210px;
               height: 6px;
             }
-            .percentInfo-bottom{
+            .percentInfo-bottom {
               margin-top: 4px;
               font-size: 12px;
               color: #718199;

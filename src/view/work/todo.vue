@@ -138,7 +138,7 @@ export default {
     this.getDidList()
   },
   methods: {
-      ifShowWarn(row) {
+    ifShowWarn(row) {
       return (
         row.status === 'UnFinished' &&
         moment()
@@ -160,7 +160,7 @@ export default {
       }
       this.toduStatus.loading = true
 
-        getTodoList(params).then((res) => {
+      getTodoList(params).then((res) => {
         if (res.data.length > 0) {
           if (this.toduStatus.refreshing) this.workMsgList = []
           this.workMsgList.push(...res.data)
@@ -172,7 +172,6 @@ export default {
         this.toduStatus.loading = false
         this.toduStatus.refreshing = false
       })
-      
     },
     getDidList(pageNo) {
       if (this.didList.loading) return
@@ -201,41 +200,39 @@ export default {
 }
 </script>
 
-<style lang='less' scoped>
-.page{
+<style lang="less" scoped>
+.page {
   height: 100%;
 }
 /deep/ .van-tabs__line {
   width: 50% !important;
-  
+
   background-color: #207efa;
 }
 /deep/.van-tab--active {
   color: #207efa;
 }
 .person-cell {
-      display: flex;
-      align-items: center;
-      .title {
-        margin-left: 14px;
-        .title-top {
-          // margin-bottom: 6px;
-          .custom-title {
-            font-size: 16px;
-            margin-right: 11px;
-            color: #000;
-          }
-        }
-        .title-bottom {
-          color: #888888;
-          font-size: 14px;
-        } 
+  display: flex;
+  align-items: center;
+  .title {
+    margin-left: 14px;
+    .title-top {
+      // margin-bottom: 6px;
+      .custom-title {
+        font-size: 16px;
+        margin-right: 11px;
+        color: #000;
       }
-      .matterIcon{
-          height: 32px;
-          width: 32px;
+      .matterIcon {
+        height: 32px;
+        width: 32px;
       }
     }
-
-
+    .title-bottom {
+      color: #888888;
+      font-size: 14px;
+    }
+  }
+}
 </style>

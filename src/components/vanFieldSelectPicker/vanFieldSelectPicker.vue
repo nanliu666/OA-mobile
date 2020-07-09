@@ -57,22 +57,24 @@ export default {
   },
   computed: {
     showingLabel() {
-      if(this.columnsItemIsObj){
+      if (this.columnsItemIsObj) {
         return this.selectItem[this.columnLabel] || ''
-      }else{
+      } else {
         return this.selectItem
       }
     },
-    columnsItemIsObj(){
-      return this.columns.every(item =>{return Object.prototype.toString.call(item) === '[object Object]'})
+    columnsItemIsObj() {
+      return this.columns.every((item) => {
+        return Object.prototype.toString.call(item) === '[object Object]'
+      })
     }
   },
   watch: {
     value: {
       handler(val) {
-        if(this.columnsItemIsObj){
+        if (this.columnsItemIsObj) {
           this.selectItem = this.columns.find((item) => item[this.columnValue] === val) || ''
-        }else{
+        } else {
           this.selectItem = val
         }
       },
@@ -82,9 +84,9 @@ export default {
   methods: {
     onConfirm(item) {
       let value
-      if(this.columnsItemIsObj){
-        value =  item[this.columnValue]
-      }else{
+      if (this.columnsItemIsObj) {
+        value = item[this.columnValue]
+      } else {
         value = item
       }
 
@@ -92,8 +94,8 @@ export default {
       this.selectItem = item
       this.show = !this.show
     },
-    onChange(picker, value, index){
-      if(index > this.columns.length - 5){
+    onChange(picker, value, index) {
+      if (index > this.columns.length - 5) {
         this.$emit('willToBottom')
       }
     }

@@ -87,7 +87,6 @@
           type="textarea"
           maxlength="200"
           :rules="rules.evaluation"
-          
           placeholder="请输入"
           show-word-limit
         />
@@ -112,9 +111,7 @@
         />
       </van-form>
     </div>
-    <div
-      class="btnBox contain"
-    >
+    <div class="btnBox contain">
       <div class="nextBox">
         <van-button
           round
@@ -132,85 +129,101 @@
 <script>
 import VanFieldSelectPicker from '@/components/vanFieldSelectPicker/vanFieldSelectPicker'
 import StickyHeader from '@/components/stickyHeader/stickyHeader'
-import {Toast} from 'vant'
-import {postInterviewEvaluation} from '@/api/work'
+import { Toast } from 'vant'
+import { postInterviewEvaluation } from '@/api/work'
 
 export default {
-    components: { VanFieldSelectPicker,StickyHeader},
-    data () {
-        return {
-            rules:{
-                workBackground: [{ required: true, message: '请选择工作背景' }],
-                workExperience: [{ required: true, message: '请选择工作经验' }],
-                knowledge: [{ required: true, message: '请选择岗位知识' }],
-                train: [{ required: true, message: '请选择教育培训' }],
-                specialty: [{ required: true, message: '请选择专业特长' }],
-                evaluation: [{ required: true, message: '请填写面试评价' },{ validator: (val)=>{return val.trim().length > 0}, message: '面试评价不能为空' }],
-                score: [{ required: true, message: '请填写综合打分' },{ validator: (val)=>{return val>=0 && val <= 100}, message: '请输入范围内的整数' }],
-                status: [{ required: true, message: '请选择录用建议' }],
+  components: { VanFieldSelectPicker, StickyHeader },
+  data() {
+    return {
+      rules: {
+        workBackground: [{ required: true, message: '请选择工作背景' }],
+        workExperience: [{ required: true, message: '请选择工作经验' }],
+        knowledge: [{ required: true, message: '请选择岗位知识' }],
+        train: [{ required: true, message: '请选择教育培训' }],
+        specialty: [{ required: true, message: '请选择专业特长' }],
+        evaluation: [
+          { required: true, message: '请填写面试评价' },
+          {
+            validator: (val) => {
+              return val.trim().length > 0
             },
-            form:{
-                workBackground:'',
-                evaluation:''
+            message: '面试评价不能为空'
+          }
+        ],
+        score: [
+          { required: true, message: '请填写综合打分' },
+          {
+            validator: (val) => {
+              return val >= 0 && val <= 100
             },
-            levelColumns:['A','B', 'C', 'D'],
-            statusColumns:[
-                {label: '通过', value:'Pass'},
-                {label: '淘汰', value:'Reject'},
-            ],
-            loading: false
-        }
-    },
-    methods:{
-        handleEvaluate(){
-             this.$refs.basicForm
-          .validate()
-          .then(() => {
-              const params = {
-                  id:this.$route.query.id,
-                ...this.form
-              }
-              this.loading = true
-              postInterviewEvaluation(params).then(() =>{
-                  this.loading = false
-                  this.form.status === 'Pass' ? Toast('已通过') : Toast('已淘汰')
-                  this.$router.back()
-              })
-          })
-          .catch((error) => {
-            Toast(error[0].message)
-            this.$refs.basicForm.scrollToField(error[0].name, { alignToTop: true })
-          })
-        },
+            message: '请输入范围内的整数'
+          }
+        ],
+        status: [{ required: true, message: '请选择录用建议' }]
+      },
+      form: {
+        workBackground: '',
+        evaluation: ''
+      },
+      levelColumns: ['A', 'B', 'C', 'D'],
+      statusColumns: [
+        { label: '通过', value: 'Pass' },
+        { label: '淘汰', value: 'Reject' }
+      ],
+      loading: false
     }
+  },
+  methods: {
+    handleEvaluate() {
+      this.$refs.basicForm
+        .validate()
+        .then(() => {
+          const params = {
+            id: this.$route.query.id,
+            ...this.form
+          }
+          this.loading = true
+          postInterviewEvaluation(params).then(() => {
+            this.loading = false
+            this.form.status === 'Pass' ? Toast('已通过') : Toast('已淘汰')
+            this.$router.back()
+          })
+        })
+        .catch((error) => {
+          Toast(error[0].message)
+          this.$refs.basicForm.scrollToField(error[0].name, { alignToTop: true })
+        })
+    }
+  }
 }
 </script>
 
-<style lang='less' scoped>
+<style lang="less" scoped>
 .page {
   background-color: #f5f6f6;
   min-height: 100%;
 }
-.contain{
-    margin-top: 8px;
-    border-top: 1px solid #eee;
+.contain {
+  margin-top: 8px;
+  border-top: 1px solid #eee;
 }
 
-.fieldPicker{
-    /deep/ .van-cell{
-        border-bottom: 0;
-        padding-bottom: 0;
-    }
-    /deep/.van-cell:last-child:after{
+.fieldPicker {
+  /deep/ .van-cell {
     border-bottom: 0;
+    padding-bottom: 0;
+  }
+  /deep/.van-cell:last-child:after {
+    border-bottom: 0;
+  }
 }
-}
-.disc{
-    padding: 0 16px 10px;
-    color: #888888;
-    font-size: 12px;
-    border-bottom: 1px solid #eee;
-    background-color: #fff;
+.disc {
+  padding: 0 16px 10px;
+  color: #888888;
+  font-size: 12px;
+  border-bottom: 1px solid #eee;
+  background-color: #fff;
 }
 .noBorderBottom {
   border-bottom: 0;
