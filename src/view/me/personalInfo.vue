@@ -364,7 +364,7 @@ export default {
 }
 </script>
 
-<style lang='less' scoped>
+<style lang="less" scoped>
 .contain {
   margin-top: 8px;
   border-top: 1px solid #ebedf0;
@@ -380,6 +380,14 @@ export default {
   height: 20px;
   /deep/ .van-image__loading-icon {
     font-size: 14px;
+  }
+}
+.addBtn {
+  display: flex;
+  align-items: center;
+  /deep/ .van-icon {
+    margin-right: 8px;
+    color: #207efa;
   }
 }
 .nextBox {

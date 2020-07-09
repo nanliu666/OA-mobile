@@ -1,19 +1,21 @@
 <template>
   <div>
-    <template v-for="item in columns">
-      <div
-        :key="item.label"
-        class="item"
-      >
-        <span class="label">{{ item.label }}:</span>
-        <template v-if="!item.slot">
-          <span class="val">{{ item.value }}</span>
-        </template>
-        <template v-else>
-          <slot :name="item.prop" />
-        </template>
-      </div>
-    </template>
+    <div
+      v-for="item in columns"
+      :key="item.label"
+      class="item"
+    >
+      <span class="label">{{ item.label }}： </span>
+      <span
+        v-if="!item.slot"
+        class="val"
+      >{{ item.value }}</span>
+      <slot
+        v-else
+        :name="item.prop"
+        v-bind="{ value: item.value, label: item.label }"
+      />
+    </div>
   </div>
 </template>
 <script>
@@ -29,8 +31,8 @@ export default {
 
 <style lang="less" scoped>
 .item {
-  margin-bottom: 5px;
   font-size: 14px;
+  margin-bottom: 5px;
   .label {
     color: #757c85;
   }
