@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+
 import Mock from 'mockjs'
 
 export default ({ mock }) => {
@@ -91,6 +93,11 @@ export default ({ mock }) => {
           response
         }
       })
+      const normalData = {
+        resCode: 200,
+        resMsg: '操作成功',
+        response: {}
+      }
       Mock.mock(new RegExp('/api/user/v1/person/info' + '.*'), 'get', () => {
         return {
           ...normalData,
