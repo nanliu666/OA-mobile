@@ -35,6 +35,14 @@
         </infoShow>
       </div>
     </div>
+    <div class="btn">
+      <van-button
+        block
+        type="info"
+      >
+        请在web端处理该待办
+      </van-button>
+    </div>
   </div>
 </template>
 
@@ -126,7 +134,7 @@ export default {
 
 <style lang="less" scoped>
 .page {
-  height: 100%;
+  padding-bottom: 72px;
   .info-box {
     .name-row {
       padding-left: 16px;
@@ -157,5 +165,14 @@ export default {
       font-weight: bold;
     }
   }
+}
+.btn {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  padding: 16px;
+  background-color: #fff;
 }
 </style>
