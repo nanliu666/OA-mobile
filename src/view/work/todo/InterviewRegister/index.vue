@@ -177,13 +177,14 @@
           </div>
         </div>
       </div>
-      <van-notice-bar
-        color="#1989fa"
-        background="#ecf9ff"
-        left-icon="info-o"
-      >
-        请在web端处理该待办
-      </van-notice-bar>
+      <div class="btn">
+        <van-button
+          block
+          type="info"
+        >
+          请在web端处理该待办
+        </van-button>
+      </div>
     </div>
   </div>
 </template>
@@ -423,6 +424,9 @@ export default {
 /deep/.van-tab--active {
   color: #207efa;
 }
+.page {
+  padding-bottom: 72px;
+}
 .detail-box {
   width: 100%;
   box-sizing: border-box;
@@ -440,5 +444,14 @@ export default {
     border-bottom: 1px solid #dddddd;
     padding: 10px 0;
   }
+}
+.btn {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  padding: 16px;
+  background-color: #fff;
 }
 </style>

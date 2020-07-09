@@ -8,7 +8,8 @@
     <div class="task-box">
       <div class="jobName-row">
         <div class="jobName-box">
-          <span>{{ recruitmentDetail.jobName }}</span><span>{{ recruitmentDetail.emerType | CommonDictType(EmerType) }}</span>
+          <span>{{ recruitmentDetail.jobName }}</span>
+          <span>{{ recruitmentDetail.emerType | CommonDictType(EmerType) }}</span>
         </div>
         <div class="isFinished">
           {{ recruitmentDetail.progress | filterProgress }}

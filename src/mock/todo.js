@@ -155,8 +155,14 @@ const info = {
       {
         id: '附件ID',
         categoryId: '附件分类ID',
-        name: '附件名称',
-        url: '附件URL地址'
+        name: '身份证',
+        url: `https://s1.ax1x.com/2020/07/09/Umdx4P.jpg`
+      },
+      {
+        id: '附件ID',
+        categoryId: '附件分类ID',
+        name: '身份证',
+        url: `https://s1.ax1x.com/2020/07/09/Umdx4P.jpg`
       }
     ]
   }
@@ -193,5 +199,103 @@ export default ({ mock }) => {
   // 人员信息
   Mock.mock(new RegExp('/helper/v1/person/info' + '.*'), 'get', () => {
     return info
+  })
+  // 员工离职交接事项
+  Mock.mock(new RegExp('/user/v1/user/leave/note' + '.*'), 'get', () => {
+    let arr = [
+      {
+        userId: '3211',
+        userName: '张三',
+        createTime: '2009-08-08 04:18:37',
+        status: 'UnConfirm',
+        isUrge: 1,
+        urgeTime: '2009-08-08 04:18:37',
+        data: [
+          {
+            categoryId: '4645646',
+            categoryName: '办公物品回收',
+            details: [
+              {
+                detailId: '2313213',
+                detailName: '计算机查验'
+              },
+              {
+                detailId: '231321465643',
+                detailName: '计算机查验'
+              }
+            ]
+          },
+          {
+            categoryId: '46546',
+            categoryName: '办公物品回收',
+            details: [
+              {
+                detailId: '645646',
+                detailName: '计算机查验'
+              },
+              {
+                detailId: '6445645646',
+                detailName: '计算机查验'
+              }
+            ]
+          }
+        ]
+      }
+    ]
+    return {
+      response: arr
+    }
+  })
+  // 员工离职交接事项确认
+  Mock.mock(new RegExp('/user/v1/user/leave/note/confirm' + '.*'), 'post', () => {
+    return {
+      response: '确认成功'
+    }
+  })
+  // 员工离职交接事项确认
+  Mock.mock(new RegExp('/user/v1/user/leave/note/urge' + '.*'), 'post', () => {
+    return {
+      response: '催办成功'
+    }
+  })
+  //待入职人员详情
+  Mock.mock(new RegExp('/api/user/v1/candidate/accept/detail' + '.*'), 'get', () => {
+    return {
+      response: {
+        personId: '人员ID',
+        name: '真实姓名',
+        phonenum: '手机号',
+        sex: '1',
+        age: '年龄',
+        email: '个人邮箱',
+        provinceCode: '	目前所在省份编码',
+        proviceName: '目前所在省份名称',
+        cityCode: '目前所在地市编码	',
+        cityName: '目前所在地市名称	',
+        educationalLevel: 'High',
+        university: '毕业学校',
+        major: '	毕业专业',
+        workAge: '工作年限',
+        lastCompany: '最新工作单位',
+        recruitment: '招聘渠道',
+        monthSalary: '期望月薪，单位：元',
+        resumeUrl: '简历URL',
+        attachmentUrl: '附件URL',
+        attachmentName: '附件名称',
+        remark: '备注',
+        recruitmentId: '招聘需求ID',
+        register: '1',
+        entryDate: '2008-07-16',
+        orgId: '用人部门ID',
+        orgName: '用人部门名称	',
+        jobId: '职位ID	',
+        jobName: '职位名称',
+        positionId: '岗位ID',
+        positionName: '岗位名称',
+        workProperty: 'FullTime',
+        applyId: '录用申请ID',
+        status: '7'
+      }
+    }
   })
 }

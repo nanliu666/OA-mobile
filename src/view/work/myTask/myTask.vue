@@ -110,13 +110,13 @@
             </div>
             <div class="complete-row">
               <div class="num">
-                {{ parseInt((item.completeNum / item.totalNum) * 100) }}%
+                100%
               </div>
               <div class="progress-box">
                 <van-progress
                   :show-pivot="false"
                   color="#207EFA"
-                  :percentage="parseInt((item.completeNum / item.totalNum) * 100)"
+                  :percentage="100"
                 />
                 <p>计划招聘{{ item.totalNum }}人 已入职{{ item.completeNum }}人</p>
               </div>
@@ -200,11 +200,6 @@ export default {
       // 获取用户ID
       this.unFinishedQuery.userId = this.$store.state.user.userInfo.user_id
       this.unFinishedLoad.loading = true
-      // fetchTaskList(this.unFinishedQuery)
-      // 	.then((res) => {
-      // 		this.unFinishedList = res.data
-      // 	})
-      // 	.finally(() => {})
       fetchTaskList(this.unFinishedQuery).then((res) => {
         if (res.data.length > 0) {
           if (this.unFinishedLoad.refreshing) this.unFinishedList = []
@@ -243,7 +238,7 @@ export default {
     goToDetail({ bizId, type }) {
       if (type === 'Recruitment') {
         return this.$router.push({
-          path: '/my/taskDetail',
+          path: '/work/taskDetail',
           query: {
             bizId
           }
@@ -309,13 +304,16 @@ export default {
     }
     .complete-row {
       display: flex;
+      justify-content: flex-start;
       .num {
+        width: 70px;
         font-size: 28px;
         color: #78859c;
         text-align: right;
         line-height: 28px;
       }
       .progress-box {
+        margin-left: 15px;
         p {
           font-size: 12px;
           color: #718199;
