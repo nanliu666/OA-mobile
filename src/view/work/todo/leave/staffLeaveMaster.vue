@@ -44,15 +44,17 @@
       <van-button
         block
         type="info"
+        @click="urgeleaveNote"
       >
-        请在web端处理该待办
+        催办
       </van-button>
     </div>
   </div>
 </template>
 
 <script>
-import { getLeaveNote } from '@/api/todo'
+import { Toast } from 'vant'
+import { getLeaveNote, postUrgeleaveNote } from '@/api/todo'
 import StickyHeader from '@/components/stickyHeader/stickyHeader'
 export default {
   name: 'OrgLeave',
@@ -111,7 +113,10 @@ export default {
   },
   methods: {
     loadingData() {
-      this.leaveUserId = this.$route.query.biz_id
+      let arrId = this.$route.query.biz_id.split(',')
+      this.leaveUserId = arrId[0]
+      this.groupId = arrId[1]
+      // this.leaveUserId = this.$route.query.biz_id
       let params = {
         userId: this.$store.state.user.userInfo.user_id,
         leaveUserId: this.leaveUserId
@@ -121,6 +126,14 @@ export default {
           this.listData = res[0]
         })
         .finally(() => {})
+    },
+    // 催办
+    async urgeleaveNote() {
+      let res = await postUrgeleaveNote({
+        groupId: this.groupId,
+        userId: this.userId
+      })
+      Toast.success(res)
     }
   }
 }

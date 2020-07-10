@@ -120,8 +120,7 @@ export default {
   },
   methods: {
     loadingData() {
-      // let arrId = this.$route.query.biz_id.split(',')
-      let arrId = [13212, 1321]
+      let arrId = this.$route.query.biz_id.split(',')
       this.leaveUserId = arrId[0]
       this.groupId = arrId[1]
       this.userId = this.$store.state.user.userInfo.user_id
