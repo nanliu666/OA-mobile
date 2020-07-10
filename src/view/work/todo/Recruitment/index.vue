@@ -241,7 +241,7 @@ export default {
         query: {
           recruitmentId: this.recruitmentId
         },
-        path: '/todo/distribution'
+        path: '/todo/allotRecruitment'
       })
     }
   }

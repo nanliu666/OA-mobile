@@ -15,116 +15,120 @@
     <!-- <van-nav-bar title="我的任务" left-arrow /> -->
 
     <!-- 没完成 -->
-    <van-pull-refresh
-      v-show="active == 'UnFinished'"
-      v-model="unFinishedLoad.refreshing"
-      @refresh="loadUnFinishedData(1)"
-    >
-      <van-list
-        :value="unFinishedLoad.loading"
-        :finished="unFinishedLoad.finished"
-        finished-text="没有更多了"
-        @load="loadUnFinishedData"
+    <div v-show="active == 'UnFinished'">
+      <van-pull-refresh
+        v-model="unFinishedLoad.refreshing"
+        @refresh="loadUnFinishedData(1)"
       >
-        <div
-          v-for="(item, index) in unFinishedList"
-          :key="index"
-          class="item"
+        <van-list
+          :immediate-check="false"
+          :value="unFinishedLoad.loading"
+          :finished="unFinishedLoad.finished"
+          finished-text="没有更多了"
+          @load="loadUnFinishedData"
         >
-          <!-- 左侧 -->
-          <div class="left-content">
-            <svg
-              class="icon"
-              aria-hidden="true"
-            >
-              <use xlink:href="#icon-approval-recruit-bicolor" />
-            </svg>
-            <!-- {{ item.type }} -->
-          </div>
-          <!-- 主要内容 -->
-          <div class="main-content">
-            <div class="title-row">
-              {{ item.title }} <van-icon
-                name="arrow"
-                @click="goToDetail(item)"
-              />
+          <div
+            v-for="(item, index) in unFinishedList"
+            :key="index"
+            class="item"
+          >
+            <!-- 左侧 -->
+            <div class="left-content">
+              <svg
+                class="icon"
+                aria-hidden="true"
+              >
+                <use xlink:href="#icon-approval-recruit-bicolor" />
+              </svg>
+              <!-- {{ item.type }} -->
             </div>
-            <div class="brief-row">
-              {{ item.brief }}
-            </div>
-            <div class="complete-row">
-              <div class="num">
-                {{ parseInt((item.completeNum / item.totalNum) * 100) }}%
-              </div>
-              <div class="progress-box">
-                <van-progress
-                  :show-pivot="false"
-                  color="#207EFA"
-                  :percentage="parseInt((item.completeNum / item.totalNum) * 100)"
+            <!-- 主要内容 -->
+            <div class="main-content">
+              <div class="title-row">
+                {{ item.title }} <van-icon
+                  name="arrow"
+                  @click="goToDetail(item)"
                 />
-                <p>计划招聘{{ item.totalNum }}人 已入职{{ item.completeNum }}人</p>
+              </div>
+              <div class="brief-row">
+                {{ item.brief }}
+              </div>
+              <div class="complete-row">
+                <div class="num">
+                  {{ parseInt((item.completeNum / item.totalNum) * 100) }}%
+                </div>
+                <div class="progress-box">
+                  <van-progress
+                    :show-pivot="false"
+                    color="#207EFA"
+                    :percentage="parseInt((item.completeNum / item.totalNum) * 100)"
+                  />
+                  <p>计划招聘{{ item.totalNum }}人 已入职{{ item.completeNum }}人</p>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </van-list>
-    </van-pull-refresh>
+        </van-list>
+      </van-pull-refresh>
+    </div>
 
     <!-- 已完成 -->
-    <van-pull-refresh
-      v-show="active == 'Finished'"
-      v-model="FinishedLoad.refreshing"
-      @refresh="loadFinishedData(1)"
-    >
-      <van-list
-        :value="FinishedLoad.loading"
-        :finished="FinishedLoad.finished"
-        finished-text="没有更多了"
-        @load="loadFinishedData"
+    <div v-show="active == 'Finished'">
+      <van-pull-refresh
+        v-model="FinishedLoad.refreshing"
+        @refresh="loadFinishedData(1)"
       >
-        <div
-          v-for="(item, index) in finishedList"
-          :key="index"
-          class="item"
+        <van-list
+          :immediate-check="false"
+          :value="FinishedLoad.loading"
+          :finished="FinishedLoad.finished"
+          finished-text="没有更多了"
+          @load="loadFinishedData"
         >
-          <!-- 左侧 -->
-          <div class="left-content">
-            <svg
-              class="icon"
-              aria-hidden="true"
-            >
-              <use xlink:href="#icon-approval-recruit-bicolor" />
-            </svg>
-            <!-- {{ item.type }} -->
-          </div>
-          <!-- 主要内容 -->
-          <div class="main-content">
-            <div class="title-row">
-              {{ item.title }} <van-icon
-                name="arrow"
-                @click="goToDetail(item)"
-              />
+          <div
+            v-for="(item, index) in finishedList"
+            :key="index"
+            class="item"
+          >
+            <!-- 左侧 -->
+            <div class="left-content">
+              <svg
+                class="icon"
+                aria-hidden="true"
+              >
+                <use xlink:href="#icon-approval-recruit-bicolor" />
+              </svg>
+              <!-- {{ item.type }} -->
             </div>
-            <div class="brief-row">
-              {{ item.brief }}
-            </div>
-            <div class="complete-row">
-              <div class="num">
-                100%
-              </div>
-              <div class="progress-box">
-                <van-progress
-                  :show-pivot="false"
-                  color="#207EFA"
-                  :percentage="100"
+            <!-- 主要内容 -->
+            <div class="main-content">
+              <div class="title-row">
+                {{ item.title }} <van-icon
+                  name="arrow"
+                  @click="goToDetail(item)"
                 />
-                <p>计划招聘{{ item.totalNum }}人 已入职{{ item.completeNum }}人</p>
+              </div>
+              <div class="brief-row">
+                {{ item.brief }}
+              </div>
+              <div class="complete-row">
+                <div class="num">
+                  100%
+                </div>
+                <div class="progress-box">
+                  <van-progress
+                    :show-pivot="false"
+                    color="#207EFA"
+                    percentage="100"
+                  />
+                  <p>计划招聘{{ item.totalNum }}人 已入职{{ item.completeNum }}人</p>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </van-list>
-    </van-pull-refresh>
+        </van-list>
+      </van-pull-refresh>
+    </div>
   </div>
 </template>
 

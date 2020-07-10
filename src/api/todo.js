@@ -24,3 +24,21 @@ export const postConfirmleaveNote = (params) => {
 export const postUrgeleaveNote = (params) => {
   return post('/user/v1/user/leave/note/urge', params)
 }
+
+// 员工离职信息查询，调用接口：员工离职信息查询接口【GET /user/v1/user/leave/info】
+export const getLeaveInfo = (params) => {
+  return get('/api/user/v1/user/leave/info', params)
+}
+
+//查询员工信息
+export const getStaffBasicInfo = (params) => {
+  return get('/api/user/v1/user/info', params)
+}
+// 录用申请详情查询接口
+export const getOfferApply = (params) => {
+  return get('/user/v1/candidate/offer/apply', params)
+}
+// 待入职人员详情查询接口
+export const getWaitEmploy = (params) => {
+  return get('/user/v1/candidate/accept/detail', params)
+}

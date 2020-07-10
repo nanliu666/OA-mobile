@@ -37,5 +37,11 @@ export default [
     component: () =>
       import(/* webpackChunkName: "view" */ '@/view/work/todo/leave/staffLeaveMaster'),
     meta: { title: '离职事项' }
+  },
+  {
+    path: '/todo/leaveHandel',
+    name: '离职办理',
+    component: () => import(/* webpackChunkName: "view" */ '@/view/work/todo/leave/leaveHandel'),
+    meta: { title: '离职办理' }
   }
 ]

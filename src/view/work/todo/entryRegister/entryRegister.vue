@@ -286,7 +286,7 @@ export default {
           name: 'accessories'
         }
       ],
-      active: 'accessories',
+      active: 'info',
       infoData: {},
       // 基本信息配置
       infoColumns: [
