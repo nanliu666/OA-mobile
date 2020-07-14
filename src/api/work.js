@@ -1,4 +1,4 @@
-import { get, post } from '@/util/request'
+import { get, post, del } from '@/util/request'
 
 /**
  * 待办任务查询接口
@@ -94,4 +94,28 @@ export const getWorkList = (params) => {
  * */
 export const postRecruitmentTask = (params) => {
   return post('/user/v1/recruitment/task', params)
+}
+
+/**
+ * 提醒事项查询接口
+ * @param {Object} params
+ * */
+export const getScheduleInfo = (params) => {
+  return get('/schedule/v1/schedule/info', params)
+}
+
+/**
+ * 提醒事项添加接口
+ * @param {Object} params
+ * */
+export const createScheduleInfo = (params) => {
+  return post('/schedule/v1/schedule/info', params)
+}
+
+/**
+ * 提醒事项删除接口
+ * @param {Object} params
+ * */
+export const deleteScheduleInfo = (params) => {
+  return del('/schedule/v1/schedule/info', params)
 }

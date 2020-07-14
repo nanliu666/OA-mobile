@@ -9,10 +9,15 @@ import 'vant/lib/index.less'
 import '@/styles/index.less'
 import VueClipboard from 'vue-clipboard2'
 import longpress from '@/directive/longpress'
+// 日历组件
+import vueHashCalendar from 'vue-hash-calendar'
+import 'vue-hash-calendar/lib/vue-hash-calendar.css'
 
 Vue.use(Vant)
 Vue.use(VueClipboard)
 
+// 注册日历组件
+Vue.use(vueHashCalendar)
 // 自定义vue指令
 Vue.use(longpress)
 

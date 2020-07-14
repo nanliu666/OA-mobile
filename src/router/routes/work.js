@@ -56,6 +56,20 @@ export default {
       component: () =>
         import(/* webpackChunkName: "view" */ '@/view/work/todo/allotRecruitment.vue'),
       meta: { title: '百利宏移动办公' }
+    },
+    {
+      path: '/todaySchedule/calendar',
+      name: '今日安排',
+      component: () =>
+        import(/* webpackChunkName: "view" */ '@/view/work/todaySchedule/calendar.vue'),
+      meta: { title: '工作台' }
+    },
+    {
+      path: '/todaySchedule/calendar/info',
+      name: '提醒事项',
+      component: () =>
+        import(/* webpackChunkName: "view" */ '@/view/work/todaySchedule/scheduleInfo.vue'),
+      meta: { title: '工作台' }
     }
   ]
 }

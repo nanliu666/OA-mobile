@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-
+const moment = require('moment')
 import Mock from 'mockjs'
 
 export default ({ mock }) => {
@@ -54,45 +54,45 @@ export default ({ mock }) => {
       response: {}
     }
   })
-  // Mock.mock(new RegExp('/user/v1/recruitment/detail' + '.*'), 'get', () => {
-  //   let response = Mock.mock({
-  //     id: '@integer(100000, 10000000000)',
-  //     orgId: '@integer(100000, 10000000000)',
-  //     orgName: '部门名称',
-  //     jobId: '@integer(100000, 10000000000)',
-  //     jobName: '职位名称',
-  //     positionId: '@integer(100000, 10000000000)',
-  //     positionName: '岗位名称',
-  //     //  workProperty: '工作性质，字典组：WorkProperty',
-  //     workProperty: 'FullTime',
-  //     // emerType: '紧急程度，字典组：EmerType',
-  //     emerType: 'common',
-  //     needNum: '10',
-  //     entryNum: '已入职人数21321',
-  //     candidateNum: '候选人数213212',
-  //     joinDate: '到岗日期1978-11-14',
-  //     // workYear: '工作年限，字典组：WorkYear',
-  //     workYear: 'Y02',
-  //     // educationalLevel: '学历要求，字典组：EducationalLevel',
-  //     educationalLevel: 'JuniorCollege',
-  //     minSalary: '最低薪酬，单位：21321元',
-  //     maxSalary: '最高薪酬，单位：2132132元',
-  //     requirement: '职位要求',
-  //     duty: '工作职责',
-  //     // reason: '招聘原因，字典组：RecruitmentReason',
-  //     reason: 'Organization4',
-  //     reasonNote: '原因补充说明',
-  //     remark: '申请理由',
-  //     userId: '@integer(100000, 10000000000)',
-  //     userName: '提交人姓名',
-  //     companyId: '@integer(100000, 10000000000)',
-  //     companyName: '公司名称'
-  //   })
+  Mock.mock(new RegExp('/user/v1/recruitment/detail' + '.*'), 'get', () => {
+    let response = Mock.mock({
+      id: '@integer(100000, 10000000000)',
+      orgId: '@integer(100000, 10000000000)',
+      orgName: '部门名称',
+      jobId: '@integer(100000, 10000000000)',
+      jobName: '职位名称',
+      positionId: '@integer(100000, 10000000000)',
+      positionName: '岗位名称',
+      //  workProperty: '工作性质，字典组：WorkProperty',
+      workProperty: 'FullTime',
+      // emerType: '紧急程度，字典组：EmerType',
+      emerType: 'common',
+      needNum: '10',
+      entryNum: '已入职人数21321',
+      candidateNum: '候选人数213212',
+      joinDate: '到岗日期1978-11-14',
+      // workYear: '工作年限，字典组：WorkYear',
+      workYear: 'Y02',
+      // educationalLevel: '学历要求，字典组：EducationalLevel',
+      educationalLevel: 'JuniorCollege',
+      minSalary: '最低薪酬，单位：21321元',
+      maxSalary: '最高薪酬，单位：2132132元',
+      requirement: '职位要求',
+      duty: '工作职责',
+      // reason: '招聘原因，字典组：RecruitmentReason',
+      reason: 'Organization4',
+      reasonNote: '原因补充说明',
+      remark: '申请理由',
+      userId: '@integer(100000, 10000000000)',
+      userName: '提交人姓名',
+      companyId: '@integer(100000, 10000000000)',
+      companyName: '公司名称'
+    })
 
-  //   return {
-  //     response
-  //   }
-  // })
+    return {
+      response
+    }
+  })
   const normalData = {
     resCode: 200,
     resMsg: '操作成功',
@@ -501,6 +501,80 @@ export default ({ mock }) => {
         totalPage: 2
       },
       resMsg: '操作成功'
+    }
+  })
+  Mock.mock(new RegExp('/api/task/v1/todo/list' + '.*'), 'get', () => {
+    let data = []
+    for (let i = 0; i < 21; i++) {
+      data.push(
+        Mock.mock({
+          id: '@integer(1000000, 1000000000)',
+          'type|1': [
+            'Approve',
+            'Recruitment',
+            'ResumeReview',
+            'Interview',
+            'InterviewRegister',
+            'Entry',
+            'EntryRegister',
+            'LeaveListOrg',
+            'LeaveListUser',
+            'Leave'
+          ],
+          bizId: '@integer(1000000, 1000000000)',
+          'status|1': ['UnFinished', 'Finished'],
+          beginDate: '@date("yyyy-MM-dd")',
+          endDate: '@date("yyyy-MM-dd")',
+          completeTime: '@date("yyyy-MM-dd")',
+          title: '@ctitle(3,5)',
+          content: '@cparagraph(3, 5)',
+          'isRead|1': [1, 0],
+          createTime: '@date("yyyy-MM-dd hh:mm:ss")'
+        })
+      )
+    }
+    return {
+      resCode: 200,
+      success: true,
+      response: {
+        totalNum: 20,
+        totalPage: 1,
+        data: data
+      }
+    }
+  })
+  Mock.mock(new RegExp('/api/schedule/v1/schedule/info' + '.*'), 'get', (option) => {
+    let urlParams = new URLSearchParams(option.url.split('?')[1])
+    const randomDate = (startDate, endDate) => {
+      let start = moment(startDate).valueOf()
+      let end = moment(endDate).valueOf()
+      let date = new Date(start + Math.random() * (end - start))
+      let hour = (0 + Math.random() * (23 - 0)) | 0
+      let minute = (0 + Math.random() * (59 - 0)) | 0
+      let second = (0 + Math.random() * (59 - 0)) | 0
+      date.setHours(hour)
+      date.setMinutes(minute)
+      date.setSeconds(second)
+      return date
+    }
+    let data = []
+    for (let i = 0; i < 30; i++) {
+      data.push(
+        Mock.mock({
+          id: '@integer(1000000, 1000000000)',
+          remindDate: moment(
+            randomDate(urlParams.get('beginRemindDate'), urlParams.get('endRemindDate'))
+          ).format('YYYY-MM-DD'),
+          type: 'Remind',
+          title: '@ctitle(3,5)',
+          createTime: '@date("yyyy-MM-dd hh:mm:ss")'
+        })
+      )
+    }
+    return {
+      resCode: 200,
+      resMsg: '',
+      response: data
     }
   })
 }

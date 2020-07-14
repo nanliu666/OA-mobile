@@ -83,7 +83,7 @@
                 class="msgBox"
               >
                 <div
-                  v-if="item.isRead === 0"
+                  :class="item.isRead === 1 ? 'read' : ''"
                   class="unread"
                 />
                 <div
@@ -243,7 +243,11 @@ export default {
     height: 10px;
     border-radius: 10px;
     background: #ff6464;
+    &.read {
+      background: #fff;
+    }
   }
+
   .msgContent {
     .content {
       font-size: 16px;

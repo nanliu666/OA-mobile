@@ -13,7 +13,7 @@
       </template>
     </stickyHeader>
     <van-pull-refresh
-      v-show="active === 0"
+      v-if="active === 0"
       v-model="toduStatus.refreshing"
       @refresh="getToduList(1)"
     >
@@ -21,13 +21,13 @@
         :value="toduStatus.loading"
         :finished="toduStatus.finished"
         finished-text="没有更多了"
-        :offset="247"
         @load="getToduList"
       >
         <template v-for="item in workMsgList">
           <van-cell
             :key="item.id"
             is-link
+            @click="handleClickCell(item)"
           >
             <!-- 使用 title 插槽来自定义标题 -->
             <template #title>
@@ -60,7 +60,7 @@
       </van-list>
     </van-pull-refresh>
     <van-pull-refresh
-      v-show="active === 1"
+      v-if="active === 1"
       v-model="didList.refreshing"
       @refresh="getDidList(1)"
     >
@@ -74,6 +74,7 @@
           <van-cell
             :key="item.id"
             is-link
+            @click="handleClickCell(item)"
           >
             <!-- 使用 title 插槽来自定义标题 -->
             <template #title>
@@ -106,6 +107,7 @@
 import { getTodoList } from '@/api/work'
 import StickyHeader from '@/components/stickyHeader/stickyHeader'
 import moment from 'moment'
+import { todoJumpFun } from './common'
 
 export default {
   name: 'Todo',
@@ -130,10 +132,20 @@ export default {
       },
       active: 0,
       workMsgList: [],
-      systemMsgList: []
+      systemMsgList: [],
+      scrollTop: {
+        0: 0,
+        1: 0
+      }
     }
   },
-  activated() {
+  watch: {
+    active(nVal, oVal) {
+      this.scrollTop[oVal] = document.documentElement.scrollTop
+      document.documentElement.scrollTop = this.scrollTop[nVal]
+    }
+  },
+  created() {
     this.getToduList()
     this.getDidList()
   },
@@ -195,6 +207,9 @@ export default {
         this.didList.loading = false
         this.didList.refreshing = false
       })
+    },
+    handleClickCell(item) {
+      todoJumpFun(item, this.$router)
     }
   }
 }
@@ -233,6 +248,10 @@ export default {
       color: #888888;
       font-size: 14px;
     }
+  }
+  .matterIcon {
+    height: 32px;
+    width: 32px;
   }
 }
 </style>
