@@ -40,7 +40,7 @@
           </template>
           <!-- 工作性质 -->
           <template #workProperty>
-            {{ employmentData.workProperty }}
+            {{ employmentData.workProperty | CommonDictType(WorkProperty) }}
           </template>
           <!-- 工作地址 -->
           <template #workAddress>
@@ -213,7 +213,7 @@ export default {
   .detail-box {
     width: 100%;
     box-sizing: border-box;
-    padding-left: 16px;
+    // padding-left: 16px;
     padding-top: 20px;
 
     .title {

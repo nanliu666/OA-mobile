@@ -1,17 +1,32 @@
 <template>
   <div class="page">
-    <stickyHeader :title="`${infoData.name}的面试登记表`">
-      <template #footer>
-        <van-tabs v-model="active">
-          <van-tab
-            v-for="(item, index) in tabList"
-            :key="index"
-            :title="item.title"
-            :name="item.name"
-          />
-        </van-tabs>
-      </template>
-    </stickyHeader>
+    <!-- <stickyHeader :title="`${infoData.name}(${jobName})的面试登记表`">
+			<template #footer>
+				<van-tabs v-model="active">
+					<van-tab
+						v-for="(item, index) in tabList"
+						:key="index"
+						:title="item.title"
+						:name="item.name"
+					/>
+				</van-tabs>
+			</template>
+		</stickyHeader> -->
+    <div class="sticky-box">
+      <van-nav-bar
+        :title="`${infoData.name}(${jobName})的面试登记表`"
+        left-arrow
+        @click-left="goBack"
+      />
+      <van-tabs v-model="active">
+        <van-tab
+          v-for="(item, index) in tabList"
+          :key="index"
+          :title="item.title"
+          :name="item.name"
+        />
+      </van-tabs>
+    </div>
     <div class="main-box">
       <!-- 基本信息区 -->
       <div v-show="active == 'info'">
@@ -190,13 +205,14 @@
 </template>
 
 <script>
-import StickyHeader from '@/components/stickyHeader/stickyHeader'
+// import StickyHeader from '@/components/stickyHeader/stickyHeader'
 import infoShow from '@/components/infoShow/infoShow'
 import { getpersonInfo } from '@/api/todo'
+import { getRecruitmentDetail } from '@/api/metask'
 export default {
   name: 'InterviewRegister',
   components: {
-    StickyHeader,
+    // StickyHeader,
     infoShow
   },
   filters: {
@@ -218,6 +234,8 @@ export default {
     return {
       // query
       personId: '',
+      recruitmentId: '',
+      jobName: '',
       tabList: [
         {
           title: '基本信息',
@@ -272,7 +290,18 @@ export default {
       HouseholdType: [],
       EducationalType: [],
       ChangeReason: [],
-      UserRelationship: []
+      UserRelationship: [],
+      // scrollTop
+      scrollTop: {
+        info: 0,
+        experience: 0
+      }
+    }
+  },
+  watch: {
+    active(nVal, oVal) {
+      this.scrollTop[oVal] = document.documentElement.scrollTop
+      document.documentElement.scrollTop = this.scrollTop[nVal]
     }
   },
   created() {
@@ -282,6 +311,7 @@ export default {
   methods: {
     loading() {
       this.personId = this.$route.query.bizId
+      this.recruitmentId = this.$route.query.bizId
       getpersonInfo({ personId: this.personId }).then((res) => {
         this.infoData = res
         // 基本信息
@@ -380,6 +410,10 @@ export default {
           this.certificateColumnArr.push(arr)
         })
       })
+
+      getRecruitmentDetail({ recruitmentId: this.recruitmentId }).then((res) => {
+        this.jobName = res.jobName
+      })
     },
     // 获取相关字典组
     getCommonDict() {
@@ -404,12 +438,28 @@ export default {
           this[item] = targetArr
         })
       })
+    },
+    //
+    goBack() {
+      this.$router.go(-1)
     }
   }
 }
 </script>
 
 <style lang="less" scoped>
+.page {
+  padding-top: 90px;
+  padding-bottom: 72px;
+  box-sizing: border-box;
+  .sticky-box {
+    position: fixed;
+    z-index: 10;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
+}
 /deep/.van-tabs__line {
   background-color: #207efa;
   width: 50% !important;

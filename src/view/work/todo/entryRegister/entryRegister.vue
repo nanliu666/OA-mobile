@@ -1,17 +1,32 @@
 <template>
   <div class="page">
-    <stickyHeader :title="`${infoData.name}的入职登记表`">
-      <template #footer>
-        <van-tabs v-model="active">
-          <van-tab
-            v-for="(item, index) in tabList"
-            :key="index"
-            :title="item.title"
-            :name="item.name"
-          />
-        </van-tabs>
-      </template>
-    </stickyHeader>
+    <!-- <stickyHeader :title="`${infoData.name}的入职登记表`">
+			<template #footer>
+				<van-tabs v-model="active">
+					<van-tab
+						v-for="(item, index) in tabList"
+						:key="index"
+						:title="item.title"
+						:name="item.name"
+					/>
+				</van-tabs>
+			</template>
+		</stickyHeader> -->
+    <div class="sticky-box">
+      <van-nav-bar
+        title="入职登记表"
+        left-arrow
+        @click-left="goBack"
+      />
+      <van-tabs v-model="active">
+        <van-tab
+          v-for="(item, index) in tabList"
+          :key="index"
+          :title="item.title"
+          :name="item.name"
+        />
+      </van-tabs>
+    </div>
     <div class="main-box">
       <!-- 基本信息区 -->
       <div v-show="active == 'info'">
@@ -244,13 +259,13 @@
 
 <script>
 import { ImagePreview } from 'vant'
-import StickyHeader from '@/components/stickyHeader/stickyHeader'
+// import StickyHeader from '@/components/stickyHeader/stickyHeader'
 import infoShow from '@/components/infoShow/infoShow'
 import { getpersonInfo } from '@/api/todo'
 export default {
   name: 'EntryRegister',
   components: {
-    StickyHeader,
+    // StickyHeader,
     infoShow
   },
   filters: {
@@ -342,7 +357,19 @@ export default {
       HouseholdType: [],
       EducationalType: [],
       ChangeReason: [],
-      UserRelationship: []
+      UserRelationship: [],
+      // scrollTop
+      scrollTop: {
+        info: 0,
+        experience: 0,
+        accessories: 0
+      }
+    }
+  },
+  watch: {
+    active(nVal, oVal) {
+      this.scrollTop[oVal] = document.documentElement.scrollTop
+      document.documentElement.scrollTop = this.scrollTop[nVal]
     }
   },
   created() {
@@ -486,6 +513,9 @@ export default {
     // 点击查看tup
     lookImg(url) {
       ImagePreview([url])
+    },
+    goBack() {
+      this.$router.go(-1)
     }
   }
 }
@@ -507,8 +537,20 @@ export default {
   color: #207efa;
 }
 .page {
+  padding-top: 90px;
   padding-bottom: 72px;
+  box-sizing: border-box;
+  .sticky-box {
+    position: fixed;
+    z-index: 10;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
 }
+// .page {
+// 	padding-bottom: 72px;
+// }
 .detail-box {
   width: 100%;
   box-sizing: border-box;

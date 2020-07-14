@@ -15,7 +15,7 @@
           发起人: <span>{{ listData.userName }}</span>
         </div>
         <div class="item">
-          发起时间: <span>{{ listData.createTime | dataFliter }}</span>
+          发起时间: <span>{{ listData.createTime }}</span>
         </div>
       </div>
     </div>
@@ -62,34 +62,6 @@ export default {
     StickyHeader
   },
   filters: {
-    dataFliter(time) {
-      if (!time) {
-        return
-      }
-      let dateStr = time.split(' ')
-      let strGMT =
-        dateStr[0] +
-        ' ' +
-        dateStr[1] +
-        ' ' +
-        dateStr[2] +
-        ' ' +
-        dateStr[5] +
-        ' ' +
-        dateStr[3] +
-        ' GMT+0800'
-      let date = new Date(Date.parse(strGMT))
-      let year = date.getFullYear()
-      let month = date.getMonth() + 1
-      let dates = date.getDate()
-      let h = date.getHours()
-      let m = date.getMinutes()
-      let s = date.getSeconds()
-      h = h < 10 ? '0' + h : h
-      m = m < 10 ? '0' + m : m
-      s = s < 10 ? '0' + s : s
-      return `${year}-${month}-${dates}  ${h}:${m}:${s}`
-    },
     filterStatus(val) {
       if (!val) return
       let obj = {
@@ -102,7 +74,6 @@ export default {
   data() {
     return {
       leaveUserId: '',
-      groupId: '',
       listData: {},
       userId: ''
     }
@@ -113,12 +84,10 @@ export default {
   },
   methods: {
     loadingData() {
-      let arrId = this.$route.query.biz_id.split(',')
-      this.leaveUserId = arrId[0]
-      this.groupId = arrId[1]
-      // this.leaveUserId = this.$route.query.biz_id
+      this.leaveUserId = this.$route.query.biz_id
+      this.userId = this.$store.state.user.userInfo.user_id
       let params = {
-        userId: this.$store.state.user.userInfo.user_id,
+        userId: this.userId,
         leaveUserId: this.leaveUserId
       }
       getLeaveNote(params)
@@ -130,8 +99,9 @@ export default {
     // 催办
     async urgeleaveNote() {
       let res = await postUrgeleaveNote({
-        groupId: this.groupId,
-        userId: this.userId
+        userId: this.userId,
+        type: 'C2B',
+        groupId: ''
       })
       Toast.success(res)
     }

@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <stickyHeader title="我的任务">
+    <!-- <stickyHeader title="我的任务">
       <template #footer>
         <van-tabs v-model="active">
           <van-tab
@@ -11,8 +11,22 @@
           />
         </van-tabs>
       </template>
-    </stickyHeader>
-    <!-- <van-nav-bar title="我的任务" left-arrow /> -->
+    </stickyHeader> -->
+    <div class="sticky-box">
+      <van-nav-bar
+        title="我的任务"
+        left-arrow
+        @click-left="goBack"
+      />
+      <van-tabs v-model="active">
+        <van-tab
+          v-for="(item, index) in tabList"
+          :key="index"
+          :title="item.title"
+          :name="item.name"
+        />
+      </van-tabs>
+    </div>
 
     <!-- 没完成 -->
     <div v-show="active == 'UnFinished'">
@@ -133,12 +147,12 @@
 </template>
 
 <script>
-import StickyHeader from '@/components/stickyHeader/stickyHeader'
+// import StickyHeader from '@/components/stickyHeader/stickyHeader'
 import { fetchTaskList } from '@/api/metask'
 export default {
   name: 'MyTask',
   components: {
-    StickyHeader
+    // StickyHeader
   },
   data() {
     return {
@@ -188,13 +202,28 @@ export default {
         refreshing: false
       },
       unFinishedList: [],
-      finishedList: []
+      finishedList: [],
+      // // scrollTop
+      unFinishedScrollTop: 0,
+      finishedScrollTop: 0,
+      scrollTop: {
+        unFinished: 0,
+        finished: 0
+      }
+    }
+  },
+  watch: {
+    // 解决滚动条位置
+    active(nval, oval) {
+      this.scrollTop[oval] = document.documentElement.scrollTop
+      document.documentElement.scrollTop = this.scrollTop[nval]
     }
   },
   created() {
     this.loadUnFinishedData()
     this.loadFinishedData()
   },
+
   methods: {
     // 加载 unFinishedList
     loadUnFinishedData(pageNo) {
@@ -248,6 +277,10 @@ export default {
           }
         })
       }
+    },
+    //
+    goBack() {
+      this.$router.go(-1)
     }
   }
 }
@@ -256,6 +289,14 @@ export default {
 <style lang="less" scoped>
 .page {
   height: 100%;
+  padding-top: 90px;
+  .sticky-box {
+    position: fixed;
+    z-index: 10;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
 }
 /deep/.van-tabs__line {
   background-color: #207efa;
