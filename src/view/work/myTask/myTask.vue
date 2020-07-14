@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <stickyHeader title="我的任务">
+    <!-- <stickyHeader title="我的任务">
       <template #footer>
         <van-tabs v-model="active">
           <van-tab
@@ -11,130 +11,148 @@
           />
         </van-tabs>
       </template>
-    </stickyHeader>
-    <!-- <van-nav-bar title="我的任务" left-arrow /> -->
+    </stickyHeader> -->
+    <div class="sticky-box">
+      <van-nav-bar
+        title="我的任务"
+        left-arrow
+        @click-left="goBack"
+      />
+      <van-tabs v-model="active">
+        <van-tab
+          v-for="(item, index) in tabList"
+          :key="index"
+          :title="item.title"
+          :name="item.name"
+        />
+      </van-tabs>
+    </div>
 
     <!-- 没完成 -->
-    <van-pull-refresh
-      v-show="active == 'UnFinished'"
-      v-model="unFinishedLoad.refreshing"
-      @refresh="loadUnFinishedData(1)"
-    >
-      <van-list
-        :value="unFinishedLoad.loading"
-        :finished="unFinishedLoad.finished"
-        finished-text="没有更多了"
-        @load="loadUnFinishedData"
+    <div v-show="active == 'UnFinished'">
+      <van-pull-refresh
+        v-model="unFinishedLoad.refreshing"
+        @refresh="loadUnFinishedData(1)"
       >
-        <div
-          v-for="(item, index) in unFinishedList"
-          :key="index"
-          class="item"
+        <van-list
+          :immediate-check="false"
+          :value="unFinishedLoad.loading"
+          :finished="unFinishedLoad.finished"
+          finished-text="没有更多了"
+          @load="loadUnFinishedData"
         >
-          <!-- 左侧 -->
-          <div class="left-content">
-            <svg
-              class="icon"
-              aria-hidden="true"
-            >
-              <use xlink:href="#icon-approval-recruit-bicolor" />
-            </svg>
-            <!-- {{ item.type }} -->
-          </div>
-          <!-- 主要内容 -->
-          <div class="main-content">
-            <div class="title-row">
-              {{ item.title }} <van-icon
-                name="arrow"
-                @click="goToDetail(item)"
-              />
+          <div
+            v-for="(item, index) in unFinishedList"
+            :key="index"
+            class="item"
+          >
+            <!-- 左侧 -->
+            <div class="left-content">
+              <svg
+                class="icon"
+                aria-hidden="true"
+              >
+                <use xlink:href="#icon-approval-recruit-bicolor" />
+              </svg>
+              <!-- {{ item.type }} -->
             </div>
-            <div class="brief-row">
-              {{ item.brief }}
-            </div>
-            <div class="complete-row">
-              <div class="num">
-                {{ parseInt((item.completeNum / item.totalNum) * 100) }}%
-              </div>
-              <div class="progress-box">
-                <van-progress
-                  :show-pivot="false"
-                  color="#207EFA"
-                  :percentage="parseInt((item.completeNum / item.totalNum) * 100)"
+            <!-- 主要内容 -->
+            <div class="main-content">
+              <div class="title-row">
+                {{ item.title }} <van-icon
+                  name="arrow"
+                  @click="goToDetail(item)"
                 />
-                <p>计划招聘{{ item.totalNum }}人 已入职{{ item.completeNum }}人</p>
+              </div>
+              <div class="brief-row">
+                {{ item.brief }}
+              </div>
+              <div class="complete-row">
+                <div class="num">
+                  {{ parseInt((item.completeNum / item.totalNum) * 100) }}%
+                </div>
+                <div class="progress-box">
+                  <van-progress
+                    :show-pivot="false"
+                    color="#207EFA"
+                    :percentage="parseInt((item.completeNum / item.totalNum) * 100)"
+                  />
+                  <p>计划招聘{{ item.totalNum }}人 已入职{{ item.completeNum }}人</p>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </van-list>
-    </van-pull-refresh>
+        </van-list>
+      </van-pull-refresh>
+    </div>
 
     <!-- 已完成 -->
-    <van-pull-refresh
-      v-show="active == 'Finished'"
-      v-model="FinishedLoad.refreshing"
-      @refresh="loadFinishedData(1)"
-    >
-      <van-list
-        :value="FinishedLoad.loading"
-        :finished="FinishedLoad.finished"
-        finished-text="没有更多了"
-        @load="loadFinishedData"
+    <div v-show="active == 'Finished'">
+      <van-pull-refresh
+        v-model="FinishedLoad.refreshing"
+        @refresh="loadFinishedData(1)"
       >
-        <div
-          v-for="(item, index) in finishedList"
-          :key="index"
-          class="item"
+        <van-list
+          :immediate-check="false"
+          :value="FinishedLoad.loading"
+          :finished="FinishedLoad.finished"
+          finished-text="没有更多了"
+          @load="loadFinishedData"
         >
-          <!-- 左侧 -->
-          <div class="left-content">
-            <svg
-              class="icon"
-              aria-hidden="true"
-            >
-              <use xlink:href="#icon-approval-recruit-bicolor" />
-            </svg>
-            <!-- {{ item.type }} -->
-          </div>
-          <!-- 主要内容 -->
-          <div class="main-content">
-            <div class="title-row">
-              {{ item.title }} <van-icon
-                name="arrow"
-                @click="goToDetail(item)"
-              />
+          <div
+            v-for="(item, index) in finishedList"
+            :key="index"
+            class="item"
+          >
+            <!-- 左侧 -->
+            <div class="left-content">
+              <svg
+                class="icon"
+                aria-hidden="true"
+              >
+                <use xlink:href="#icon-approval-recruit-bicolor" />
+              </svg>
+              <!-- {{ item.type }} -->
             </div>
-            <div class="brief-row">
-              {{ item.brief }}
-            </div>
-            <div class="complete-row">
-              <div class="num">
-                100%
-              </div>
-              <div class="progress-box">
-                <van-progress
-                  :show-pivot="false"
-                  color="#207EFA"
-                  :percentage="100"
+            <!-- 主要内容 -->
+            <div class="main-content">
+              <div class="title-row">
+                {{ item.title }} <van-icon
+                  name="arrow"
+                  @click="goToDetail(item)"
                 />
-                <p>计划招聘{{ item.totalNum }}人 已入职{{ item.completeNum }}人</p>
+              </div>
+              <div class="brief-row">
+                {{ item.brief }}
+              </div>
+              <div class="complete-row">
+                <div class="num">
+                  100%
+                </div>
+                <div class="progress-box">
+                  <van-progress
+                    :show-pivot="false"
+                    color="#207EFA"
+                    percentage="100"
+                  />
+                  <p>计划招聘{{ item.totalNum }}人 已入职{{ item.completeNum }}人</p>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </van-list>
-    </van-pull-refresh>
+        </van-list>
+      </van-pull-refresh>
+    </div>
   </div>
 </template>
 
 <script>
-import StickyHeader from '@/components/stickyHeader/stickyHeader'
+// import StickyHeader from '@/components/stickyHeader/stickyHeader'
 import { fetchTaskList } from '@/api/metask'
 export default {
   name: 'MyTask',
   components: {
-    StickyHeader
+    // StickyHeader
   },
   data() {
     return {
@@ -184,13 +202,28 @@ export default {
         refreshing: false
       },
       unFinishedList: [],
-      finishedList: []
+      finishedList: [],
+      // // scrollTop
+      unFinishedScrollTop: 0,
+      finishedScrollTop: 0,
+      scrollTop: {
+        unFinished: 0,
+        finished: 0
+      }
+    }
+  },
+  watch: {
+    // 解决滚动条位置
+    active(nval, oval) {
+      this.scrollTop[oval] = document.documentElement.scrollTop
+      document.documentElement.scrollTop = this.scrollTop[nval]
     }
   },
   created() {
     this.loadUnFinishedData()
     this.loadFinishedData()
   },
+
   methods: {
     // 加载 unFinishedList
     loadUnFinishedData(pageNo) {
@@ -244,6 +277,10 @@ export default {
           }
         })
       }
+    },
+    //
+    goBack() {
+      this.$router.go(-1)
     }
   }
 }
@@ -252,6 +289,14 @@ export default {
 <style lang="less" scoped>
 .page {
   height: 100%;
+  padding-top: 90px;
+  .sticky-box {
+    position: fixed;
+    z-index: 10;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
 }
 /deep/.van-tabs__line {
   background-color: #207efa;

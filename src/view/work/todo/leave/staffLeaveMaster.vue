@@ -15,7 +15,7 @@
           发起人: <span>{{ listData.userName }}</span>
         </div>
         <div class="item">
-          发起时间: <span>{{ listData.createTime | dataFliter }}</span>
+          发起时间: <span>{{ listData.createTime }}</span>
         </div>
       </div>
     </div>
@@ -44,15 +44,17 @@
       <van-button
         block
         type="info"
+        @click="urgeleaveNote"
       >
-        请在web端处理该待办
+        催办
       </van-button>
     </div>
   </div>
 </template>
 
 <script>
-import { getLeaveNote } from '@/api/todo'
+import { Toast } from 'vant'
+import { getLeaveNote, postUrgeleaveNote } from '@/api/todo'
 import StickyHeader from '@/components/stickyHeader/stickyHeader'
 export default {
   name: 'OrgLeave',
@@ -60,34 +62,6 @@ export default {
     StickyHeader
   },
   filters: {
-    dataFliter(time) {
-      if (!time) {
-        return
-      }
-      let dateStr = time.split(' ')
-      let strGMT =
-        dateStr[0] +
-        ' ' +
-        dateStr[1] +
-        ' ' +
-        dateStr[2] +
-        ' ' +
-        dateStr[5] +
-        ' ' +
-        dateStr[3] +
-        ' GMT+0800'
-      let date = new Date(Date.parse(strGMT))
-      let year = date.getFullYear()
-      let month = date.getMonth() + 1
-      let dates = date.getDate()
-      let h = date.getHours()
-      let m = date.getMinutes()
-      let s = date.getSeconds()
-      h = h < 10 ? '0' + h : h
-      m = m < 10 ? '0' + m : m
-      s = s < 10 ? '0' + s : s
-      return `${year}-${month}-${dates}  ${h}:${m}:${s}`
-    },
     filterStatus(val) {
       if (!val) return
       let obj = {
@@ -100,7 +74,6 @@ export default {
   data() {
     return {
       leaveUserId: '',
-      groupId: '',
       listData: {},
       userId: ''
     }
@@ -111,9 +84,10 @@ export default {
   },
   methods: {
     loadingData() {
-      this.leaveUserId = this.$route.query.biz_id
+      this.leaveUserId = this.$route.query.leaveUserId
+      this.userId = this.$store.state.user.userInfo.user_id
       let params = {
-        userId: this.$store.state.user.userInfo.user_id,
+        userId: this.userId,
         leaveUserId: this.leaveUserId
       }
       getLeaveNote(params)
@@ -121,6 +95,15 @@ export default {
           this.listData = res[0]
         })
         .finally(() => {})
+    },
+    // 催办
+    async urgeleaveNote() {
+      let res = await postUrgeleaveNote({
+        userId: this.userId,
+        type: 'C2B',
+        groupId: ''
+      })
+      Toast.success(res)
     }
   }
 }
