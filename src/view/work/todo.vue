@@ -13,7 +13,7 @@
       </template>
     </stickyHeader>
     <van-pull-refresh
-      v-show="active === 0"
+      v-if="active === 0"
       v-model="toduStatus.refreshing"
       @refresh="getToduList(1)"
     >
@@ -21,7 +21,6 @@
         :value="toduStatus.loading"
         :finished="toduStatus.finished"
         finished-text="没有更多了"
-        :offset="247"
         @load="getToduList"
       >
         <template v-for="item in workMsgList">
@@ -60,7 +59,7 @@
       </van-list>
     </van-pull-refresh>
     <van-pull-refresh
-      v-show="active === 1"
+      v-if="active === 1"
       v-model="didList.refreshing"
       @refresh="getDidList(1)"
     >
@@ -133,12 +132,12 @@ export default {
       systemMsgList: []
     }
   },
-  activated() {
+  created() {
     this.getToduList()
     this.getDidList()
   },
   methods: {
-      ifShowWarn(row) {
+    ifShowWarn(row) {
       return (
         row.status === 'UnFinished' &&
         moment()
@@ -160,7 +159,7 @@ export default {
       }
       this.toduStatus.loading = true
 
-        getTodoList(params).then((res) => {
+      getTodoList(params).then((res) => {
         if (res.data.length > 0) {
           if (this.toduStatus.refreshing) this.workMsgList = []
           this.workMsgList.push(...res.data)
@@ -172,7 +171,6 @@ export default {
         this.toduStatus.loading = false
         this.toduStatus.refreshing = false
       })
-      
     },
     getDidList(pageNo) {
       if (this.didList.loading) return
@@ -201,41 +199,39 @@ export default {
 }
 </script>
 
-<style lang='less' scoped>
-.page{
+<style lang="less" scoped>
+.page {
   height: 100%;
 }
 /deep/ .van-tabs__line {
   width: 50% !important;
-  
+
   background-color: #207efa;
 }
 /deep/.van-tab--active {
   color: #207efa;
 }
 .person-cell {
-      display: flex;
-      align-items: center;
-      .title {
-        margin-left: 14px;
-        .title-top {
-          // margin-bottom: 6px;
-          .custom-title {
-            font-size: 16px;
-            margin-right: 11px;
-            color: #000;
-          }
-        }
-        .title-bottom {
-          color: #888888;
-          font-size: 14px;
-        } 
-      }
-      .matterIcon{
-          height: 32px;
-          width: 32px;
+  display: flex;
+  align-items: center;
+  .title {
+    margin-left: 14px;
+    .title-top {
+      // margin-bottom: 6px;
+      .custom-title {
+        font-size: 16px;
+        margin-right: 11px;
+        color: #000;
       }
     }
-
-
+    .title-bottom {
+      color: #888888;
+      font-size: 14px;
+    }
+  }
+  .matterIcon {
+    height: 32px;
+    width: 32px;
+  }
+}
 </style>
