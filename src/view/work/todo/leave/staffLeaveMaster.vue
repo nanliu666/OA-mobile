@@ -84,7 +84,7 @@ export default {
   },
   methods: {
     loadingData() {
-      this.leaveUserId = this.$route.query.biz_id
+      this.leaveUserId = this.$route.query.leaveUserId
       this.userId = this.$store.state.user.userInfo.user_id
       let params = {
         userId: this.userId,
