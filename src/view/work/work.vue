@@ -36,7 +36,7 @@
         </div>
         <div
           class="iconItem"
-          @click="toTudo"
+          @click="handleClickIcon('todo')"
         >
           <van-image
             class="iconImg"
@@ -50,7 +50,10 @@
             待办
           </div>
         </div>
-        <div class="iconItem">
+        <div
+          class="iconItem"
+          @click="handleClickIcon('schedule')"
+        >
           <van-image
             class="iconImg"
             :src="userInfo.avatarUrl"
@@ -63,7 +66,10 @@
             日程
           </div>
         </div>
-        <div class="iconItem">
+        <div
+          class="iconItem"
+          @click="handleClickIcon('task')"
+        >
           <van-image
             class="iconImg"
             :src="userInfo.avatarUrl"
@@ -139,10 +145,12 @@
       class="matters"
     >
       <van-cell title="待办事项" />
-      <template v-for="item in todoList">
+      <template v-for="(item, index) in todoList">
         <van-cell
+          v-if="index < 5"
           :key="item.id"
           is-link
+          @click="handleClickCell(item)"
         >
           <!-- 使用 title 插槽来自定义标题 -->
           <template #title>
@@ -176,7 +184,7 @@
     <div class="matters">
       <van-cell title="今日安排">
         <template #right-icon>
-          <span>{{ today }}</span>
+          <span @click="handleClickIcon('schedule')">{{ today }}</span>
         </template>
       </van-cell>
       <template v-for="(item, index) in scheduleList">
@@ -220,6 +228,7 @@
           v-if="index < 3"
           :key="item.id"
           style="align-items: flex-start"
+          :class="index === 2 ? 'noBorderBottom' : ''"
           is-link
         >
           <!-- 使用 title 插槽来自定义标题 -->
@@ -238,7 +247,7 @@
               </van-image>
               <div class="title">
                 <div class="title-top">
-                  <span class="custom-title">{{ item.title }}</span><span class="emerType">{{ item.emerType }}</span>
+                  <span class="custom-title">{{ item.title }}</span><span class="emerType">{{ EmerType[item.emerType] }}</span>
                 </div>
                 <div class="title-bottom">
                   <span class="custom-title">{{ item.brief }}</span>
@@ -266,6 +275,15 @@
           </template>
         </van-cell>
       </template>
+      <div
+        v-if="taskList.length > 3"
+        class="more"
+        @click="handleClickIcon('task')"
+      >
+        <div class="btn">
+          查看更多
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -273,6 +291,8 @@
 import { getUserInfo } from '@/api/user'
 import { getTodoList, getScheduleList, getMyApproveList } from '@/api/work'
 import moment from 'moment'
+import { fetchTaskList } from '@/api/metask'
+import { todoJumpFun } from './common'
 
 export default {
   data() {
@@ -290,7 +310,9 @@ export default {
           emerType: 'Super',
           beginDate: '2020-07-06',
           status: 'Approve',
-          brief: 'kjahf'
+          brief: 'kjahf',
+          totalNum: 5,
+          completeNum: 1
         }
       ],
       approveStatusWork: {
@@ -299,7 +321,12 @@ export default {
         Reject: '已拒绝',
         Cancel: '已撤回'
       },
-      EmerType: {}
+      EmerType: {
+        Super: '特级',
+        urgent: '急',
+        common: '一般',
+        suit: '有合适的人选再进'
+      }
     }
   },
   created() {
@@ -315,6 +342,7 @@ export default {
     this.getTodoList()
     this.getScheduleList()
     this.getMyApproveList()
+    this.getMyTask()
   },
   methods: {
     toTudo() {
@@ -351,6 +379,17 @@ export default {
         this.myApproveList = res.data
       })
     },
+    getMyTask() {
+      const params = {
+        pageNo: 1,
+        pageSize: 10,
+        userId: this.$store.state.user.userInfo.user_id,
+        status: 'UnFinished'
+      }
+      fetchTaskList(params).then((res) => {
+        this.taskList = res.data
+      })
+    },
     ifShowWarn(row) {
       return (
         row.status === 'UnFinished' &&
@@ -361,6 +400,17 @@ export default {
     },
     getWarnText(row) {
       return moment().diff(moment(row.beginDate), 'days')
+    },
+    handleClickIcon(iconName) {
+      const obj = {
+        todo: '/work/todo',
+        schedule: '/todaySchedule/calendar',
+        task: '/work/task'
+      }
+      this.$router.push(obj[iconName])
+    },
+    handleClickCell(item) {
+      todoJumpFun(item, this.$router)
     }
   }
 }

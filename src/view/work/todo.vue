@@ -27,6 +27,7 @@
           <van-cell
             :key="item.id"
             is-link
+            @click="handleClickCell(item)"
           >
             <!-- 使用 title 插槽来自定义标题 -->
             <template #title>
@@ -73,6 +74,7 @@
           <van-cell
             :key="item.id"
             is-link
+            @click="handleClickCell(item)"
           >
             <!-- 使用 title 插槽来自定义标题 -->
             <template #title>
@@ -105,6 +107,7 @@
 import { getTodoList } from '@/api/work'
 import StickyHeader from '@/components/stickyHeader/stickyHeader'
 import moment from 'moment'
+import { todoJumpFun } from './common'
 
 export default {
   name: 'Todo',
@@ -129,7 +132,17 @@ export default {
       },
       active: 0,
       workMsgList: [],
-      systemMsgList: []
+      systemMsgList: [],
+      scrollTop: {
+        0: 0,
+        1: 0
+      }
+    }
+  },
+  watch: {
+    active(nVal, oVal) {
+      this.scrollTop[oVal] = document.documentElement.scrollTop
+      document.documentElement.scrollTop = this.scrollTop[nVal]
     }
   },
   created() {
@@ -194,6 +207,9 @@ export default {
         this.didList.loading = false
         this.didList.refreshing = false
       })
+    },
+    handleClickCell(item) {
+      todoJumpFun(item, this.$router)
     }
   }
 }
