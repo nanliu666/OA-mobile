@@ -1,6 +1,8 @@
 <template>
   <div
-    v-if="['/work/index', '/addressBook/index', '/message/index', '/me/index'].indexOf($route.path) > -1"
+    v-if="
+      ['/work/index', '/addressBook/index', '/message/index', '/me/index'].indexOf($route.path) > -1
+    "
     data-title="百利宏移动办公"
     class="home"
   >
@@ -51,42 +53,41 @@
   <router-view v-else />
 </template>
 <script>
-
 export default {
   name: 'Home',
 
- data() {
+  data() {
     return {
-      active: 'work',
+      active: 'work'
     }
-  },
+  }
 }
 </script>
 
-<style lang='less' scoped>
-.home{
+<style lang="less" scoped>
+.home {
   height: 100%;
 }
-.tab-contain{
+.tab-contain {
   height: calc(100% - 53px);
   // background-color: #F5F6F6;
 }
-.van-tabbar--fixed{
+.van-tabbar--fixed {
   height: 53px;
 }
 
-.van-tabbar-item{
+.van-tabbar-item {
   color: #979797;
-  .van-tabbar-item__text{
-    a{
+  .van-tabbar-item__text {
+    a {
       color: #979797;
     }
   }
 }
-.van-tabbar-item--active{
+.van-tabbar-item--active {
   color: #207efa;
-  .van-tabbar-item__text{
-    a{
+  .van-tabbar-item__text {
+    a {
       color: #207efa;
     }
   }

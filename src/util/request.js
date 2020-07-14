@@ -44,7 +44,10 @@ instance.interceptors.request.use(
       //让每个请求携带token--['Authorization']为自定义key 请根据实际情况自行修改
       config.headers.accessToken = 'bearer' + ' ' + getToken()
     }
-    if(config.method.toLowerCase() === 'post' && String.prototype.endsWith.call(config.url, '/oauth/token')){
+    if (
+      config.method.toLowerCase() === 'post' &&
+      String.prototype.endsWith.call(config.url, '/oauth/token')
+    ) {
       config.params = config.data
       config.headers['Tenant-Id'] = config.data.tenantId
       config.headers['Captcha-Key'] = config.data.key

@@ -364,7 +364,7 @@ export default {
 }
 </script>
 
-<style lang='less' scoped>
+<style lang="less" scoped>
 .contain {
   margin-top: 8px;
   border-top: 1px solid #ebedf0;

@@ -223,6 +223,10 @@ export default {
         margin-right: 11px;
         color: #000;
       }
+      .matterIcon {
+        height: 32px;
+        width: 32px;
+      }
     }
     .title-bottom {
       color: #888888;

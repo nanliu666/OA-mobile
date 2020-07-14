@@ -13,7 +13,7 @@
       <slot
         v-else
         :name="item.prop"
-        v-bind="{value:item.value,label:item.label}"
+        v-bind="{ value: item.value, label: item.label }"
       />
     </div>
   </div>
@@ -29,7 +29,7 @@ export default {
 }
 </script>
 
-<style lang='less' scoped>
+<style lang="less" scoped>
 .item {
   font-size: 14px;
   margin-bottom: 5px;

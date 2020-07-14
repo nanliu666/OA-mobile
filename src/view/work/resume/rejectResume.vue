@@ -53,21 +53,30 @@ export default {
     return {
       content: '',
       loading: false,
-      reason:'',
-      relationColumns:['不符合岗位条件', '专业技能欠缺', '沟通表达能力差','候选人放弃','薪资要求过高','稳定性较差','相关经验过少','其他']
+      reason: '',
+      relationColumns: [
+        '不符合岗位条件',
+        '专业技能欠缺',
+        '沟通表达能力差',
+        '候选人放弃',
+        '薪资要求过高',
+        '稳定性较差',
+        '相关经验过少',
+        '其他'
+      ]
     }
   },
   methods: {
     submit() {
-        if(!this.reason){
-            Toast('淘汰原因必须选择')
-            return
-        }
+      if (!this.reason) {
+        Toast('淘汰原因必须选择')
+        return
+      }
       const params = {
         userId: this.$store.state.user.userInfo.user_id,
         id: this.$route.query.id,
         remark: this.content,
-        reason:this.reason
+        reason: this.reason
       }
       this.loading = true
       rejectResume(params)
@@ -87,7 +96,7 @@ export default {
 }
 </script>
 
-<style lang='less' scoped>
+<style lang="less" scoped>
 .page {
   background-color: #f5f6f6;
   min-height: 100%;

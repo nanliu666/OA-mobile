@@ -31,8 +31,8 @@
 </template>
 <script>
 import StickyHeader from '@/components/stickyHeader/stickyHeader'
-import {passResume} from '@/api/work'
-import {Toast} from 'vant'
+import { passResume } from '@/api/work'
+import { Toast } from 'vant'
 export default {
   name: 'PassResume',
   components: {
@@ -41,40 +41,42 @@ export default {
   data() {
     return {
       content: '',
-      loading: false,
+      loading: false
     }
   },
   methods: {
-      submit(){
-          const params = {
-              userId: this.$store.state.user.userInfo.user_id,
-              id:this.$route.query.id,
-              remark: this.content,
-          }
-          this.loading = true
-          passResume(params).then(() => {
-              Toast('已通过')
-              this.loading = false
-              this.$router.go(-1)
-          }).catch(() =>{
-              this.loading = false
-          })
-      },
-      backHome(){
-          this.$router.go(-1)
+    submit() {
+      const params = {
+        userId: this.$store.state.user.userInfo.user_id,
+        id: this.$route.query.id,
+        remark: this.content
       }
+      this.loading = true
+      passResume(params)
+        .then(() => {
+          Toast('已通过')
+          this.loading = false
+          this.$router.go(-1)
+        })
+        .catch(() => {
+          this.loading = false
+        })
+    },
+    backHome() {
+      this.$router.go(-1)
+    }
   }
 }
 </script>
 
-<style lang='less' scoped>
+<style lang="less" scoped>
 .page {
   background-color: #f5f6f6;
   min-height: 100%;
   display: flex;
   flex-direction: column;
-  .content{
-     margin-top: 8px;
+  .content {
+    margin-top: 8px;
   }
   .bottom {
     position: fixed;
