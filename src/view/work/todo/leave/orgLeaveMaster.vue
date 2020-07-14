@@ -92,9 +92,11 @@ export default {
   },
   methods: {
     loadingData() {
-      let arrId = this.$route.query.biz_id.split(',')
-      this.leaveUserId = arrId[0]
-      this.groupId = arrId[1]
+      // let arrId = this.$route.query.biz_id.split(',')
+      // this.leaveUserId = arrId[0]
+      // this.groupId = arrId[1]
+      this.leaveUserId = this.$route.query.biz_id
+      this.groupId = this.$route.query.biz_id2
       this.userId = this.$store.state.user.userInfo.user_id
       let params = {
         userId: this.userId,
