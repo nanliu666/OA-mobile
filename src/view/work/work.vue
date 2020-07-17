@@ -22,14 +22,12 @@
     <div class="workbox">
       <div class="iconbox">
         <div class="iconItem">
-          <van-image
-            class="iconImg"
-            :src="userInfo.avatarUrl"
+          <svg
+            class="icon iconImg"
+            aria-hidden="true"
           >
-            <template v-slot:error>
-              加载失败
-            </template>
-          </van-image>
+            <use xlink:href="#icon-approval-recruit-bicolor" />
+          </svg>
           <div class="title">
             审批
           </div>
@@ -38,14 +36,12 @@
           class="iconItem"
           @click="handleClickIcon('todo')"
         >
-          <van-image
-            class="iconImg"
-            :src="userInfo.avatarUrl"
+          <svg
+            class="icon iconImg"
+            aria-hidden="true"
           >
-            <template v-slot:error>
-              加载失败
-            </template>
-          </van-image>
+            <use xlink:href="#icon-approval-recruit-bicolor" />
+          </svg>
           <div class="title">
             待办
           </div>
@@ -54,14 +50,12 @@
           class="iconItem"
           @click="handleClickIcon('schedule')"
         >
-          <van-image
-            class="iconImg"
-            :src="userInfo.avatarUrl"
+          <svg
+            class="icon iconImg"
+            aria-hidden="true"
           >
-            <template v-slot:error>
-              加载失败
-            </template>
-          </van-image>
+            <use xlink:href="#icon-approval-recruit-bicolor" />
+          </svg>
           <div class="title">
             日程
           </div>
@@ -70,14 +64,12 @@
           class="iconItem"
           @click="handleClickIcon('task')"
         >
-          <van-image
-            class="iconImg"
-            :src="userInfo.avatarUrl"
+          <svg
+            class="icon iconImg"
+            aria-hidden="true"
           >
-            <template v-slot:error>
-              加载失败
-            </template>
-          </van-image>
+            <use xlink:href="#icon-approval-recruit-bicolor" />
+          </svg>
           <div class="title">
             任务
           </div>
@@ -104,14 +96,12 @@
               class="person-cell"
               style="align-items: flex-start"
             >
-              <van-image
-                round
-                class="matterIcon"
+              <svg
+                class="icon matterIcon"
+                aria-hidden="true"
               >
-                <template v-slot:error>
-                  加载失败
-                </template>
-              </van-image>
+                <use xlink:href="#icon-approval-recruit-bicolor" />
+              </svg>
               <div class="title needWidth">
                 <div class="title-top">
                   <span class="custom-title">{{ item.title }}</span>
@@ -155,14 +145,12 @@
           <!-- 使用 title 插槽来自定义标题 -->
           <template #title>
             <div class="person-cell">
-              <van-image
-                round
-                class="matterIcon"
+              <svg
+                class="icon matterIcon"
+                aria-hidden="true"
               >
-                <template v-slot:error>
-                  加载失败
-                </template>
-              </van-image>
+                <use xlink:href="#icon-approval-recruit-bicolor" />
+              </svg>
               <div class="title">
                 <div class="title-top">
                   <span class="custom-title">{{ item.title }}</span><van-tag
@@ -196,14 +184,12 @@
           <!-- 使用 title 插槽来自定义标题 -->
           <template #title>
             <div class="person-cell">
-              <van-image
-                round
-                class="matterIcon"
+              <svg
+                class="icon matterIcon"
+                aria-hidden="true"
               >
-                <template v-slot:error>
-                  加载失败
-                </template>
-              </van-image>
+                <use xlink:href="#icon-approval-recruit-bicolor" />
+              </svg>
               <div class="title">
                 <div class="title-top">
                   <span class="custom-title">{{ item.title }}</span>
@@ -237,14 +223,12 @@
               class="person-cell"
               style="align-items: flex-start"
             >
-              <van-image
-                round
-                class="matterIcon"
+              <svg
+                class="icon matterIcon"
+                aria-hidden="true"
               >
-                <template v-slot:error>
-                  加载失败
-                </template>
-              </van-image>
+                <use xlink:href="#icon-approval-recruit-bicolor" />
+              </svg>
               <div class="title">
                 <div class="title-top">
                   <span class="custom-title">{{ item.title }}</span><span class="emerType">{{ EmerType[item.emerType] }}</span>
@@ -302,19 +286,7 @@ export default {
       todoList: [],
       scheduleList: [],
       myApproveList: [],
-      taskList: [
-        {
-          id: '156465',
-          applyTime: '2020-07-07',
-          title: '张三今天办理离职',
-          emerType: 'Super',
-          beginDate: '2020-07-06',
-          status: 'Approve',
-          brief: 'kjahf',
-          totalNum: 5,
-          completeNum: 1
-        }
-      ],
+      taskList: [],
       approveStatusWork: {
         Approve: '审批中',
         Pass: '已通过',

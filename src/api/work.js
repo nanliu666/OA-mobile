@@ -5,7 +5,7 @@ import { get, post, del } from '@/util/request'
  * @param {Object} params
  * */
 export const getTodoList = (params) => {
-  return get('/task/v1/todo/list', params)
+  return get('/user/v1/todo/list', params)
 }
 
 /**

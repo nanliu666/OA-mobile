@@ -33,7 +33,7 @@
           <span>{{ value + '岁' }}</span>
         </template>
         <template #provinceCode>
-          <span>{{ personInfo.proviceName + personInfo.cityName || '' }}</span>
+          <span>{{ personInfo.provinceName + personInfo.cityName || '' }}</span>
         </template>
         <template #educationalLevel="{value}">
           <span>{{ EducationalLevel[value] }}</span>

@@ -184,11 +184,15 @@ export default {
             ...this.form
           }
           this.loading = true
-          postInterviewEvaluation(params).then(() => {
-            this.loading = false
-            this.form.status === 'Pass' ? Toast('已通过') : Toast('已淘汰')
-            this.$router.back()
-          })
+          postInterviewEvaluation(params)
+            .then(() => {
+              this.loading = false
+              this.form.status === 'Pass' ? Toast('已通过') : Toast('已淘汰')
+              this.$router.back()
+            })
+            .catch(() => {
+              this.loading = false
+            })
         })
         .catch((error) => {
           Toast(error[0].message)

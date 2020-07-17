@@ -7,6 +7,13 @@ import store from '@/store/'
 
 Vue.use(VueRouter)
 
+//在路由跳转的时候同一个路由多次添加是不被允许的
+//重写路由的push方法
+const VueRouterPush = VueRouter.prototype.push
+VueRouter.prototype.push = function push(to) {
+  return VueRouterPush.call(this, to).catch((err) => err)
+}
+
 const router = new VueRouter({
   mode: 'history',
   // base: '/helper/',
@@ -32,15 +39,13 @@ const router = new VueRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
-  if(to.meta.title){
-
+  if (to.meta.title) {
     document.title = to.meta.title
-    
-    }
-    if(!store.state.user.userInfo.user_id && ['/login', '/forget'].indexOf(to.path) === -1){
-      next('/login')
-      // location.reload()
-    }
+  }
+  if (!store.state.user.userInfo.user_id && ['/login', '/forget'].indexOf(to.path) === -1) {
+    router.replace({ path: '/login' })
+    // window.location.reload()
+  }
   next()
 })
 
