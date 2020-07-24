@@ -41,11 +41,21 @@
         <template #recruitment="{value}">
           <span>{{ RecruitmentChannel[value] }}</span>
         </template>
-        <template #resumeUrl="{value}">
-          <a :href="value" />
+        <template #resumeUrl>
+          <span
+            style="color: #207efa"
+            @click="handlePreviewResume"
+          >{{
+            personInfo.name + '的简历'
+          }}</span>
         </template>
-        <template #attachmentUrl="{value}">
-          <a :href="value" />
+        <template #attachmentUrl>
+          <span
+            style="color: #207efa"
+            @click="handlePreviewAttachment"
+          >{{
+            personInfo.attachmentName
+          }}</span>
         </template>
       </info-show>
     </div>
@@ -67,7 +77,6 @@
         <van-button
           round
           block
-          :loading="submitLoading"
           type="info"
           @click="handlePass"
         >
@@ -173,6 +182,24 @@ export default {
     },
     handlePass() {
       this.$router.push('/work/passResume?id=' + this.$route.query.id)
+    },
+    handlePreviewResume() {
+      this.$router.push({
+        path: '/work/resumeUrl',
+        query: {
+          title: this.personInfo.name + '的简历',
+          url: this.personInfo.resumeUrl
+        }
+      })
+    },
+    handlePreviewAttachment() {
+      this.$router.push({
+        path: '/work/resumeUrl',
+        query: {
+          title: this.personInfo.attachmentName,
+          url: this.personInfo.attachmentUrl
+        }
+      })
     }
   }
 }
