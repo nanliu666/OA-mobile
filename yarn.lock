@@ -7729,6 +7729,11 @@ pbkdf2@^3.0.3:
     safe-buffer "^5.0.1"
     sha.js "^2.4.8"
 
+pdfh5@^1.3.18:
+  version "1.3.18"
+  resolved "https://registry.npm.taobao.org/pdfh5/download/pdfh5-1.3.18.tgz#ffddf583ba2196039a3d1fdbedfc1ee3637ef90e"
+  integrity sha1-/931g7ohlgOaPR/b7fwe42N++Q4=
+
 pdfjs-dist@^2.5.207:
   version "2.5.207"
   resolved "https://registry.npm.taobao.org/pdfjs-dist/download/pdfjs-dist-2.5.207.tgz#b5e8c19627be64269cd3fb6df3eaaf45ddffe7b6"
