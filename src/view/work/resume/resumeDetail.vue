@@ -43,6 +43,7 @@
         </template>
         <template #resumeUrl>
           <span
+            v-show="personInfo.resumeUrl"
             style="color: #207efa"
             @click="handlePreviewResume"
           >{{
