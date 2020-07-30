@@ -1,6 +1,15 @@
 <template>
   <div class="page">
     <div class="basic-info">
+      <van-image
+        class="backgroud-image"
+        fill
+        :src="imgModules.bg"
+      >
+        <template v-slot:error>
+          加载失败
+        </template>
+      </van-image>
       <div class="basic">
         <div class="company">
           {{ userInfo.companyName }}
@@ -24,7 +33,7 @@
         <div class="iconItem">
           <van-image
             class="iconImg"
-            :src="userInfo.avatarUrl"
+            :src="imgModules.approve"
           >
             <template v-slot:error>
               加载失败
@@ -40,7 +49,7 @@
         >
           <van-image
             class="iconImg"
-            :src="userInfo.avatarUrl"
+            :src="imgModules.todo"
           >
             <template v-slot:error>
               加载失败
@@ -56,7 +65,7 @@
         >
           <van-image
             class="iconImg"
-            :src="userInfo.avatarUrl"
+            :src="imgModules.schedule"
           >
             <template v-slot:error>
               加载失败
@@ -72,7 +81,7 @@
         >
           <van-image
             class="iconImg"
-            :src="userInfo.avatarUrl"
+            :src="imgModules.task"
           >
             <template v-slot:error>
               加载失败
@@ -294,28 +303,24 @@ import { getTodoList, getScheduleList, getMyApproveList } from '@/api/work'
 import moment from 'moment'
 import { fetchTaskList } from '@/api/metask'
 import { todoJumpFun } from './common'
-
+// 批量引入图片
+const path = require('path')
+const files = require.context('@/assets/images/homeImages', false, /\.png$/) //这句话的意思是引入图片文件夹下的所有图片
+const imgModules = {}
+files.keys().forEach((key) => {
+  const name = path.basename(key, '.png')
+  imgModules[name] = files(key).default || files(key)
+})
 export default {
   data() {
     return {
+      imgModules: imgModules,
       today: moment().format('YYYY-MM-DD'),
       userInfo: {},
       todoList: [],
       scheduleList: [],
       myApproveList: [],
-      taskList: [
-        {
-          id: '156465',
-          applyTime: '2020-07-07',
-          title: '张三今天办理离职',
-          emerType: 'Super',
-          beginDate: '2020-07-06',
-          status: 'Approve',
-          brief: 'kjahf',
-          totalNum: 5,
-          completeNum: 1
-        }
-      ],
+      taskList: [],
       approveStatusWork: {
         Approve: '审批中',
         Pass: '已通过',
@@ -389,7 +394,7 @@ export default {
       }
       fetchTaskList(params).then((res) => {
         this.taskList = res.data
-        window.console.log('this.taskList==', this.taskList)
+        // window.console.log('this.taskList==', this.taskList)
       })
     },
     ifShowWarn(row) {
@@ -425,12 +430,18 @@ export default {
   overflow: scroll;
 }
 .basic-info {
+  position: relative;
   height: 145px;
   background-image: linear-gradient(180deg, #207efa 0%, #0ea6fe 100%);
-  // padding: 17px 34px 60px 25px;
   padding: 0 34px 0px 25px;
   display: flex;
   justify-content: bet;
+  .backgroud-image {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+  }
   .basic {
     flex: 1;
     margin-top: 34px;
@@ -445,6 +456,8 @@ export default {
     }
   }
   .avatarClass {
+    border: 2px solid white;
+    box-shadow: 0 4px 12px 0 rgba(#1f416c, 0.3);
     margin-top: 22px;
     width: 60px;
     height: 60px;
