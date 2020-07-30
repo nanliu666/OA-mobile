@@ -20,8 +20,14 @@ export default {
     },
     {
       path: '/work/resumeDetail',
-      name: '简历审核',
+      name: '附件预览',
       component: () => import(/* webpackChunkName: "view" */ '@/view/work/resume/resumeDetail.vue'),
+      meta: { title: '百利宏移动办公' }
+    },
+    {
+      path: '/work/resumeUrl',
+      name: '简历审核',
+      component: () => import(/* webpackChunkName: "view" */ '@/view/work/resume/resumeUrl.vue'),
       meta: { title: '百利宏移动办公' }
     },
     {

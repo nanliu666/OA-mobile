@@ -59,10 +59,11 @@
           placeholder="请输入邮箱"
           :rules="rules.email"
         />
-        <van-field-area
-          v-model="form.provinceCode"
+        <van-field
+          v-model="form.userAddress"
+          name="userAddress"
           label="现住址"
-          :columns-num="3"
+          placeholder="请输入现住址"
         />
         <van-field
           v-model.trim="form.address"
@@ -187,6 +188,7 @@
     </div>
     <div class="nextBox">
       <van-button
+        :loading="loading"
         round
         block
         type="info"
@@ -200,7 +202,7 @@
 <script>
 import StickyHeader from '@/components/stickyHeader/stickyHeader'
 import VanFieldSelectPicker from '@/components/vanFieldSelectPicker/vanFieldSelectPicker'
-import VanFieldArea from '@/components/vanFieldArea/vanFieldArea'
+// import VanFieldArea from '@/components/vanFieldArea/vanFieldArea'
 import { uploadQiniu } from '@/util/uploadQiniu'
 import { getFormDifferent } from '@/util/util'
 import { Toast, Dialog } from 'vant'
@@ -212,12 +214,13 @@ import {
   deleteUserEmerInfo,
   createUserEmerInfo
 } from '@/api/user'
+// import Json from 'archiver/lib/plugins/json'
 
 export default {
   components: {
     StickyHeader,
-    VanFieldSelectPicker,
-    VanFieldArea
+    VanFieldSelectPicker
+    // VanFieldArea
   },
   data() {
     return {
@@ -245,7 +248,8 @@ export default {
         isFirstSs: [{ required: true, message: '请选择是否本地首次缴纳社保' }],
         isFirstEpf: [{ required: true, message: '请选择是否本地首次缴纳公积金' }]
       },
-      relationshipColumns: []
+      relationshipColumns: [],
+      loading: false
     }
   },
   created() {
@@ -277,8 +281,8 @@ export default {
         this.form = res
       })
       getUserEmerInfo({ userId: this.$store.state.user.userInfo.user_id }).then((res) => {
-        this.oldEmerForm = res
-        this.emerForm = res
+        this.oldEmerForm = JSON.parse(JSON.stringify(res))
+        this.emerForm = JSON.parse(JSON.stringify(res))
       })
     },
     deleteEmerItem(index) {
@@ -301,22 +305,22 @@ export default {
     postEmerInfo(item) {
       let fun
       let params
-      if (item.type === 'Add') {
+      if (item.operatorType === 'Add') {
         fun = createUserEmerInfo
         params = {
           userId: this.$store.state.user.userInfo.user_id,
           ...item
         }
-      } else if (item.type === 'Update') {
+      } else if (item.operatorType === 'Update') {
         fun = modifyUserEmerInfo
         params = {
           userId: this.$store.state.user.userInfo.user_id,
           ...item
         }
-      } else if (item.type === 'Del') {
+      } else if (item.operatorType === 'Del') {
         fun = deleteUserEmerInfo
         params = {
-          id: item.id
+          ids: item.id
         }
       }
       fun(params)
@@ -338,7 +342,8 @@ export default {
     },
     async toNext() {
       Promise.all([this.formValidate('basicForm'), this.formValidate('emerForm')]).then(() => {
-        let emer = { ...this.emerForm }
+        this.loading = true
+        let emer = [...this.emerForm]
         let emerTypeForm = getFormDifferent(emer, this.oldEmerForm)
         emerTypeForm.forEach((item) => {
           this.postEmerInfo(item)
@@ -354,6 +359,7 @@ export default {
         }
         modifyUserInfo(basicForm).then(() => {
           Toast('修改成功')
+          this.loading = false
           setTimeout(() => {
             this.$router.go(-1)
           }, 300)

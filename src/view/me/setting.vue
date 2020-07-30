@@ -8,7 +8,6 @@
     />
     <van-cell
       title="关于百利宏控股"
-      
       is-link
     >
       <template #title>
@@ -29,42 +28,43 @@
 <script>
 import StickyHeader from '@/components/stickyHeader/stickyHeader'
 export default {
-    name: 'Setting',
-    components: {
-        StickyHeader
+  name: 'Setting',
+  components: {
+    StickyHeader
   },
-  methods:{
-      loginout(){
-          this.$store.commit('SET_USER_INFO',{})
-          this.$router.push({path:'/login'})
-      },
-      toAccountSafe(){
-        this.$router.push('/me/accountSafe')
-      }
+  methods: {
+    loginout() {
+      this.$store.commit('SET_USER_INFO', {})
+      this.$router.replace({ path: '/login' })
+      // location.reload()
+    },
+    toAccountSafe() {
+      this.$router.push('/me/accountSafe')
+    }
   }
 }
 </script>
 
-<style lang='less' scoped>
-.page{
-    background-color: #f5f6f6;
+<style lang="less" scoped>
+.page {
+  background-color: #f5f6f6;
   min-height: 100%;
 }
-.versionClass{
-    font-size: 14px;
-color: #757C85;
-margin-left: 11px;
+.versionClass {
+  font-size: 14px;
+  color: #757c85;
+  margin-left: 11px;
 }
-.van-cell__title{
-    font-size: 17px;
+.van-cell__title {
+  font-size: 17px;
 }
-.btn{
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 40px;
-    padding: 16px;
-    background-color: #fff;
+.btn {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  padding: 16px;
+  background-color: #fff;
 }
 </style>

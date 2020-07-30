@@ -50,7 +50,7 @@
           <span>{{ value + '岁' }}</span>
         </template>
         <template #provinceCode>
-          <span>{{ personInfo.proviceName + personInfo.cityName || '' }}</span>
+          <span>{{ personInfo.provinceName + personInfo.cityName || '' }}</span>
         </template>
         <template #educationalLevel="{value}">
           <span>{{ EducationalLevel[value] }}</span>
@@ -116,7 +116,7 @@ export default {
         { prop: 'status', label: '录用建议', value: '', slot: true }
       ],
       interviewColumns: [
-        { prop: 'interviewName', label: '面试人', value: '123' },
+        { prop: 'interviewName', label: '面试人', value: '' },
         { prop: 'interviewTime', label: '面试时间', value: '' },
         { prop: 'interviewType', label: '面试方式', value: '', slot: true },
         { prop: 'address', label: '面试地址', value: '' }
@@ -162,10 +162,14 @@ export default {
       this.initiateColumns.forEach((item) => {
         item.value = res[item.prop]
       })
+      this.evaluationColumns.forEach((item) => {
+        item.value = res[item.prop]
+      })
       this.interviewColumns.forEach((item) => {
         item.value = res[item.prop]
       })
       getPersonInfo({ personId: res.personId }).then((res) => {
+        this.personInfo = res
         this.personColums.forEach((item) => {
           if (item.prop !== 'jobName' || item.prop !== 'orgName') {
             item.value = res[item.prop]
@@ -191,7 +195,7 @@ export default {
   },
   methods: {
     toEvaluate() {
-      this.$router.push('/work/interviewEvaluation?id' + this.$route.query.id)
+      this.$router.push('/work/interviewEvaluation?id=' + this.$route.query.id)
     }
   }
 }

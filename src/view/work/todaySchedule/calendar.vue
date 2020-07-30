@@ -17,6 +17,7 @@
     </stickyHeader>
     <vue-hash-calendar
       ref="hash-calendar"
+      :mark-date="allData"
       :visible.sync="calendarShow"
       :default-datetime="currentDate"
       :is-show-action="false"
@@ -171,7 +172,7 @@ export default {
           let dotDate = Array.from(
             new Set(
               res.map((item) => {
-                return moment(item.remindDate).format('YYYY/MM/DD')
+                return item.remindDate
               })
             )
           )
