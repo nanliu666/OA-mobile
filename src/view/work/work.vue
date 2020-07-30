@@ -247,7 +247,8 @@
               </van-image>
               <div class="title">
                 <div class="title-top">
-                  <span class="custom-title">{{ item.title }}</span><span class="emerType">{{ EmerType[item.emerType] }}</span>
+                  <span class="custom-title">{{ item.title }}</span>
+                  <span class="emerType">{{ EmerType[item.emerType] }}</span>
                 </div>
                 <div class="title-bottom">
                   <span class="custom-title">{{ item.brief }}</span>
@@ -265,7 +266,7 @@
                       <span
                         class="custom-title"
                       >计划招聘{{ item.totalNum || ' ' }}人 已入职{{
-                        item.completeNum || ' '
+                        item.totalNum === 0 ? ' ' : item.completeNum || 0
                       }}人</span>
                     </div>
                   </div>
@@ -388,6 +389,7 @@ export default {
       }
       fetchTaskList(params).then((res) => {
         this.taskList = res.data
+        window.console.log('this.taskList==', this.taskList)
       })
     },
     ifShowWarn(row) {

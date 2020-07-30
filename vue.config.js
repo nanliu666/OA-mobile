@@ -53,8 +53,8 @@ module.exports = {
     proxy: {
       '/api': {
         // 本地环境
-        // target: 'http://192.168.1.100:8000/',
-        target: 'http://192.168.1.37/',
+        target: 'http://192.168.1.100:8000/',
+        // target: 'http://192.168.1.37/',
 
         // 开发环境
         // target: 'http://122.112.183.186/',

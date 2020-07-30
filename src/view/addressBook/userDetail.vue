@@ -13,7 +13,7 @@
               <span class="custom-title">{{ userInfo.name }}</span>
             </div>
             <div class="title-bottom">
-              <span class="custom-title">{{ '（' +userInfo.workNo + '）' }}</span>
+              <span class="custom-title">{{ '（' + userInfo.workNo + '）' }}</span>
             </div>
           </div>
         </div>
@@ -128,6 +128,7 @@ export default {
     })
   },
   methods: {
+    onCancel() {},
     showPhoneCopy() {
       this.copyPhoneShow = true
     },
@@ -172,7 +173,7 @@ export default {
 }
 </script>
 
-<style lang='less' scoped>
+<style lang="less" scoped>
 .page {
   background-color: #f5f6f6;
   min-height: 100%;
