@@ -505,6 +505,9 @@ export default {
   margin-top: 8px;
   .van-cell {
     align-items: center;
+    .van-cell__title {
+      font-weight: 500;
+    }
     .van-cell__value {
       flex: 0 1 60px;
     }
