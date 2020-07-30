@@ -36,13 +36,10 @@
                 @click="handleClick(item)"
               >
                 <div
-                  v-if="item.isRead === 0"
+                  :class="item.isRead === 1 ? 'read' : ''"
                   class="unread"
                 />
-                <div
-                  class="msgContent"
-                  :class="item.isRead === 0 ? 'unreadMsg' : ''"
-                >
+                <div class="msgContent unreadMsg">
                   <div class="content">
                     {{ item.content }}
                   </div>
@@ -86,10 +83,7 @@
                   :class="item.isRead === 1 ? 'read' : ''"
                   class="unread"
                 />
-                <div
-                  class="msgContent"
-                  :class="item.isRead === 0 ? 'unreadMsg' : ''"
-                >
+                <div class="msgContent unreadMsg">
                   <div class="content">
                     {{ item.content }}
                   </div>

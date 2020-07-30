@@ -32,14 +32,14 @@
             <!-- 使用 title 插槽来自定义标题 -->
             <template #title>
               <div class="person-cell">
-                <van-image
-                  round
-                  class="matterIcon"
-                >
-                  <template v-slot:error>
-                    加载失败
-                  </template>
-                </van-image>
+                <div class="matterIcon">
+                  <svg
+                    class="icon matterIcon"
+                    aria-hidden="true"
+                  >
+                    <use xlink:href="#icon-approval-recruit-bicolor" />
+                  </svg>
+                </div>
                 <div class="title">
                   <div class="title-top">
                     <span class="custom-title">{{ item.title }}</span><van-tag
@@ -79,14 +79,15 @@
             <!-- 使用 title 插槽来自定义标题 -->
             <template #title>
               <div class="person-cell">
-                <van-image
-                  round
-                  class="matterIcon"
-                >
-                  <template v-slot:error>
-                    加载失败
-                  </template>
-                </van-image>
+                <div class="matterIcon">
+                  <svg
+                    class="icon matterIcon"
+                    aria-hidden="true"
+                  >
+                    <use xlink:href="#icon-approval-recruit-bicolor" />
+                  </svg>
+                </div>
+
                 <div class="title">
                   <div class="title-top">
                     <span class="custom-title">{{ item.title }}</span>
@@ -168,7 +169,7 @@ export default {
         pageNo: this.toduStatus.pageNo,
         pageSize: this.toduStatus.pageSize,
         userId: this.$store.state.user.userInfo.user_id,
-        type: 'UnFinished'
+        status: 'UnFinished'
       }
       this.toduStatus.loading = true
 
@@ -192,7 +193,7 @@ export default {
         pageNo: this.didList.pageNo,
         pageSize: this.didList.pageSize,
         userId: this.$store.state.user.userInfo.user_id,
-        type: 'Finished'
+        status: 'Finished'
       }
       this.didList.loading = true
       getTodoList(params).then((res) => {

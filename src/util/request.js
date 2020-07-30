@@ -6,7 +6,7 @@
  * isToken是否需要token
  */
 import axios from 'axios'
-// import router from '@/router/'
+import router from '@/router/'
 import store from '@/store/'
 import { getToken } from '@/util/auth'
 import { Toast } from 'vant'
@@ -79,7 +79,7 @@ instance.interceptors.response.use(
     let message = res.data.resMsg || res.data.error_description || '网络错误'
     //如果是401则跳转到登录页面
     if (status === 401) {
-      // router.push({ path: '/login' })
+      router.push({ path: '/login' })
       message = '授权失败'
     }
     // 如果请求为非200否者默认统一处理

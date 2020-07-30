@@ -1,7 +1,7 @@
 <template>
   <div>
     <stickyHeader
-      :title="step === 0 ? '旧密码': '新密码'"
+      :title="step === 0 ? '旧密码' : '新密码'"
       @leftClick="handleBack"
     />
     <template v-if="step === 0">
@@ -83,24 +83,24 @@
 
 <script>
 import StickyHeader from '@/components/stickyHeader/stickyHeader'
-import { sendSms,changePassword,modifyUserPhone } from '@/api/user'
+import { sendSms, changePassword, modifyUserPhone } from '@/api/user'
 import { Toast } from 'vant'
 import md5 from 'js-md5'
+// import { mapGetters } from 'vuex'
 
 export default {
-  name:'Forget',
+  name: 'Forget',
   components: {
     StickyHeader
   },
   data() {
     return {
-      password:'',
+      password: '',
       countdown: 60,
       timeout: null,
       checkLoading: false,
       smsLoading: false,
       step: 0,
-      userInfo: {},
       newPassword: '',
       checkPassword: '',
       changeLoading: false,
@@ -141,10 +141,10 @@ export default {
       })
     },
     toNext() {
-      if(!this.password.trim()){
-            Toast('密码不能为空')
-            return
-        }
+      if (!this.password.trim()) {
+        Toast('密码不能为空')
+        return
+      }
       const params = {
         userId: this.$store.state.user.userInfo.user_id,
         password: md5(this.password)
@@ -159,41 +159,38 @@ export default {
           this.checkLoading = false
         })
     },
-    handelConfirm(){
-        if(!this.newPassword.trim() || !this.checkPassword.trim()){
-            Toast('密码不能为空')
-            return
-        }
-        if(this.newPassword !== this.checkPassword){
-            Toast('两次密码不一致')
-            return
-        }
-        const params ={
-            userId: this.userInfo.userId,
-            newPassword: md5(this.newPassword),
-            oldPassword:md5(this.password),
-            phonenum: this.tel,
-            smsCode: this.code
-        }
-        this.changeLoading = true
-        changePassword(params).then(() =>{
-            this.changeLoading = false
-            this.changeSuccess = true
-        }).catch(() =>{
-            this.changeLoading = false
+    handelConfirm() {
+      if (!this.newPassword.trim() || !this.checkPassword.trim()) {
+        Toast('密码不能为空')
+        return
+      }
+      if (this.newPassword !== this.checkPassword) {
+        Toast('两次密码不一致')
+        return
+      }
+      const params = {
+        userId: this.$store.state.user.userInfo.user_id,
+        newPassword: md5(this.newPassword),
+        oldPassword: md5(this.password)
+      }
+      this.changeLoading = true
+      changePassword(params)
+        .then(() => {
+          this.changeLoading = false
+          this.changeSuccess = true
+        })
+        .catch(() => {
+          this.changeLoading = false
         })
     },
-    toSetting(){
-        this.$router.replace('/me/setting')
+    toSetting() {
+      this.$router.replace('/me/setting')
     }
   }
 }
 </script>
 
-    <style
-      lang="less"
-      scoped
-    >
+<style lang="less" scoped>
 .inputBox {
   .title {
     font-size: 16px;
