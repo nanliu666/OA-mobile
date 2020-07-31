@@ -21,7 +21,7 @@ export const getScheduleList = (params) => {
  * @param {Object} params
  * */
 export const getMyApproveList = (params) => {
-  return get('/appr/v1/appr/my/approve/list', params)
+  return post('/appr/v1/appr/my/approve/list', params)
 }
 
 /**

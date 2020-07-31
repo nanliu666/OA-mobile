@@ -104,7 +104,6 @@
       <van-cell title="我的申请" />
       <template v-for="(item, index) in myApproveList">
         <van-cell
-          v-if="index < 3"
           :key="item.id"
           :value="approveStatusWork[item.status]"
           :class="index === 2 ? 'noBorderBottom' : ''"
@@ -145,8 +144,9 @@
         </van-cell>
       </template>
       <div
-        v-if="myApproveList.length > 3"
+        v-if="approveTotalNum > 3"
         class="more"
+        @click="getMoreApproveList"
       >
         <div class="btn">
           查看更多
@@ -318,12 +318,18 @@ files.keys().forEach((key) => {
 export default {
   data() {
     return {
+      approveParams: {
+        pageNo: 1,
+        pageSize: 3,
+        userId: this.$store.state.user.userInfo.user_id
+      },
       imgModules: imgModules,
       today: moment().format('YYYY-MM-DD'),
       userInfo: {},
       todoList: [],
       scheduleList: [],
       myApproveList: [],
+      approveTotalNum: 0,
       taskList: [],
       approveStatusWork: {
         Approve: '审批中',
@@ -351,7 +357,7 @@ export default {
     })
     this.getTodoList()
     this.getScheduleList()
-    this.getMyApproveList()
+    this.getApproveList()
     this.getMyTask()
   },
   methods: {
@@ -385,15 +391,22 @@ export default {
         this.scheduleList = res
       })
     },
-    getMyApproveList() {
-      const params = {
-        pageNo: 1,
-        pageSize: 10,
-        userId: this.$store.state.user.userInfo.user_id
-      }
-      getMyApproveList(params).then((res) => {
-        this.myApproveList = res.data
+    /**
+     * 获取我的审批列表
+     */
+    getApproveList() {
+      getMyApproveList(this.approveParams).then((res) => {
+        let { totalNum, data } = res
+        this.myApproveList = [...this.myApproveList, ...data]
+        this.approveTotalNum = totalNum
       })
+    },
+    /**
+     * 获取更多我的审批数据
+     */
+    getMoreApproveList() {
+      this.approveParams.pageNo += 1
+      this.getApproveList()
     },
     getMyTask() {
       const params = {
