@@ -10,10 +10,6 @@
       <keep-alive>
         <router-view />
       </keep-alive>
-      <!-- <work v-if="active === 'work'" />
-      <address-book v-if="active === 'addressBook'" />
-      <me v-if="active === 'me'" />
-      <message v-if="active === 'message'" /> -->
     </div>
     <van-tabbar v-model="active">
       <van-tabbar-item
@@ -55,10 +51,25 @@
 <script>
 export default {
   name: 'Home',
-
   data() {
     return {
       active: 'work'
+    }
+  },
+  created() {
+    switch (this.$route.path) {
+      case '/work/index':
+        this.active = 'work'
+        break
+      case '/addressBook/index':
+        this.active = 'addressBook'
+        break
+      case '/message/index':
+        this.active = 'message'
+        break
+      case '/me/index':
+        this.active = 'me'
+        break
     }
   }
 }
