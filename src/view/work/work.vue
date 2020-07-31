@@ -22,6 +22,7 @@
         round
         class="avatarClass"
         :src="userInfo.avatarUrl"
+        @click="toPersonalcenter"
       >
         <template v-slot:error>
           加载失败
@@ -30,7 +31,10 @@
     </div>
     <div class="workbox">
       <div class="iconbox">
-        <div class="iconItem">
+        <div
+          class="iconItem"
+          @click="handleClickIcon('approve')"
+        >
           <van-image
             class="iconImg"
             :src="imgModules.approve"
@@ -351,6 +355,12 @@ export default {
     this.getMyTask()
   },
   methods: {
+    /**
+     * 前往个人中心
+     */
+    toPersonalcenter() {
+      this.$router.push('/me/index')
+    },
     toTudo() {
       this.$router.push('/work/todo')
     },
@@ -408,11 +418,15 @@ export default {
     getWarnText(row) {
       return moment().diff(moment(row.beginDate), 'days')
     },
+    /**
+     * 点击icon图标
+     */
     handleClickIcon(iconName) {
       const obj = {
         todo: '/work/todo',
         schedule: '/todaySchedule/calendar',
-        task: '/work/task'
+        task: '/work/task',
+        approve: '/work/task'
       }
       // 当点击任务icon时，重置nav标签
       if (iconName === 'task') {
