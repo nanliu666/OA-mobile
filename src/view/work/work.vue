@@ -414,6 +414,10 @@ export default {
         schedule: '/todaySchedule/calendar',
         task: '/work/task'
       }
+      // 当点击任务icon时，重置nav标签
+      if (iconName === 'task') {
+        this.$store.commit('RESET_TASK_NAV')
+      }
       this.$router.push(obj[iconName])
     },
     handleClickCell(item) {

@@ -1,17 +1,5 @@
 <template>
   <div class="page">
-    <!-- <stickyHeader title="我的任务">
-      <template #footer>
-        <van-tabs v-model="active">
-          <van-tab
-            v-for="(item, index) in tabList"
-            :key="index"
-            :title="item.title"
-            :name="item.name"
-          />
-        </van-tabs>
-      </template>
-    </stickyHeader> -->
     <div class="sticky-box">
       <van-nav-bar
         title="我的任务"
@@ -147,13 +135,10 @@
 </template>
 
 <script>
-// import StickyHeader from '@/components/stickyHeader/stickyHeader'
 import { fetchTaskList } from '@/api/metask'
+import { mapGetters } from 'vuex'
 export default {
   name: 'MyTask',
-  components: {
-    // StickyHeader
-  },
   data() {
     return {
       // tags
@@ -167,7 +152,7 @@ export default {
           name: 'Finished'
         }
       ],
-      active: 'UnFinished',
+      active: '',
       // query 请求参数
       unFinishedQuery: {
         pageNo: 1,
@@ -212,6 +197,9 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapGetters(['taskActive'])
+  },
   watch: {
     // 解决滚动条位置
     active(nval, oval) {
@@ -220,11 +208,18 @@ export default {
     }
   },
   created() {
+    this.initSetting()
     this.loadUnFinishedData()
     this.loadFinishedData()
   },
 
   methods: {
+    /**
+     * 初始化设置
+     */
+    initSetting() {
+      this.active = this.taskActive
+    },
     // 加载 unFinishedList
     loadUnFinishedData(pageNo) {
       if (this.unFinishedLoad.loading) return
@@ -269,6 +264,8 @@ export default {
     },
     // 点击跳转到详情页
     goToDetail({ bizId, type }) {
+      // 跳转详情之前先记录当前显示nav的标识
+      this.$store.commit('SET_TASK_NAV', this.active)
       if (type === 'Recruitment') {
         return this.$router.push({
           path: '/work/taskDetail',
