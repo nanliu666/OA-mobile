@@ -22,9 +22,9 @@
             @click="handleClickOrg(item)"
           >
             <template #title>
-              <span
-                class="custom-title"
-              >{{ item.orgName + (item.users.length > 0 ? `（${item.users.length +1}）` : '' ) }}</span>
+              <span class="custom-title">{{
+                item.orgName + (item.users.length > 0 ? `（${item.users.length + 1}）` : '')
+              }}</span>
             </template>
           </van-cell>
         </template>
@@ -55,7 +55,7 @@
                     </van-tag>-->
                   </div>
                   <div class="title-bottom">
-                    <span class="custom-title">{{ item.orgName + ' - '+ item.jobName }}</span>
+                    <span class="custom-title">{{ item.orgName + ' - ' + item.jobName }}</span>
                   </div>
                 </div>
               </div>
@@ -76,6 +76,7 @@
   </div>
 </template>
 <script>
+import { validatenull } from '@/util/validate'
 import { Toast } from 'vant'
 export default {
   name: 'FindOrgUser',
@@ -91,7 +92,8 @@ export default {
       this.$router.go(-1)
     },
     handleSearch(val) {
-      if(this.search.trim()){
+      // window.console.log('this.search==', this.search)
+      if (validatenull(this.search)) {
         Toast('搜索参数不能为空')
         return
       }
@@ -121,14 +123,14 @@ export default {
     handleClickOrg(item) {
       this.$router.push('/addressBook/orgDetail/' + item.orgId)
     },
-      toUserDetail(item){
-this.$router.push('/addressBook/userDetail/'+ item.userId)
+    toUserDetail(item) {
+      this.$router.push('/addressBook/userDetail/' + item.userId)
     }
   }
 }
 </script>
 
-<style lang='less' scoped>
+<style lang="less" scoped>
 .page {
   background-color: #f5f6f6;
   min-height: 100%;

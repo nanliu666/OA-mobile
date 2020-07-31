@@ -60,13 +60,13 @@
         <span>用人部门：</span> <span>{{ recruitmentDetail.orgName }}</span>
       </div>
       <div class="item ">
-        <span>职位:</span> <span>{{ recruitmentDetail.jobName }}</span>
+        <span>职位：</span> <span>{{ recruitmentDetail.jobName }}</span>
       </div>
       <div class="item ">
         <span>岗位：</span> <span>{{ recruitmentDetail.positionName }}</span>
       </div>
       <div class="item ">
-        <span>需求人数:</span> <span>{{ recruitmentDetail.needNum }}</span>
+        <span>需求人数：</span> <span>{{ recruitmentDetail.needNum }}</span>
       </div>
       <div class="item ">
         <span>到岗日期：</span> <span>{{ recruitmentDetail.joinDate }}</span>
@@ -76,17 +76,17 @@
         <span>{{ recruitmentDetail.emerType | CommonDictType(EmerType) }}</span>
       </div>
       <div class="item ">
-        <span>职位要求:</span> <span>{{ recruitmentDetail.requirement }}</span>
+        <span>职位要求：</span> <span>{{ recruitmentDetail.requirement }}</span>
       </div>
       <div class="item ">
-        <span>工作职责:</span> <span>{{ recruitmentDetail.duty }}</span>
+        <span>工作职责：</span> <span>{{ recruitmentDetail.duty }}</span>
       </div>
       <div class="item ">
-        <span>招聘原因:</span>
+        <span>招聘原因：</span>
         <span>{{ recruitmentDetail.reason | CommonDictType(RecruitmentReason) }}</span>
       </div>
       <div class="item ">
-        <span>申请理由:</span> <span>{{ recruitmentDetail.remark }}</span>
+        <span>申请理由：</span> <span>{{ recruitmentDetail.remark }}</span>
       </div>
     </div>
   </div>
@@ -184,15 +184,15 @@ export default {
 .page {
   //
   .task-box {
-    width: 100%;
-    height: 86.5px;
-    padding-left: 16px;
+    width: calc(100% - 20px);
+    margin: 10px;
+    padding: 20px 24px;
+    box-shadow: 0 8px 16px 0 rgba(#000000, 0.1);
     box-sizing: border-box;
-    box-shadow: inset 0 -1px 0 0 #dddddd;
+    border-radius: 8px;
     .jobName-row {
       display: flex;
       justify-content: space-between;
-      margin: 20px 0 0 0;
       .jobName-box {
         font-size: 16px;
         color: #000000;
@@ -227,11 +227,10 @@ export default {
   }
   // 招聘进度
   .progress-box {
-    margin-top: 8px;
     width: 100%;
     box-sizing: border-box;
     padding-left: 16px;
-    padding-top: 20px;
+    padding-top: 10px;
     height: 153.5px;
     box-shadow: inset 0 -1px 0 0 #dddddd;
     .title {

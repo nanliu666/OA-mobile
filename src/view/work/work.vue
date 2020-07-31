@@ -1,6 +1,15 @@
 <template>
   <div class="page">
     <div class="basic-info">
+      <van-image
+        class="backgroud-image"
+        fill
+        :src="imgModules.bg"
+      >
+        <template v-slot:error>
+          加载失败
+        </template>
+      </van-image>
       <div class="basic">
         <div class="company">
           {{ userInfo.companyName }}
@@ -22,12 +31,14 @@
     <div class="workbox">
       <div class="iconbox">
         <div class="iconItem">
-          <svg
-            class="icon iconImg"
-            aria-hidden="true"
+          <van-image
+            class="iconImg"
+            :src="imgModules.approve"
           >
-            <use xlink:href="#icon-approval-recruit-bicolor" />
-          </svg>
+            <template v-slot:error>
+              加载失败
+            </template>
+          </van-image>
           <div class="title">
             审批
           </div>
@@ -36,12 +47,14 @@
           class="iconItem"
           @click="handleClickIcon('todo')"
         >
-          <svg
-            class="icon iconImg"
-            aria-hidden="true"
+          <van-image
+            class="iconImg"
+            :src="imgModules.todo"
           >
-            <use xlink:href="#icon-approval-recruit-bicolor" />
-          </svg>
+            <template v-slot:error>
+              加载失败
+            </template>
+          </van-image>
           <div class="title">
             待办
           </div>
@@ -50,12 +63,14 @@
           class="iconItem"
           @click="handleClickIcon('schedule')"
         >
-          <svg
-            class="icon iconImg"
-            aria-hidden="true"
+          <van-image
+            class="iconImg"
+            :src="imgModules.schedule"
           >
-            <use xlink:href="#icon-approval-recruit-bicolor" />
-          </svg>
+            <template v-slot:error>
+              加载失败
+            </template>
+          </van-image>
           <div class="title">
             日程
           </div>
@@ -64,12 +79,14 @@
           class="iconItem"
           @click="handleClickIcon('task')"
         >
-          <svg
-            class="icon iconImg"
-            aria-hidden="true"
+          <van-image
+            class="iconImg"
+            :src="imgModules.task"
           >
-            <use xlink:href="#icon-approval-recruit-bicolor" />
-          </svg>
+            <template v-slot:error>
+              加载失败
+            </template>
+          </van-image>
           <div class="title">
             任务
           </div>
@@ -96,12 +113,14 @@
               class="person-cell"
               style="align-items: flex-start"
             >
-              <svg
-                class="icon matterIcon"
-                aria-hidden="true"
+              <van-image
+                round
+                class="matterIcon"
               >
-                <use xlink:href="#icon-approval-recruit-bicolor" />
-              </svg>
+                <template v-slot:error>
+                  加载失败
+                </template>
+              </van-image>
               <div class="title needWidth">
                 <div class="title-top">
                   <span class="custom-title">{{ item.title }}</span>
@@ -145,12 +164,14 @@
           <!-- 使用 title 插槽来自定义标题 -->
           <template #title>
             <div class="person-cell">
-              <svg
-                class="icon matterIcon"
-                aria-hidden="true"
+              <van-image
+                round
+                class="matterIcon"
               >
-                <use xlink:href="#icon-approval-recruit-bicolor" />
-              </svg>
+                <template v-slot:error>
+                  加载失败
+                </template>
+              </van-image>
               <div class="title">
                 <div class="title-top">
                   <span class="custom-title">{{ item.title }}</span><van-tag
@@ -184,12 +205,14 @@
           <!-- 使用 title 插槽来自定义标题 -->
           <template #title>
             <div class="person-cell">
-              <svg
-                class="icon matterIcon"
-                aria-hidden="true"
+              <van-image
+                round
+                class="matterIcon"
               >
-                <use xlink:href="#icon-approval-recruit-bicolor" />
-              </svg>
+                <template v-slot:error>
+                  加载失败
+                </template>
+              </van-image>
               <div class="title">
                 <div class="title-top">
                   <span class="custom-title">{{ item.title }}</span>
@@ -223,15 +246,18 @@
               class="person-cell"
               style="align-items: flex-start"
             >
-              <svg
-                class="icon matterIcon"
-                aria-hidden="true"
+              <van-image
+                round
+                class="matterIcon"
               >
-                <use xlink:href="#icon-approval-recruit-bicolor" />
-              </svg>
+                <template v-slot:error>
+                  加载失败
+                </template>
+              </van-image>
               <div class="title">
                 <div class="title-top">
-                  <span class="custom-title">{{ item.title }}</span><span class="emerType">{{ EmerType[item.emerType] }}</span>
+                  <span class="custom-title">{{ item.title }}</span>
+                  <span class="emerType">{{ EmerType[item.emerType] }}</span>
                 </div>
                 <div class="title-bottom">
                   <span class="custom-title">{{ item.brief }}</span>
@@ -249,7 +275,7 @@
                       <span
                         class="custom-title"
                       >计划招聘{{ item.totalNum || ' ' }}人 已入职{{
-                        item.completeNum || ' '
+                        item.totalNum === 0 ? ' ' : item.completeNum || 0
                       }}人</span>
                     </div>
                   </div>
@@ -277,10 +303,18 @@ import { getTodoList, getScheduleList, getMyApproveList } from '@/api/work'
 import moment from 'moment'
 import { fetchTaskList } from '@/api/metask'
 import { todoJumpFun } from './common'
-
+// 批量引入图片
+const path = require('path')
+const files = require.context('@/assets/images/homeImages', false, /\.png$/) //这句话的意思是引入图片文件夹下的所有图片
+const imgModules = {}
+files.keys().forEach((key) => {
+  const name = path.basename(key, '.png')
+  imgModules[name] = files(key).default || files(key)
+})
 export default {
   data() {
     return {
+      imgModules: imgModules,
       today: moment().format('YYYY-MM-DD'),
       userInfo: {},
       todoList: [],
@@ -360,6 +394,7 @@ export default {
       }
       fetchTaskList(params).then((res) => {
         this.taskList = res.data
+        // window.console.log('this.taskList==', this.taskList)
       })
     },
     ifShowWarn(row) {
@@ -379,6 +414,10 @@ export default {
         schedule: '/todaySchedule/calendar',
         task: '/work/task'
       }
+      // 当点击任务icon时，重置nav标签
+      if (iconName === 'task') {
+        this.$store.commit('RESET_TASK_NAV')
+      }
       this.$router.push(obj[iconName])
     },
     handleClickCell(item) {
@@ -395,12 +434,18 @@ export default {
   overflow: scroll;
 }
 .basic-info {
+  position: relative;
   height: 145px;
   background-image: linear-gradient(180deg, #207efa 0%, #0ea6fe 100%);
-  // padding: 17px 34px 60px 25px;
   padding: 0 34px 0px 25px;
   display: flex;
   justify-content: bet;
+  .backgroud-image {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+  }
   .basic {
     flex: 1;
     margin-top: 34px;
@@ -415,6 +460,8 @@ export default {
     }
   }
   .avatarClass {
+    border: 2px solid white;
+    box-shadow: 0 4px 12px 0 rgba(#1f416c, 0.3);
     margin-top: 22px;
     width: 60px;
     height: 60px;
@@ -462,6 +509,9 @@ export default {
   margin-top: 8px;
   .van-cell {
     align-items: center;
+    .van-cell__title {
+      font-weight: 500;
+    }
     .van-cell__value {
       flex: 0 1 60px;
     }
