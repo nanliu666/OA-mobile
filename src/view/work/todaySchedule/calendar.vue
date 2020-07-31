@@ -34,7 +34,7 @@
     <div class="contain">
       <van-cell title="当日安排" />
       <van-list
-        v-model="loading"
+        v-model="listloading"
         :finished="finished"
         finished-text="没有更多了"
       >
@@ -116,12 +116,16 @@ export default {
         return item.remindDate === moment(this.currentDate).format('YYYY-MM-DD')
       })
     },
-    loading() {
-      let dataItem
-      this.allData.forEach((item) => {
-        if (item.month === moment(this.currentDate).format('YYYY-MM')) dataItem = item
-      })
-      return dataItem.loading
+    // 不能直接修改computed内的值，需要设置get/set
+    listloading: {
+      get() {
+        let dataItem
+        this.allData.forEach((item) => {
+          if (item.month === moment(this.currentDate).format('YYYY-MM')) dataItem = item
+        })
+        return dataItem.loading
+      },
+      set() {}
     }
   },
   created() {
