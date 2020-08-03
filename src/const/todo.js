@@ -1,14 +1,44 @@
 export const todoTypeCN = {
-  Approve: '审批', //biz_id = 审批编码，即表appr_apply_user中的字段appr_no
-  Recruitment: '招聘', //biz_id = 招聘需求ID，即表recruitment的id
-  ResumeReview: '简历审核', // biz_id = 人员简历审核ID，即表person_resume_check的id
-  Interview: '面试', // biz_id = 人员面试记录ID，即表person_interview_info的id
-  InterviewRegister: '面试登记表',
-  Entry: '入职办理',
-  EntryRegister: '入职登记表',
-  LeaveListUser: '离职事项',
-  LeaveListOrg: '离职事项',
-  Leave: '离职办理'
+  Approve: {
+    text: '审批',
+    icon: 'icon-approval-Seal-bicolor'
+  }, //biz_id = 审批编码，即表appr_apply_user中的字段appr_no
+  Recruitment: {
+    text: '招聘',
+    icon: 'icon-approval-invitation-bicolor'
+  }, //biz_id = 招聘需求ID，即表recruitment的id
+  ResumeReview: {
+    text: '简历审核',
+    icon: 'icon-approval-Seal-bicolor'
+  }, // biz_id = 人员简历审核ID，即表person_resume_check的id
+  Interview: {
+    text: '面试',
+    icon: 'icon-approval-recruit-bicolor'
+  }, // biz_id = 人员面试记录ID，即表person_interview_info的id
+  InterviewRegister: {
+    text: '面试登记表',
+    icon: 'icon-approval-info-outlined'
+  },
+  Entry: {
+    text: '入职办理',
+    icon: 'icon-approval-checkin-bicolor'
+  },
+  EntryRegister: {
+    text: '入职登记表',
+    icon: 'icon-approval-info-outlined'
+  },
+  LeaveListUser: {
+    text: '离职事项',
+    icon: 'icon-approval-info-outlined'
+  },
+  LeaveListOrg: {
+    text: '离职事项',
+    icon: 'icon-approval-info-outlined'
+  },
+  Leave: {
+    text: '离职办理',
+    icon: 'icon-approval-leaveoffice-bicolor'
+  }
 }
 
 export const interviewStatusCN = {
