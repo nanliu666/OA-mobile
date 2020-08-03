@@ -11,37 +11,29 @@
         <router-view />
       </keep-alive>
     </div>
-    <van-tabbar v-model="active">
+    <van-tabbar v-model="curentPage">
       <van-tabbar-item
-        name="work"
-        icon="home-o"
+        v-for="(item, index) in tabbarList"
+        :key="index"
+        :class="{ 'van-tabbar-item--active': curentPage === item.code }"
+        :name="item.code"
       >
-        <router-link to="/work">
-          工作
-        </router-link>
-      </van-tabbar-item>
-      <van-tabbar-item
-        name="addressBook"
-        icon="search"
-      >
-        <router-link to="/addressBook">
-          通讯录
-        </router-link>
-      </van-tabbar-item>
-      <van-tabbar-item
-        name="message"
-        icon="friends-o"
-      >
-        <router-link to="/message">
-          消息
-        </router-link>
-      </van-tabbar-item>
-      <van-tabbar-item
-        name="me"
-        icon="setting-o"
-      >
-        <router-link to="/me">
-          我的
+        <svg
+          slot="icon"
+          class="icon"
+          aria-hidden="true"
+        >
+          <use
+            v-show="curentPage !== item.code"
+            :[symbolKey]="'#' + item.icon"
+          />
+          <use
+            v-show="curentPage === item.code"
+            :[symbolKey]="'#' + item.activeIcon"
+          />
+        </svg>
+        <router-link :to="item.to">
+          {{ item.name }}
         </router-link>
       </van-tabbar-item>
     </van-tabbar>
@@ -53,22 +45,53 @@ export default {
   name: 'Home',
   data() {
     return {
-      active: 'work'
+      symbolKey: 'xlink:href',
+      curentPage: 'work',
+      tabbarList: [
+        {
+          to: '/work',
+          name: '工作',
+          code: 'work',
+          icon: 'icon-mobile-homepage-work',
+          activeIcon: 'icon-mobile-homepage-workblue'
+        },
+        {
+          to: '/addressBook',
+          code: 'addressBook',
+          name: '通讯录',
+          icon: 'icon-mobile-homepage-directories',
+          activeIcon: 'icon-mobile-homepage-directoriesblue'
+        },
+        {
+          to: '/message',
+          code: 'message',
+          name: '消息',
+          icon: 'icon-mobile-homepage-message',
+          activeIcon: 'icon-mobile-homepage-messageblue'
+        },
+        {
+          to: '/me',
+          code: 'me',
+          name: '我的',
+          icon: 'icon-mobile-homepage-personal',
+          activeIcon: 'icon-mobile-homepage-personalblue'
+        }
+      ]
     }
   },
   created() {
     switch (this.$route.path) {
       case '/work/index':
-        this.active = 'work'
+        this.curentPage = 'work'
         break
       case '/addressBook/index':
-        this.active = 'addressBook'
+        this.curentPage = 'addressBook'
         break
       case '/message/index':
-        this.active = 'message'
+        this.curentPage = 'message'
         break
       case '/me/index':
-        this.active = 'me'
+        this.curentPage = 'me'
         break
     }
   }

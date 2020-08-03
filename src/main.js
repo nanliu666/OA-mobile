@@ -12,18 +12,13 @@ import longpress from '@/directive/longpress'
 // 日历组件
 import vueHashCalendar from 'vue-hash-calendar'
 import 'vue-hash-calendar/lib/vue-hash-calendar.css'
-import { iconfontUrl, iconfontVersion } from '@/config/env'
-import { loadStyle } from './util/util'
 // import preview from 'vue-photo-preview'
 // import 'vue-photo-preview/dist/skin.css'
 
 // Vue.use(preview)
 Vue.use(Vant)
 Vue.use(VueClipboard)
-// 动态加载阿里云字体库
-iconfontVersion.forEach((ele) => {
-  loadStyle(iconfontUrl.replace('$key', ele))
-})
+
 // 注册日历组件
 Vue.use(vueHashCalendar)
 // 自定义vue指令

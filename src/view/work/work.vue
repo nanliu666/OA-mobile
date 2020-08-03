@@ -354,17 +354,14 @@ export default {
      * 初始化数据
      */
     initData() {
-      Promise.all([
-        this.getTodoList(),
-        this.getMyTask(),
-        this.getScheduleList(),
-        this.getUser()
-      ]).then((res) => {
-        this.todoList = res[0].data
-        this.taskList = res[1].data
-        this.scheduleList = res[2].data
-        this.userInfo = res[3]
-      })
+      Promise.all([this.getTodoList(), this.getMyTask(), this.getSchedule(), this.getUser()]).then(
+        (res) => {
+          this.todoList = res[0].data
+          this.taskList = res[1].data
+          this.scheduleList = res[2]
+          this.userInfo = res[3]
+        }
+      )
     },
     getUser() {
       return getUserInfo({ userId: this.$store.state.user.userInfo.user_id }).then((res) => {
@@ -394,7 +391,7 @@ export default {
         return res
       })
     },
-    getScheduleList() {
+    getSchedule() {
       const params = {
         userId: this.$store.state.user.userInfo.user_id,
         beginRemindDate: moment().format('YYYY-MM-DD'),
