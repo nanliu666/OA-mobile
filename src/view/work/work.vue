@@ -152,19 +152,18 @@
       </div>
     </div>
     <div
-      v-if="todoList.length > 0"
+      v-show="todoList.length > 0"
       class="matters"
     >
       <van-cell title="待办事项" />
-      <template>
+      <ul>
         <van-cell
           v-for="(item, index) in todoList"
           :key="index"
           is-link
           @click="handleClickCell(item)"
         >
-          <!-- 使用 title 插槽来自定义标题 -->
-          <template #title>
+          <div slot="title">
             <div class="person-cell">
               <van-image
                 round
@@ -189,9 +188,9 @@
                 </div>
               </div>
             </div>
-          </template>
+          </div>
         </van-cell>
-      </template>
+      </ul>
     </div>
     <div class="matters">
       <van-cell title="今日安排">
@@ -342,21 +341,80 @@ export default {
     }
   },
   created() {
-    getUserInfo({ userId: this.$store.state.user.userInfo.user_id }).then((res) => {
-      this.userInfo = res
-      this.$store.commit('SET_USER_DETAIL', res)
-    })
     this.$store.dispatch('CommonDict', 'EmerType').then((res) => {
       res.forEach((item) => {
         this.EmerType[item.dictKey] = item.dictValue
       })
     })
-    this.getTodoList()
-    this.getScheduleList()
     this.getApproveList()
-    this.getMyTask()
+    this.initData()
   },
   methods: {
+    /**
+     * 初始化数据
+     */
+    initData() {
+      Promise.all([
+        this.getTodoList(),
+        this.getMyTask(),
+        this.getScheduleList(),
+        this.getUser()
+      ]).then((res) => {
+        this.todoList = res[0].data
+        this.taskList = res[1].data
+        this.scheduleList = res[2].data
+        this.userInfo = res[3]
+      })
+    },
+    getUser() {
+      return getUserInfo({ userId: this.$store.state.user.userInfo.user_id }).then((res) => {
+        this.$store.commit('SET_USER_DETAIL', res)
+        return res
+      })
+    },
+    getMyTask() {
+      const params = {
+        pageNo: 1,
+        pageSize: 10,
+        userId: this.$store.state.user.userInfo.user_id,
+        status: 'UnFinished'
+      }
+      return fetchTaskList(params).then((res) => {
+        return res
+      })
+    },
+    getTodoList() {
+      const params = {
+        pageNo: 1,
+        pageSize: 3,
+        status: 'UnFinished',
+        userId: this.$store.state.user.userInfo.user_id
+      }
+      return getTodoList(params).then((res) => {
+        return res
+      })
+    },
+    getScheduleList() {
+      const params = {
+        userId: this.$store.state.user.userInfo.user_id,
+        beginRemindDate: moment().format('YYYY-MM-DD'),
+        endRemindDate: moment().format('YYYY-MM-DD')
+      }
+      return getScheduleList(params).then((res) => {
+        return res
+      })
+    },
+    /**
+     * 获取我的审批列表
+     */
+    getApproveList() {
+      getMyApproveList(this.approveParams).then((res) => {
+        let { totalNum, data } = res
+        this.myApproveList = [...this.myApproveList, ...data]
+        // console.log('this.myApproveList=', this.myApproveList)
+        this.approveTotalNum = totalNum
+      })
+    },
     /**
      * 获取当前的formKey.来兑换当前的icon
      */
@@ -372,28 +430,7 @@ export default {
     toTudo() {
       this.$router.push('/work/todo')
     },
-    getTodoList() {
-      const params = {
-        pageNo: 1,
-        pageSize: 3,
-        status: 'UnFinished',
-        userId: this.$store.state.user.userInfo.user_id
-      }
-      getTodoList(params).then((res) => {
-        this.todoList = res.data
-        // console.log('代办事项==', this.todoList)
-      })
-    },
-    getScheduleList() {
-      const params = {
-        userId: this.$store.state.user.userInfo.user_id,
-        beginRemindDate: moment().format('YYYY-MM-DD'),
-        endRemindDate: moment().format('YYYY-MM-DD')
-      }
-      getScheduleList(params).then((res) => {
-        this.scheduleList = res
-      })
-    },
+
     /**
      * 跳转到审批详情
      */
@@ -407,53 +444,23 @@ export default {
       return apprStatusCN[status]
     },
     /**
-     * 获取我的审批列表
-     */
-    getApproveList() {
-      getMyApproveList(this.approveParams).then((res) => {
-        let { totalNum, data } = res
-        this.myApproveList = [...this.myApproveList, ...data]
-        // console.log('this.myApproveList=', this.myApproveList)
-        this.approveTotalNum = totalNum
-      })
-    },
-    /**
      * 跳转到审批列表页面
      */
     getMoreApproveList() {
       this.$router.push({ path: '/work/interviewDetail' })
     },
-    getMyTask() {
-      const params = {
-        pageNo: 1,
-        pageSize: 10,
-        userId: this.$store.state.user.userInfo.user_id,
-        status: 'UnFinished'
-      }
-      fetchTaskList(params).then((res) => {
-        this.taskList = res.data
-        // window.console.log('this.taskList==', this.taskList)
-      })
-    },
     /**
-     * 展示条件：状态未完成并且
+     * 展示条件：今天是否在比较时间相同或者之后
      */
     ifShowWarn(row) {
-      // console.log('row==', row)
-      let isShowWarn = true // 初始默认显示warn的状态
-      if (moment().isSame(row.beginDate, 'day')) {
-        isShowWarn = false
-      }
-      if (row.status === 'UnFinished' && moment().diff(moment(row.endDate)) > 0) {
-        isShowWarn = false
-      }
-      // console.log('isShowWarn==', isShowWarn)
+      let isShowWarn = moment().isSameOrAfter(moment(row.endDate)) && row.status === 'UnFinished'
       return isShowWarn
     },
+    /**
+     * 获取滞留的天数（今天天数 - 结束日期）
+     */
     getWarnText(row) {
-      // console.log('遍历一次')
-      // console.log(moment().isSame(row.beginDate, 'day'))
-      return moment().diff(moment(row.beginDate), 'days')
+      return moment().diff(moment(row.endDate), 'days')
     },
     /**
      * 点击icon图标
@@ -488,9 +495,8 @@ export default {
   position: relative;
   height: 145px;
   background-repeat: no-repeat;
-  background-position: center;
   background-size: contain;
-  padding: 0 34px 0px 25px;
+  padding: 0 32px 0px 25px;
   display: flex;
   justify-content: bet;
   .basic {
@@ -510,7 +516,7 @@ export default {
   .avatarClass {
     border: 2px solid white;
     box-shadow: 0 4px 12px 0 rgba(#1f416c, 0.3);
-    margin-top: 22px;
+    margin-top: 20px;
     width: 60px;
     height: 60px;
     /deep/ .van-image__loading {
