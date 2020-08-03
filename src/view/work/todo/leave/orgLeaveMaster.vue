@@ -47,7 +47,10 @@
       </div>
     </div>
 
-    <div class="btn-box">
+    <div
+      v-if="listData.data && listData.data[0].status !== 'Confirmed'"
+      class="btn-box"
+    >
       <div
         class="urge"
         @click="urgeleaveNote"
@@ -55,7 +58,6 @@
         催办
       </div>
       <div
-        v-if="listData.data && listData.data[0].status !== 'Confirmed'"
         class="confirm"
         @click="confirmleaveNote"
       >
@@ -131,12 +133,12 @@ export default {
     },
     async urgeleaveNote() {
       // TODO:原先的催办是不是存在只能催办一次？
-      await postUrgeleaveNote({
+      let res = await postUrgeleaveNote({
         groupId: this.groupId,
         userId: this.userId,
         type: 'B2C'
       })
-      Toast.success('催办成功')
+      Toast.success(res)
     }
   }
 }
