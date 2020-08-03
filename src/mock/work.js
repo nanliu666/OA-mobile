@@ -168,7 +168,7 @@ export default ({ mock }) => {
       })
     }
   })
-  Mock.mock(new RegExp('/appr/v1/appr/my/approve/list' + '.*'), 'get', () => {
+  Mock.mock(new RegExp('/api/appr/v1/appr/my/approve/list' + '.*'), 'get', () => {
     let list = Mock.mock([
       {
         apprNo: '@integer(100000, 10000000000)',
@@ -503,7 +503,7 @@ export default ({ mock }) => {
       resMsg: '操作成功'
     }
   })
-  Mock.mock(new RegExp('/api/task/v1/todo/list' + '.*'), 'get', () => {
+  Mock.mock(new RegExp('/api/user/v1/todo/list' + '.*'), 'get', () => {
     let data = []
     for (let i = 0; i < 21; i++) {
       data.push(

@@ -258,14 +258,12 @@
                   class="person-cell"
                   style="align-items: flex-start"
                 >
-                  <van-image
-                    round
-                    class="matterIcon"
+                  <svg
+                    class="icon svg-icon"
+                    aria-hidden="true"
                   >
-                    <template v-slot:error>
-                      加载失败
-                    </template>
-                  </van-image>
+                    <use xlink:href="#icon-approval-invitation-bicolor" />
+                  </svg>
                   <div class="title">
                     <div class="title-top">
                       <span class="custom-title">{{ item.title }}</span>
@@ -359,7 +357,6 @@ export default {
         this.EmerType[item.dictKey] = item.dictValue
       })
     })
-    this.getApproveList()
     this.initData()
   },
   methods: {
@@ -399,7 +396,7 @@ export default {
     getMyTask() {
       const params = {
         pageNo: 1,
-        pageSize: 10,
+        pageSize: 5,
         userId: this.$store.state.user.userInfo.user_id,
         status: 'UnFinished'
       }
