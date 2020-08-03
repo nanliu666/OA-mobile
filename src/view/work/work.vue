@@ -1,15 +1,9 @@
 <template>
   <div class="page">
-    <div class="basic-info">
-      <van-image
-        class="backgroud-image"
-        fill
-        :src="imgModules.bg"
-      >
-        <template v-slot:error>
-          加载失败
-        </template>
-      </van-image>
+    <div
+      class="basic-info"
+      :style="{ backgroundImage: `url(${imgModules.bg})` }"
+    >
       <div class="basic">
         <div class="company">
           {{ userInfo.companyName }}
@@ -105,10 +99,10 @@
       <template v-for="(item, index) in myApproveList">
         <van-cell
           :key="item.id"
-          :value="approveStatusWork[item.status]"
           :class="index === 2 ? 'noBorderBottom' : ''"
           style="align-items: flex-start"
           is-link
+          @click="toApprovalDetail(item)"
         >
           <!-- 使用 title 插槽来自定义标题 -->
           <template #title>
@@ -116,14 +110,12 @@
               class="person-cell"
               style="align-items: flex-start"
             >
-              <van-image
-                round
-                class="matterIcon"
+              <svg
+                class="icon svg-icon"
+                aria-hidden="true"
               >
-                <template v-slot:error>
-                  加载失败
-                </template>
-              </van-image>
+                <use :[symbolKey]="getApprIcon(item.formKey)" />
+              </svg>
               <div class="title needWidth">
                 <div class="title-top">
                   <span class="custom-title">{{ item.title }}</span>
@@ -131,16 +123,22 @@
                 <div class="title-bottom">
                   <span class="custom-title">申请时间：{{ item.applyTime }}</span>
                 </div>
-                <div class="title-bottom">
+                <div
+                  v-if="item.approveName"
+                  class="title-bottom"
+                >
                   <span class="custom-title">当前审批人：{{ item.approveName || '' }}</span>
-                  <span
-                    class="press"
-                    style="color: #207EFA;"
-                  >催一下</span>
                 </div>
               </div>
             </div>
           </template>
+          <span
+            v-if="item.status"
+            :style="{
+              color: getApprovalText(item.status).color
+            }"
+            v-text="getApprovalText(item.status).text"
+          />
         </van-cell>
       </template>
       <div
@@ -158,10 +156,10 @@
       class="matters"
     >
       <van-cell title="待办事项" />
-      <template v-for="(item, index) in todoList">
+      <template>
         <van-cell
-          v-if="index < 5"
-          :key="item.id"
+          v-for="(item, index) in todoList"
+          :key="index"
           is-link
           @click="handleClickCell(item)"
         >
@@ -178,7 +176,8 @@
               </van-image>
               <div class="title">
                 <div class="title-top">
-                  <span class="custom-title">{{ item.title }}</span><van-tag
+                  <span class="custom-title">{{ item.title }}</span>
+                  <van-tag
                     v-if="ifShowWarn(item)"
                     type="danger"
                   >
@@ -208,15 +207,16 @@
         >
           <!-- 使用 title 插槽来自定义标题 -->
           <template #title>
-            <div class="person-cell">
-              <van-image
-                round
-                class="matterIcon"
+            <div
+              class="person-cell"
+              @click="handleClickIcon('schedule')"
+            >
+              <svg
+                class="icon matterIcon"
+                aria-hidden="true"
               >
-                <template v-slot:error>
-                  加载失败
-                </template>
-              </van-image>
+                <use xlink:href="#icon-remind-bicolor" />
+              </svg>
               <div class="title">
                 <div class="title-top">
                   <span class="custom-title">{{ item.title }}</span>
@@ -315,9 +315,11 @@ files.keys().forEach((key) => {
   const name = path.basename(key, '.png')
   imgModules[name] = files(key).default || files(key)
 })
+import { apprStatusCN, FormKeysCN } from '@/const/approve'
 export default {
   data() {
     return {
+      symbolKey: 'xlink:href',
       approveParams: {
         pageNo: 1,
         pageSize: 3,
@@ -331,12 +333,6 @@ export default {
       myApproveList: [],
       approveTotalNum: 0,
       taskList: [],
-      approveStatusWork: {
-        Approve: '审批中',
-        Pass: '已通过',
-        Reject: '已拒绝',
-        Cancel: '已撤回'
-      },
       EmerType: {
         Super: '特级',
         urgent: '急',
@@ -362,6 +358,12 @@ export default {
   },
   methods: {
     /**
+     * 获取当前的formKey.来兑换当前的icon
+     */
+    getApprIcon(data) {
+      return `#${FormKeysCN[data].icon}`
+    },
+    /**
      * 前往个人中心
      */
     toPersonalcenter() {
@@ -373,12 +375,13 @@ export default {
     getTodoList() {
       const params = {
         pageNo: 1,
-        pageSize: 5,
+        pageSize: 3,
         status: 'UnFinished',
         userId: this.$store.state.user.userInfo.user_id
       }
       getTodoList(params).then((res) => {
         this.todoList = res.data
+        // console.log('代办事项==', this.todoList)
       })
     },
     getScheduleList() {
@@ -392,21 +395,33 @@ export default {
       })
     },
     /**
+     * 跳转到审批详情
+     */
+    toApprovalDetail() {
+      // console.log('跳转到审批详情==', data)
+    },
+    /**
+     * 获取审批中文文字以及文字颜色
+     */
+    getApprovalText(status) {
+      return apprStatusCN[status]
+    },
+    /**
      * 获取我的审批列表
      */
     getApproveList() {
       getMyApproveList(this.approveParams).then((res) => {
         let { totalNum, data } = res
         this.myApproveList = [...this.myApproveList, ...data]
+        // console.log('this.myApproveList=', this.myApproveList)
         this.approveTotalNum = totalNum
       })
     },
     /**
-     * 获取更多我的审批数据
+     * 跳转到审批列表页面
      */
     getMoreApproveList() {
-      this.approveParams.pageNo += 1
-      this.getApproveList()
+      this.$router.push({ path: '/work/interviewDetail' })
     },
     getMyTask() {
       const params = {
@@ -420,15 +435,24 @@ export default {
         // window.console.log('this.taskList==', this.taskList)
       })
     },
+    /**
+     * 展示条件：状态未完成并且
+     */
     ifShowWarn(row) {
-      return (
-        row.status === 'UnFinished' &&
-        moment()
-          .startOf('day')
-          .diff(moment(row.endDate)) > 0
-      )
+      // console.log('row==', row)
+      let isShowWarn = true // 初始默认显示warn的状态
+      if (moment().isSame(row.beginDate, 'day')) {
+        isShowWarn = false
+      }
+      if (row.status === 'UnFinished' && moment().diff(moment(row.endDate)) > 0) {
+        isShowWarn = false
+      }
+      // console.log('isShowWarn==', isShowWarn)
+      return isShowWarn
     },
     getWarnText(row) {
+      // console.log('遍历一次')
+      // console.log(moment().isSame(row.beginDate, 'day'))
       return moment().diff(moment(row.beginDate), 'days')
     },
     /**
@@ -463,26 +487,23 @@ export default {
 .basic-info {
   position: relative;
   height: 145px;
-  background-image: linear-gradient(180deg, #207efa 0%, #0ea6fe 100%);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
   padding: 0 34px 0px 25px;
   display: flex;
   justify-content: bet;
-  .backgroud-image {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-  }
   .basic {
     flex: 1;
     margin-top: 34px;
     .company {
-      font-size: 14px;
+      font-size: 12px;
       color: #ffffff;
       margin-bottom: 4px;
     }
     .hello {
       font-size: 16px;
+      font-weight: 500;
       color: #ffffff;
     }
   }
@@ -597,6 +618,18 @@ export default {
       .matterIcon {
         width: 32px;
         height: 32px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 20px;
+      }
+      .svg-icon {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 4px;
       }
     }
   }
