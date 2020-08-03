@@ -7,7 +7,13 @@ import { get, post, del } from '@/util/request'
 export const getTodoList = (params) => {
   return get('/user/v1/todo/list', params)
 }
-
+/**
+ * 审批申请催一下接口
+ * @param {Object} params
+ * */
+export const urgeApply = (params) => {
+  return post('/appr/v1/appr/apply/urge', params)
+}
 /**
  * 提醒事项查询接口
  * @param {Object} params
@@ -21,7 +27,7 @@ export const getScheduleList = (params) => {
  * @param {Object} params
  * */
 export const getMyApproveList = (params) => {
-  return get('/appr/v1/appr/my/approve/list', params)
+  return post('/appr/v1/appr/my/approve/list', params)
 }
 
 /**

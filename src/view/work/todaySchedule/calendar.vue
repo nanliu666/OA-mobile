@@ -34,7 +34,7 @@
     <div class="contain">
       <van-cell title="当日安排" />
       <van-list
-        v-model="loading"
+        v-model="listloading"
         :finished="finished"
         finished-text="没有更多了"
       >
@@ -47,14 +47,12 @@
             <!-- 使用 title 插槽来自定义标题 -->
             <template #title>
               <div class="person-cell">
-                <van-image
-                  round
-                  class="matterIcon"
+                <svg
+                  class="icon matterIcon"
+                  aria-hidden="true"
                 >
-                  <template v-slot:error>
-                    加载失败
-                  </template>
-                </van-image>
+                  <use xlink:href="#icon-remind-bicolor" />
+                </svg>
                 <div class="title">
                   <div class="title-top">
                     <span class="custom-title">{{ item.title }}</span>
@@ -116,12 +114,16 @@ export default {
         return item.remindDate === moment(this.currentDate).format('YYYY-MM-DD')
       })
     },
-    loading() {
-      let dataItem
-      this.allData.forEach((item) => {
-        if (item.month === moment(this.currentDate).format('YYYY-MM')) dataItem = item
-      })
-      return dataItem.loading
+    // 不能直接修改computed内的值，需要设置get/set
+    listloading: {
+      get() {
+        let dataItem
+        this.allData.forEach((item) => {
+          if (item.month === moment(this.currentDate).format('YYYY-MM')) dataItem = item
+        })
+        return dataItem.loading
+      },
+      set() {}
     }
   },
   created() {
@@ -218,6 +220,14 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.matterIcon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+}
 .page {
   min-height: 100%;
   background-color: #f5f6f6;

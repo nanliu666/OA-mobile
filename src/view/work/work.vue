@@ -1,20 +1,17 @@
 <template>
   <div class="page">
-    <div class="basic-info">
-      <van-image
-        class="backgroud-image"
-        fill
-        :src="imgModules.bg"
-      >
-        <template v-slot:error>
-          加载失败
-        </template>
-      </van-image>
+    <div
+      class="basic-info"
+      :style="{ backgroundImage: `url(${imgModules.bg})` }"
+    >
       <div class="basic">
         <div class="company">
           {{ userInfo.companyName }}
         </div>
-        <div class="hello">
+        <div
+          v-if="userInfo.workNo"
+          class="hello"
+        >
           你好，{{ userInfo.name }}（{{ userInfo.workNo }}）
         </div>
       </div>
@@ -22,6 +19,7 @@
         round
         class="avatarClass"
         :src="userInfo.avatarUrl"
+        @click="toPersonalcenter"
       >
         <template v-slot:error>
           加载失败
@@ -30,7 +28,10 @@
     </div>
     <div class="workbox">
       <div class="iconbox">
-        <div class="iconItem">
+        <div
+          class="iconItem"
+          @click="handleClickIcon('approve')"
+        >
           <van-image
             class="iconImg"
             :src="imgModules.approve"
@@ -93,208 +94,233 @@
         </div>
       </div>
     </div>
-    <div
-      v-if="myApproveList.length > 0"
-      class="matters"
+    <van-skeleton
+      title
+      avatar
+      row="3"
+      :loading="skeletonLoading"
+      class="skeleton-class"
     >
-      <van-cell title="我的申请" />
-      <template v-for="(item, index) in myApproveList">
-        <van-cell
-          v-if="index < 3"
-          :key="item.id"
-          :value="approveStatusWork[item.status]"
-          :class="index === 2 ? 'noBorderBottom' : ''"
-          style="align-items: flex-start"
-          is-link
+      <section>
+        <div
+          v-if="myApproveList.length > 0"
+          class="matters"
         >
-          <!-- 使用 title 插槽来自定义标题 -->
-          <template #title>
-            <div
-              class="person-cell"
+          <van-cell title="我的申请" />
+          <template v-for="(item, index) in myApproveList">
+            <van-cell
+              :key="item.id"
+              :class="index === 2 ? 'noBorderBottom' : ''"
               style="align-items: flex-start"
+              is-link
+              @click="toApprovalDetail(item)"
             >
-              <van-image
-                round
-                class="matterIcon"
-              >
-                <template v-slot:error>
-                  加载失败
-                </template>
-              </van-image>
-              <div class="title needWidth">
-                <div class="title-top">
-                  <span class="custom-title">{{ item.title }}</span>
-                </div>
-                <div class="title-bottom">
-                  <span class="custom-title">申请时间：{{ item.applyTime }}</span>
-                </div>
-                <div class="title-bottom">
-                  <span class="custom-title">当前审批人：{{ item.approveName || '' }}</span>
-                  <span
-                    class="press"
-                    style="color: #207EFA;"
-                  >催一下</span>
-                </div>
-              </div>
-            </div>
-          </template>
-        </van-cell>
-      </template>
-      <div
-        v-if="myApproveList.length > 3"
-        class="more"
-      >
-        <div class="btn">
-          查看更多
-        </div>
-      </div>
-    </div>
-    <div
-      v-if="todoList.length > 0"
-      class="matters"
-    >
-      <van-cell title="待办事项" />
-      <template v-for="(item, index) in todoList">
-        <van-cell
-          v-if="index < 5"
-          :key="item.id"
-          is-link
-          @click="handleClickCell(item)"
-        >
-          <!-- 使用 title 插槽来自定义标题 -->
-          <template #title>
-            <div class="person-cell">
-              <van-image
-                round
-                class="matterIcon"
-              >
-                <template v-slot:error>
-                  加载失败
-                </template>
-              </van-image>
-              <div class="title">
-                <div class="title-top">
-                  <span class="custom-title">{{ item.title }}</span><van-tag
-                    v-if="ifShowWarn(item)"
-                    type="danger"
+              <!-- 使用 title 插槽来自定义标题 -->
+              <template #title>
+                <div
+                  class="person-cell"
+                  style="align-items: flex-start"
+                >
+                  <svg
+                    class="icon svg-icon"
+                    aria-hidden="true"
                   >
-                    停滞{{ getWarnText(item) }}天
-                  </van-tag>
-                </div>
-                <div class="title-bottom">
-                  <span class="custom-title">{{ item.beginDate }}</span>
-                </div>
-              </div>
-            </div>
-          </template>
-        </van-cell>
-      </template>
-    </div>
-    <div class="matters">
-      <van-cell title="今日安排">
-        <template #right-icon>
-          <span @click="handleClickIcon('schedule')">{{ today }}</span>
-        </template>
-      </van-cell>
-      <template v-for="(item, index) in scheduleList">
-        <van-cell
-          v-if="index < 5"
-          :key="item.id"
-          is-link
-        >
-          <!-- 使用 title 插槽来自定义标题 -->
-          <template #title>
-            <div class="person-cell">
-              <van-image
-                round
-                class="matterIcon"
-              >
-                <template v-slot:error>
-                  加载失败
-                </template>
-              </van-image>
-              <div class="title">
-                <div class="title-top">
-                  <span class="custom-title">{{ item.title }}</span>
-                </div>
-                <div class="title-bottom">
-                  <span class="custom-title">{{ item.remindDate }}</span>
-                </div>
-              </div>
-            </div>
-          </template>
-        </van-cell>
-      </template>
-    </div>
-    <div
-      v-if="taskList.length > 0"
-      class="matters"
-    >
-      <van-cell title="我的任务" />
-
-      <template v-for="(item, index) in taskList">
-        <van-cell
-          v-if="index < 3"
-          :key="item.id"
-          style="align-items: flex-start"
-          :class="index === 2 ? 'noBorderBottom' : ''"
-          is-link
-        >
-          <!-- 使用 title 插槽来自定义标题 -->
-          <template #title>
-            <div
-              class="person-cell"
-              style="align-items: flex-start"
-            >
-              <van-image
-                round
-                class="matterIcon"
-              >
-                <template v-slot:error>
-                  加载失败
-                </template>
-              </van-image>
-              <div class="title">
-                <div class="title-top">
-                  <span class="custom-title">{{ item.title }}</span>
-                  <span class="emerType">{{ EmerType[item.emerType] }}</span>
-                </div>
-                <div class="title-bottom">
-                  <span class="custom-title">{{ item.brief }}</span>
-                </div>
-                <div class="percent">
-                  <div class="percentNum">
-                    {{ parseInt((item.completeNum / item.totalNum || 0) * 100) }}%
+                    <use :[symbolKey]="getApprIcon(item.formKey)" />
+                  </svg>
+                  <div class="title needWidth">
+                    <div class="title-top">
+                      <span class="custom-title">{{ item.title }}</span>
+                    </div>
+                    <div class="title-bottom">
+                      <span class="custom-title">申请时间：{{ item.applyTime }}</span>
+                    </div>
+                    <div
+                      v-if="item.approveName"
+                      class="title-bottom"
+                    >
+                      <span class="custom-title">当前审批人：{{ item.approveName || '' }}</span>
+                    </div>
                   </div>
-                  <div class="percentInfo">
-                    <van-progress
-                      :percentage="parseInt((item.completeNum / item.totalNum || 0) * 100)"
-                      pivot-text
-                    />
-                    <div class="percentInfo-bottom">
+                </div>
+              </template>
+              <span
+                v-if="item.status"
+                :style="{
+                  color: getApprovalText(item.status).color
+                }"
+                v-text="getApprovalText(item.status).text"
+              />
+            </van-cell>
+          </template>
+          <div
+            v-if="approveTotalNum > 3"
+            class="more"
+            @click="getMoreApproveList"
+          >
+            <div class="btn">
+              查看更多
+            </div>
+          </div>
+        </div>
+        <div
+          v-show="todoList.length > 0"
+          class="matters"
+        >
+          <van-cell title="待办事项" />
+          <ul>
+            <van-cell
+              v-for="(item, index) in todoList"
+              :key="index"
+              is-link
+              @click="handleClickCell(item)"
+            >
+              <div slot="title">
+                <div class="person-cell">
+                  <svg
+                    class="icon matterIcon"
+                    aria-hidden="true"
+                  >
+                    <use :[symbolKey]="getTodoIcon(item.type)" />
+                  </svg>
+                  <div class="title">
+                    <div class="title-top">
+                      <span class="custom-title">{{ item.title }}</span>
                       <span
-                        class="custom-title"
-                      >计划招聘{{ item.totalNum || ' ' }}人 已入职{{
-                        item.totalNum === 0 ? ' ' : item.completeNum || 0
-                      }}人</span>
+                        v-if="ifShowWarn(item)"
+                        class="emerType"
+                      >
+                        停滞{{ getWarnText(item) }}天
+                      </span>
+                    </div>
+                    <div class="title-bottom">
+                      <span class="custom-title">{{ item.beginDate }}</span>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </template>
-        </van-cell>
-      </template>
-      <div
-        v-if="taskList.length > 3"
-        class="more"
-        @click="handleClickIcon('task')"
-      >
-        <div class="btn">
-          查看更多
+            </van-cell>
+          </ul>
         </div>
-      </div>
-    </div>
+        <div class="matters">
+          <van-cell title="今日安排">
+            <template #right-icon>
+              <span @click="handleClickIcon('schedule')">{{ today }}</span>
+            </template>
+          </van-cell>
+          <template v-for="(item, index) in scheduleList">
+            <van-cell
+              v-if="index < 5"
+              :key="item.id"
+              is-link
+            >
+              <!-- 使用 title 插槽来自定义标题 -->
+              <template #title>
+                <div
+                  class="person-cell"
+                  @click="handleClickIcon('schedule')"
+                >
+                  <svg
+                    class="icon matterIcon"
+                    aria-hidden="true"
+                  >
+                    <use xlink:href="#icon-remind-bicolor" />
+                  </svg>
+                  <div class="title">
+                    <div class="title-top">
+                      <span class="custom-title">{{ item.title }}</span>
+                    </div>
+                    <div class="title-bottom">
+                      <span class="custom-title">{{ item.remindDate }}</span>
+                    </div>
+                  </div>
+                </div>
+              </template>
+            </van-cell>
+          </template>
+          <section
+            v-if="isAllFree"
+            class="free-style"
+          >
+            <van-empty description="当前暂无安排" />
+            <van-button
+              plain
+              type="info"
+              class="bottom-button"
+              @click="handleClickIcon('schedule')"
+            >
+              添加提醒
+            </van-button>
+          </section>
+        </div>
+        <div
+          v-if="taskList.length > 0"
+          class="matters"
+        >
+          <van-cell title="我的任务" />
+
+          <template v-for="(item, index) in taskList">
+            <van-cell
+              v-if="index < 3"
+              :key="item.id"
+              style="align-items: flex-start"
+              :class="index === 2 ? 'noBorderBottom' : ''"
+              is-link
+            >
+              <!-- 使用 title 插槽来自定义标题 -->
+              <template #title>
+                <div
+                  class="person-cell"
+                  style="align-items: flex-start"
+                >
+                  <svg
+                    class="icon svg-icon"
+                    aria-hidden="true"
+                  >
+                    <use xlink:href="#icon-approval-invitation-bicolor" />
+                  </svg>
+                  <div class="title">
+                    <div class="title-top">
+                      <span class="custom-title">{{ item.title }}</span>
+                      <span class="emerType">{{ EmerType[item.emerType] }}</span>
+                    </div>
+                    <div class="title-bottom">
+                      <span class="custom-title">{{ item.brief }}</span>
+                    </div>
+                    <div class="percent">
+                      <div class="percentNum">
+                        {{ parseInt((item.completeNum / item.totalNum || 0) * 100) }}%
+                      </div>
+                      <div class="percentInfo">
+                        <van-progress
+                          :percentage="parseInt((item.completeNum / item.totalNum || 0) * 100)"
+                          pivot-text
+                        />
+                        <div class="percentInfo-bottom">
+                          <span
+                            class="custom-title"
+                          >计划招聘{{ item.totalNum || ' ' }}人 已入职{{
+                            item.totalNum === 0 ? ' ' : item.completeNum || 0
+                          }}人</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </template>
+            </van-cell>
+          </template>
+          <div
+            v-if="taskList.length > 3"
+            class="more"
+            @click="handleClickIcon('task')"
+          >
+            <div class="btn">
+              查看更多
+            </div>
+          </div>
+        </div>
+      </section>
+    </van-skeleton>
   </div>
 </template>
 <script>
@@ -311,22 +337,27 @@ files.keys().forEach((key) => {
   const name = path.basename(key, '.png')
   imgModules[name] = files(key).default || files(key)
 })
+import { apprStatusCN, FormKeysCN } from '@/const/approve'
+import { todoTypeCN } from '@/const/todo'
 export default {
   data() {
     return {
+      isAllFree: false, //所有的任务线都是空的
+      skeletonLoading: true,
+      symbolKey: 'xlink:href',
+      approveParams: {
+        pageNo: 1,
+        pageSize: 3,
+        userId: this.$store.state.user.userInfo.user_id
+      },
       imgModules: imgModules,
       today: moment().format('YYYY-MM-DD'),
       userInfo: {},
       todoList: [],
       scheduleList: [],
       myApproveList: [],
+      approveTotalNum: 0,
       taskList: [],
-      approveStatusWork: {
-        Approve: '审批中',
-        Pass: '已通过',
-        Reject: '已拒绝',
-        Cancel: '已撤回'
-      },
       EmerType: {
         Super: '特级',
         urgent: '急',
@@ -336,83 +367,168 @@ export default {
     }
   },
   created() {
-    getUserInfo({ userId: this.$store.state.user.userInfo.user_id }).then((res) => {
-      this.userInfo = res
-      this.$store.commit('SET_USER_DETAIL', res)
-    })
     this.$store.dispatch('CommonDict', 'EmerType').then((res) => {
       res.forEach((item) => {
         this.EmerType[item.dictKey] = item.dictValue
       })
     })
-    this.getTodoList()
-    this.getScheduleList()
-    this.getMyApproveList()
-    this.getMyTask()
+    this.initData()
   },
   methods: {
-    toTudo() {
-      this.$router.push('/work/todo')
+    /**
+     * 初始化数据
+     */
+    initData() {
+      Promise.all([
+        this.getTodoList(),
+        this.getMyTask(),
+        this.getSchedule(),
+        this.getUser(),
+        this.getApproveList()
+      ]).then((res) => {
+        this.todoList = res[0].data
+        this.taskList = res[1].data
+        this.scheduleList = res[2]
+        this.userInfo = res[3]
+        this.myApproveList = res[4].data
+        this.approveTotalNum = res[4].totalNum
+        this.skeletonLoading = false
+        this.jugeFreeLine()
+      })
     },
-    getTodoList() {
+    /**
+     * 判断当前是否是空闲状态
+     */
+    jugeFreeLine() {
+      if (
+        this.todoList.length === 0 &&
+        this.scheduleList.length === 0 &&
+        this.myApproveList.length === 0 &&
+        this.taskList.length === 0
+      ) {
+        this.isAllFree = true
+      }
+    },
+    /**
+     * 获取用户信息
+     */
+    getUser() {
+      return getUserInfo({ userId: this.$store.state.user.userInfo.user_id }).then((res) => {
+        this.$store.commit('SET_USER_DETAIL', res)
+        return res
+      })
+    },
+    /**
+     * 获取我的任务
+     */
+    getMyTask() {
       const params = {
         pageNo: 1,
         pageSize: 5,
+        userId: this.$store.state.user.userInfo.user_id,
+        status: 'UnFinished'
+      }
+      return fetchTaskList(params).then((res) => {
+        return res
+      })
+    },
+    /**
+     * 获取待办事项
+     */
+    getTodoList() {
+      const params = {
+        pageNo: 1,
+        pageSize: 3,
         status: 'UnFinished',
         userId: this.$store.state.user.userInfo.user_id
       }
-      getTodoList(params).then((res) => {
-        this.todoList = res.data
+      return getTodoList(params).then((res) => {
+        return res
       })
     },
-    getScheduleList() {
+    /**
+     * 获取今日安排
+     */
+    getSchedule() {
       const params = {
         userId: this.$store.state.user.userInfo.user_id,
         beginRemindDate: moment().format('YYYY-MM-DD'),
         endRemindDate: moment().format('YYYY-MM-DD')
       }
-      getScheduleList(params).then((res) => {
-        this.scheduleList = res
+      return getScheduleList(params).then((res) => {
+        return res
       })
     },
-    getMyApproveList() {
-      const params = {
-        pageNo: 1,
-        pageSize: 10,
-        userId: this.$store.state.user.userInfo.user_id
-      }
-      getMyApproveList(params).then((res) => {
-        this.myApproveList = res.data
+    /**
+     * 获取我的审批列表
+     */
+    getApproveList() {
+      return getMyApproveList(this.approveParams).then((res) => {
+        return res
       })
     },
-    getMyTask() {
-      const params = {
-        pageNo: 1,
-        pageSize: 10,
-        userId: this.$store.state.user.userInfo.user_id,
-        status: 'UnFinished'
-      }
-      fetchTaskList(params).then((res) => {
-        this.taskList = res.data
-        // window.console.log('this.taskList==', this.taskList)
-      })
+    /**
+     * 获取代办信息的icon
+     */
+    getTodoIcon(data) {
+      return `#${todoTypeCN[data].icon}`
     },
+    /**
+     * 获取当前的formKey.来兑换当前的icon
+     */
+    getApprIcon(data) {
+      return `#${FormKeysCN[data].icon}`
+    },
+    /**
+     * 前往个人中心
+     */
+    toPersonalcenter() {
+      this.$router.push('/me/index')
+    },
+    toTudo() {
+      this.$router.push('/work/todo')
+    },
+
+    /**
+     * 跳转到审批详情
+     */
+    toApprovalDetail() {
+      // console.log('跳转到审批详情==', data)
+    },
+    /**
+     * 获取审批中文文字以及文字颜色
+     */
+    getApprovalText(status) {
+      return apprStatusCN[status]
+    },
+    /**
+     * 跳转到审批列表页面
+     */
+    getMoreApproveList() {
+      this.$router.push({ path: '/work/interviewDetail' })
+    },
+    /**
+     * 展示条件：今天是否在比较时间相同或者之后
+     */
     ifShowWarn(row) {
-      return (
-        row.status === 'UnFinished' &&
-        moment()
-          .startOf('day')
-          .diff(moment(row.endDate)) > 0
-      )
+      let isShowWarn = moment().isSameOrAfter(moment(row.endDate)) && row.status === 'UnFinished'
+      return isShowWarn
     },
+    /**
+     * 获取滞留的天数（今天天数 - 结束日期）
+     */
     getWarnText(row) {
-      return moment().diff(moment(row.beginDate), 'days')
+      return moment().diff(moment(row.endDate), 'days')
     },
+    /**
+     * 点击icon图标
+     */
     handleClickIcon(iconName) {
       const obj = {
         todo: '/work/todo',
         schedule: '/todaySchedule/calendar',
-        task: '/work/task'
+        task: '/work/task',
+        approve: '/work/task'
       }
       // 当点击任务icon时，重置nav标签
       if (iconName === 'task') {
@@ -432,37 +548,47 @@ export default {
   height: 100%;
   background-color: #f5f6f6;
   overflow: scroll;
+  .free-style {
+    background-color: #fff;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    flex-direction: column;
+    .bottom-button {
+      width: 160px;
+      height: 40px;
+      margin-bottom: 30px;
+    }
+  }
 }
 .basic-info {
   position: relative;
   height: 145px;
-  background-image: linear-gradient(180deg, #207efa 0%, #0ea6fe 100%);
-  padding: 0 34px 0px 25px;
+  background-repeat: no-repeat;
+  background-size: contain;
+  padding: 0 32px 0px 25px;
   display: flex;
   justify-content: bet;
-  .backgroud-image {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-  }
   .basic {
     flex: 1;
     margin-top: 34px;
     .company {
-      font-size: 14px;
+      height: 16px;
+      max-width: 200px;
+      font-size: 12px;
       color: #ffffff;
       margin-bottom: 4px;
     }
     .hello {
       font-size: 16px;
+      font-weight: 500;
       color: #ffffff;
     }
   }
   .avatarClass {
     border: 2px solid white;
     box-shadow: 0 4px 12px 0 rgba(#1f416c, 0.3);
-    margin-top: 22px;
+    margin-top: 20px;
     width: 60px;
     height: 60px;
     /deep/ .van-image__loading {
@@ -505,6 +631,11 @@ export default {
     }
   }
 }
+.skeleton-class {
+  background: #fff;
+  height: 100%;
+  padding-top: 20px;
+}
 .matters {
   margin-top: 8px;
   .van-cell {
@@ -525,14 +656,18 @@ export default {
         }
         .title-top {
           // margin-bottom: 6px;
+          display: flex;
+          align-items: center;
+          flex-wrap: wrap;
           .custom-title {
+            display: inline-block;
             font-size: 16px;
             margin-right: 11px;
             color: #000;
           }
           .emerType {
             display: inline-block;
-            padding: 0px 12px;
+            padding: 0px 10px;
             color: #ff6464;
             border: 1px solid #ff6464;
             border-radius: 3px;
@@ -570,6 +705,18 @@ export default {
       .matterIcon {
         width: 32px;
         height: 32px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 20px;
+      }
+      .svg-icon {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 4px;
       }
     }
   }
