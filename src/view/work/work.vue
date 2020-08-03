@@ -237,6 +237,20 @@
               </template>
             </van-cell>
           </template>
+          <section
+            v-if="isAllFree"
+            class="free-style"
+          >
+            <van-empty description="当前暂无安排" />
+            <van-button
+              plain
+              type="info"
+              class="bottom-button"
+              @click="handleClickIcon('schedule')"
+            >
+              添加提醒
+            </van-button>
+          </section>
         </div>
         <div
           v-if="taskList.length > 0"
@@ -328,6 +342,7 @@ import { todoTypeCN } from '@/const/todo'
 export default {
   data() {
     return {
+      isAllFree: false, //所有的任务线都是空的
       skeletonLoading: true,
       symbolKey: 'xlink:href',
       approveParams: {
@@ -372,14 +387,27 @@ export default {
         this.getApproveList()
       ]).then((res) => {
         this.todoList = res[0].data
-        // console.log('this.todoList==', this.todoList)
         this.taskList = res[1].data
         this.scheduleList = res[2]
         this.userInfo = res[3]
         this.myApproveList = res[4].data
         this.approveTotalNum = res[4].totalNum
         this.skeletonLoading = false
+        this.jugeFreeLine()
       })
+    },
+    /**
+     * 判断当前是否是空闲状态
+     */
+    jugeFreeLine() {
+      if (
+        this.todoList.length === 0 &&
+        this.scheduleList.length === 0 &&
+        this.myApproveList.length === 0 &&
+        this.taskList.length === 0
+      ) {
+        this.isAllFree = true
+      }
     },
     /**
      * 获取用户信息
@@ -520,6 +548,18 @@ export default {
   height: 100%;
   background-color: #f5f6f6;
   overflow: scroll;
+  .free-style {
+    background-color: #fff;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    flex-direction: column;
+    .bottom-button {
+      width: 160px;
+      height: 40px;
+      margin-bottom: 30px;
+    }
+  }
 }
 .basic-info {
   position: relative;
