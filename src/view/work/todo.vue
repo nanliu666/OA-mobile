@@ -109,6 +109,7 @@ import { getTodoList } from '@/api/work'
 import StickyHeader from '@/components/stickyHeader/stickyHeader'
 import moment from 'moment'
 import { todoJumpFun } from './common'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'Todo',
@@ -140,6 +141,9 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapGetters(['todoActive'])
+  },
   watch: {
     active(nVal, oVal) {
       this.scrollTop[oVal] = document.documentElement.scrollTop
@@ -147,10 +151,17 @@ export default {
     }
   },
   created() {
+    this.initSetting()
     this.getToduList()
     this.getDidList()
   },
   methods: {
+    /**
+     * 初始化设置
+     */
+    initSetting() {
+      this.active = this.todoActive
+    },
     ifShowWarn(row) {
       return (
         row.status === 'UnFinished' &&
@@ -211,6 +222,7 @@ export default {
     },
     handleClickCell(item) {
       todoJumpFun(item, this.$router)
+      this.$store.commit('SET_TODO_NAV', this.active)
     }
   }
 }

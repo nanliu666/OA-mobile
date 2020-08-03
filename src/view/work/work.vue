@@ -485,10 +485,6 @@ export default {
     toPersonalcenter() {
       this.$router.push('/me/index')
     },
-    toTudo() {
-      this.$router.push('/work/todo')
-    },
-
     /**
      * 跳转到审批详情
      */
@@ -533,6 +529,9 @@ export default {
       // 当点击任务icon时，重置nav标签
       if (iconName === 'task') {
         this.$store.commit('RESET_TASK_NAV')
+      }
+      if (iconName === 'todo') {
+        this.$store.commit('RESET_TODO_NAV')
       }
       this.$router.push(obj[iconName])
     },

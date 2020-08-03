@@ -6,8 +6,11 @@
         <div class="name-box">
           {{ listData.userName }} 的离职交接事项
         </div>
-        <div class="status">
-          {{ listData.status | filterStatus }}
+        <div
+          v-if="listData.data"
+          class="status"
+        >
+          {{ listData.data[0].status | filterStatus }}
         </div>
       </div>
       <div class="info-row">
@@ -19,12 +22,15 @@
         </div>
       </div>
     </div>
-    <div class="main-wrap">
+    <div
+      v-if="listData.data"
+      class="main-wrap"
+    >
       <div class="tips-row">
         员工 {{ listData.userName }},请尽快为他办理以下离职交接事项并确认：
       </div>
       <div
-        v-for="category in listData.data"
+        v-for="category in listData.data[0].categories"
         :key="category.categoryId"
         class="category-box"
       >
@@ -49,6 +55,7 @@
         催办
       </div>
       <div
+        v-if="listData.data && listData.data[0].status !== 'Confirmed'"
         class="confirm"
         @click="confirmleaveNote"
       >
@@ -92,9 +99,6 @@ export default {
   },
   methods: {
     loadingData() {
-      // let arrId = this.$route.query.biz_id.split(',')
-      // this.leaveUserId = arrId[0]
-      // this.groupId = arrId[1]
       this.leaveUserId = this.$route.query.leaveUserId
       this.groupId = this.$route.query.groupId
       this.userId = this.$store.state.user.userInfo.user_id
@@ -104,7 +108,7 @@ export default {
         groupId: this.groupId
       }
       getLeaveNote(params).then((res) => {
-        this.listData = res[0]
+        this.listData = res
       })
     },
     confirmleaveNote() {
@@ -126,12 +130,13 @@ export default {
         .catch(() => {})
     },
     async urgeleaveNote() {
-      let res = await postUrgeleaveNote({
+      // TODO:原先的催办是不是存在只能催办一次？
+      await postUrgeleaveNote({
         groupId: this.groupId,
         userId: this.userId,
         type: 'B2C'
       })
-      Toast.success(res)
+      Toast.success('催办成功')
     }
   }
 }
