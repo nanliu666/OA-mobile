@@ -88,6 +88,7 @@
               <div
                 :key="item.id"
                 class="msgBox"
+                @click="handleClick(item)"
               >
                 <div
                   :class="item.isRead === 1 ? 'read' : ''"
@@ -220,22 +221,6 @@ export default {
   margin: 0 0 3px 6px;
   background: #ff6464;
 }
-// /deep/ .van-tabs{
-//   height: 100%;
-//   .van-tabs__content{
-//     height: calc(100% - 44px);
-//     .van-tab__pane{
-//       height: 100%;
-//       .van-pull-refresh{
-//         height: 100%;
-//         .van-list{
-//           height: 100%;
-//           overflow: scroll;
-//         }
-//       }
-//     }
-//   }
-// }
 .msgBox {
   padding: 20px 16px;
   border-bottom: 1px solid #ddd;
