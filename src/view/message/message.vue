@@ -18,6 +18,11 @@
             class="dot"
           />
         </template>
+        <van-empty
+          v-if="workMessage.finished && workMsgList.length === 0"
+          image="https://img.yzcdn.cn/vant/custom-empty-image.png"
+          description="暂无工作消息"
+        />
         <van-pull-refresh
           v-model="workMessage.refreshing"
           @refresh="getWorkMsgList(1)"
@@ -25,7 +30,7 @@
           <van-list
             :value="workMessage.loading"
             :finished="workMessage.finished"
-            finished-text="没有更多了"
+            :finished-text="workMsgList.length === 0 ? '' : '没有更多了'"
             :offset="247"
             @load="getWorkMsgList"
           >
@@ -64,6 +69,11 @@
             class="dot"
           />
         </template>
+        <van-empty
+          v-if="systemMessage.finished && systemMsgList.length === 0"
+          image="https://img.yzcdn.cn/vant/custom-empty-image.png"
+          description="暂无系统消息"
+        />
         <van-pull-refresh
           v-model="systemMessage.refreshing"
           @refresh="getSystemMsgList(1)"
@@ -71,7 +81,7 @@
           <van-list
             :value="systemMessage.loading"
             :finished="systemMessage.finished"
-            finished-text="没有更多了"
+            :finished-text="workMsgList.length === 0 ? '' : '没有更多了'"
             @load="getSystemMsgList"
           >
             <template v-for="item in systemMsgList">
