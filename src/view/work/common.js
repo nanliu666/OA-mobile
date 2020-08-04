@@ -4,7 +4,6 @@
  * @param {*} router vue的路由实例
  */
 import { Toast } from 'vant'
-
 export const todoJumpFun = (item, router) => {
   switch (item.type) {
     case 'Recruitment':

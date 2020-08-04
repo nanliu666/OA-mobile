@@ -281,7 +281,10 @@
                   <div class="title">
                     <div class="title-top">
                       <span class="custom-title">{{ item.title }}</span>
-                      <span class="emerType">{{ EmerType[item.emerType] }}</span>
+                      <span
+                        class="emerType"
+                        v-text="getEmrTypeText(item.emerType)"
+                      />
                     </div>
                     <div class="title-bottom">
                       <span class="custom-title">{{ item.brief }}</span>
@@ -339,6 +342,7 @@ files.keys().forEach((key) => {
 })
 import { apprStatusCN, FormKeysCN } from '@/const/approve'
 import { todoTypeCN } from '@/const/todo'
+import { EmerTypeCN } from '@/const/myTask'
 export default {
   data() {
     return {
@@ -357,24 +361,19 @@ export default {
       scheduleList: [],
       myApproveList: [],
       approveTotalNum: 0,
-      taskList: [],
-      EmerType: {
-        Super: '特级',
-        urgent: '急',
-        common: '一般',
-        suit: '有合适的人选再进'
-      }
+      taskList: []
     }
   },
   created() {
-    this.$store.dispatch('CommonDict', 'EmerType').then((res) => {
-      res.forEach((item) => {
-        this.EmerType[item.dictKey] = item.dictValue
-      })
-    })
     this.initData()
   },
   methods: {
+    /**
+     * 兑换紧急程度文本
+     */
+    getEmrTypeText(emerTypeKey) {
+      return EmerTypeCN[emerTypeKey]
+    },
     /**
      * 初始化数据
      */
@@ -386,12 +385,14 @@ export default {
         this.getUser(),
         this.getApproveList()
       ]).then((res) => {
-        this.todoList = res[0].data
-        this.taskList = res[1].data
-        this.scheduleList = res[2]
-        this.userInfo = res[3]
-        this.myApproveList = res[4].data
-        this.approveTotalNum = res[4].totalNum
+        // 使用赋值解构，重写这部分
+        [
+          { data: this.todoList },
+          { data: this.taskList },
+          this.scheduleList,
+          this.userInfo,
+          { data: this.myApproveList, totalNum: this.approveTotalNum }
+        ] = res
         this.skeletonLoading = false
         this.jugeFreeLine()
       })
@@ -400,12 +401,16 @@ export default {
      * 判断当前是否是空闲状态
      */
     jugeFreeLine() {
-      if (
-        this.todoList.length === 0 &&
-        this.scheduleList.length === 0 &&
-        this.myApproveList.length === 0 &&
-        this.taskList.length === 0
-      ) {
+      // 判断内容为我的申请，待办事项，今日安排以及我的任务列表长度
+      const isAllFreeArray = [
+        this.todoList.length,
+        this.scheduleList.length,
+        this.myApproveList.length,
+        this.taskList.length
+      ]
+      // 当所有的长度都为0时
+      const isAllFreeFlag = isAllFreeArray.every((f) => f === 0)
+      if (isAllFreeFlag) {
         this.isAllFree = true
       }
     },
