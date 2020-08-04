@@ -170,16 +170,18 @@ export default {
     initSetting() {
       this.active = this.todoActive
     },
+    /**
+     * 展示条件：今天是否在比较时间相同或者之后
+     */
     ifShowWarn(row) {
-      return (
-        row.status === 'UnFinished' &&
-        moment()
-          .startOf('day')
-          .diff(moment(row.endDate)) > 0
-      )
+      let isShowWarn = moment().isSameOrAfter(moment(row.endDate)) && row.status === 'UnFinished'
+      return isShowWarn
     },
+    /**
+     * 获取滞留的天数（今天天数 - 结束日期）
+     */
     getWarnText(row) {
-      return moment().diff(moment(row.beginDate), 'days')
+      return moment().diff(moment(row.endDate), 'days')
     },
     /**
      * 获取待处理列表
