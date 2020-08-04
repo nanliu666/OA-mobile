@@ -196,7 +196,7 @@
 // import StickyHeader from '@/components/stickyHeader/stickyHeader'
 import infoShow from '@/components/infoShow/infoShow'
 import { getpersonInfo } from '@/api/todo'
-import { getRecruitmentDetail } from '@/api/metask'
+import { getRecruitmentDetail } from '@/api/work'
 export default {
   name: 'InterviewRegister',
   components: {

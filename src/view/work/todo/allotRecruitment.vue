@@ -99,7 +99,14 @@ export default {
   },
   data() {
     let validator = (val) => {
-      return val >= 1 && val <= this.totalNum
+      let tempAll = 0
+      this.workForm.map((item) => {
+        tempAll += item.taskNum
+      })
+      if (tempAll > this.totalNum) {
+        Toast('分配任务总数不能超过需求人数')
+      }
+      return val >= 1 && val <= this.totalNum && tempAll <= this.totalNum
     }
     return {
       totalNum: 0,
@@ -129,7 +136,7 @@ export default {
           num += item.taskNum
         }
       })
-      if (num > this.totalNum) num = this.totalNum
+      // if (num > this.totalNum) num = this.totalNum
       return num
     },
     willAllot() {
@@ -138,7 +145,7 @@ export default {
   },
   created() {
     this.getWorkList()
-    getRecruitmentDetail({ recruitmentId: this.$route.query.id }).then((res) => {
+    getRecruitmentDetail({ recruitmentId: this.$route.query.recruitmentId }).then((res) => {
       this.totalNum = Number(res.needNum)
     })
   },
@@ -172,29 +179,28 @@ export default {
       })
     },
     submit() {
-      this.$refs.workForm
-        .validate()
-        .then(() => {
-          if (this.getAllAllotNum() > this.all) {
-            Toast('分配任务总数不能超过需求人数')
-            return
-          }
-          const params = {
-            recruitmentId: this.$route.query.id,
-            assignUser: this.$store.state.user.userInfo.user_id,
-            users: [...this.workForm]
-          }
-          this.loading = true
-          postRecruitmentTask(params).then(() => {
+      this.$refs.workForm.validate().then(() => {
+        if (this.getAllAllotNum() > this.all) {
+          Toast('分配任务总数不能超过需求人数')
+          return
+        }
+        const params = {
+          recruitmentId: this.$route.query.recruitmentId,
+          assignUser: this.$store.state.user.userInfo.user_id,
+          users: [...this.workForm]
+        }
+        this.loading = true
+        postRecruitmentTask(params).then(
+          () => {
             this.loading = false
             Toast('分配成功')
             this.$router.back()
-          })
-        })
-        .catch((error) => {
-          Toast(error[0].message)
-          this.$refs.workForm.scrollToField(error[0].name, { alignToTop: true })
-        })
+          },
+          () => {
+            this.loading = false
+          }
+        )
+      })
     },
     getAllAllotNum() {
       let num = 0
