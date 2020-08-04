@@ -265,6 +265,7 @@
               style="align-items: flex-start"
               :class="index === 2 ? 'noBorderBottom' : ''"
               is-link
+              @click="toTaskDetail(item)"
             >
               <!-- 使用 title 插槽来自定义标题 -->
               <template #title>
@@ -542,6 +543,15 @@ export default {
     },
     handleClickCell(item) {
       todoJumpFun(item, this.$router)
+    },
+    // 点击跳转到任务详情
+    toTaskDetail({ bizId }) {
+      return this.$router.push({
+        path: '/work/taskDetail',
+        query: {
+          bizId
+        }
+      })
     }
   }
 }
