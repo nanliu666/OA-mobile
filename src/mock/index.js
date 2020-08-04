@@ -3,7 +3,7 @@ import message from './message.js'
 import metask from './metask'
 import todo from './todo'
 import work from './work'
-const options = { mock: false }
+const options = { mock: true }
 user(options)
 message(options)
 metask(options)

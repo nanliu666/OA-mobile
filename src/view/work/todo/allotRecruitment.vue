@@ -5,7 +5,7 @@
         <div class="numBox">
           <div class="numItem">
             需求人数：
-            <span class="all">{{ all }}</span>
+            <span class="all">{{ totalNum }}</span>
           </div>
           <div class="numItem">
             已分配：
@@ -99,11 +99,12 @@ export default {
   },
   data() {
     let validator = (val) => {
-      return val >= 1 && val <= this.all
+      return val >= 1 && val <= this.totalNum
     }
     return {
-      all: 25,
+      totalNum: 0,
       workForm: [{ userId: '', taskNum: '' }],
+      loading: false,
       userColumns: [],
       userParams: {
         pageNo: 1,
@@ -128,17 +129,17 @@ export default {
           num += item.taskNum
         }
       })
-      if (num > this.all) num = this.all
+      if (num > this.totalNum) num = this.totalNum
       return num
     },
     willAllot() {
-      return this.all - this.alloted
+      return this.totalNum - this.alloted
     }
   },
   created() {
     this.getWorkList()
     getRecruitmentDetail({ recruitmentId: this.$route.query.id }).then((res) => {
-      this.all = res.needNum
+      this.totalNum = Number(res.needNum)
     })
   },
   methods: {
@@ -215,8 +216,10 @@ export default {
 }
 .numBox {
   display: flex;
+  justify-content: space-between;
+  padding: 0 20px;
+  background-color: #fff;
   .numItem {
-    flex: 1;
     text-align: center;
     height: 46px;
     background-color: #fff;

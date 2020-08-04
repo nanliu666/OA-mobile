@@ -4,7 +4,7 @@
     <div class="task-box">
       <div class="jobName-row">
         <div class="jobName-box">
-          <span>{{ recruitmentDetail.jobName }}</span>
+          <span class="jobName-title">招聘需求：{{ recruitmentDetail.jobName }}</span>
           <span>{{ recruitmentDetail.emerType | CommonDictType(EmerType) }}</span>
         </div>
         <div class="isFinished">
@@ -270,6 +270,11 @@ export default {
         font-size: 16px;
         color: #000000;
         line-height: 24px;
+        .jobName-title {
+          font-family: PingFangSC-Medium, PingFang SC;
+          font-weight: 550;
+          color: rgba(30, 30, 30, 1);
+        }
         :first-child {
           margin-right: 10px;
         }
@@ -391,6 +396,7 @@ export default {
   right: 0;
   height: 40px;
   padding: 16px;
+  box-shadow: 0px -2px 7px 0px rgba(28, 34, 87, 0.2);
   background-color: #fff;
 }
 </style>

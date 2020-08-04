@@ -294,6 +294,7 @@ export default {
   right: 0;
   height: 40px;
   padding: 16px;
+  box-shadow: 0px -2px 7px 0px rgba(28, 34, 87, 0.2);
   background-color: #fff;
 }
 </style>
