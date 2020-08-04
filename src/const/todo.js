@@ -1,3 +1,6 @@
+/**
+ * 待办事项类型
+ */
 export const todoTypeCN = {
   Approve: {
     text: '审批',

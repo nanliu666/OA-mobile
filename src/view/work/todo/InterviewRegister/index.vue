@@ -1,20 +1,8 @@
 <template>
   <div class="page">
-    <!-- <stickyHeader :title="`${infoData.name}(${jobName})的面试登记表`">
-			<template #footer>
-				<van-tabs v-model="active">
-					<van-tab
-						v-for="(item, index) in tabList"
-						:key="index"
-						:title="item.title"
-						:name="item.name"
-					/>
-				</van-tabs>
-			</template>
-		</stickyHeader> -->
     <div class="sticky-box">
       <van-nav-bar
-        :title="`${infoData.name}(${jobName})的面试登记表`"
+        :title="`${infoData.name}${jobName ? `(${jobName})` : ''}的面试登记表`"
         left-arrow
         @click-left="goBack"
       />
@@ -314,6 +302,7 @@ export default {
       this.recruitmentId = this.$route.query.bizId
       getpersonInfo({ personId: this.personId }).then((res) => {
         this.infoData = res
+        // console.log('this.infoData==', this.infoData)
         // 基本信息
         this.infoColumns.forEach((item) => {
           item.value = res[item.prop]
@@ -503,5 +492,6 @@ export default {
   height: 40px;
   padding: 16px;
   background-color: #fff;
+  box-shadow: 0px -2px 7px 0px rgba(28, 34, 87, 0.2);
 }
 </style>

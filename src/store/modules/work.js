@@ -15,7 +15,7 @@ const work = {
       state.todoActive = active
     },
     RESET_TODO_NAV: (state) => {
-      state.taskActive = 0
+      state.todoActive = 0
     }
   }
 }

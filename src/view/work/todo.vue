@@ -15,13 +15,13 @@
     <van-pull-refresh
       v-if="active === 0"
       v-model="toduStatus.refreshing"
-      @refresh="getToduList(1)"
+      @refresh="getTodoListFun(1)"
     >
       <van-list
         :value="toduStatus.loading"
         :finished="toduStatus.finished"
         finished-text="没有更多了"
-        @load="getToduList"
+        @load="getTodoListFun"
       >
         <template v-for="item in workMsgList">
           <van-cell
@@ -37,7 +37,7 @@
                     class="icon matterIcon"
                     aria-hidden="true"
                   >
-                    <use xlink:href="#icon-approval-recruit-bicolor" />
+                    <use :[symbolKey]="getTodoIcon(item.type)" />
                   </svg>
                 </div>
                 <div class="title">
@@ -84,7 +84,7 @@
                     class="icon matterIcon"
                     aria-hidden="true"
                   >
-                    <use xlink:href="#icon-approval-recruit-bicolor" />
+                    <use :[symbolKey]="getTodoIcon(item.type)" />
                   </svg>
                 </div>
 
@@ -110,6 +110,7 @@ import StickyHeader from '@/components/stickyHeader/stickyHeader'
 import moment from 'moment'
 import { todoJumpFun } from './common'
 import { mapGetters } from 'vuex'
+import { todoTypeCN } from '@/const/todo'
 
 export default {
   name: 'Todo',
@@ -118,6 +119,7 @@ export default {
   },
   data() {
     return {
+      symbolKey: 'xlink:href',
       toduStatus: {
         loading: false,
         finished: false,
@@ -152,10 +154,16 @@ export default {
   },
   created() {
     this.initSetting()
-    this.getToduList()
+    this.getTodoListFun()
     this.getDidList()
   },
   methods: {
+    /**
+     * 获取代办信息的icon
+     */
+    getTodoIcon(data) {
+      return `#${todoTypeCN[data].icon}`
+    },
     /**
      * 初始化设置
      */
@@ -173,7 +181,10 @@ export default {
     getWarnText(row) {
       return moment().diff(moment(row.beginDate), 'days')
     },
-    getToduList(pageNo) {
+    /**
+     * 获取待处理列表
+     */
+    getTodoListFun(pageNo) {
       if (this.toduStatus.loading) return
       if (pageNo) this.toduStatus.pageNo = pageNo
       const params = {
@@ -189,6 +200,7 @@ export default {
           if (this.toduStatus.refreshing) this.workMsgList = []
           this.workMsgList.push(...res.data)
           this.toduStatus.pageNo += 1
+          // console.log('this.workMsgList==', this.workMsgList)
           if (res.data.length < this.toduStatus.pageSize) this.toduStatus.finished = true
         } else {
           this.toduStatus.finished = true

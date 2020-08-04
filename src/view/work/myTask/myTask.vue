@@ -46,11 +46,11 @@
             </div>
             <!-- 主要内容 -->
             <div class="main-content">
-              <div class="title-row">
-                {{ item.title }} <van-icon
-                  name="arrow"
-                  @click="goToDetail(item)"
-                />
+              <div
+                class="title-row"
+                @click="goToDetail(item)"
+              >
+                {{ item.title }} <van-icon name="arrow" />
               </div>
               <div class="brief-row">
                 {{ item.brief }}
@@ -104,18 +104,18 @@
             </div>
             <!-- 主要内容 -->
             <div class="main-content">
-              <div class="title-row">
-                {{ item.title }} <van-icon
-                  name="arrow"
-                  @click="goToDetail(item)"
-                />
+              <div
+                class="title-row"
+                @click="goToDetail(item)"
+              >
+                {{ item.title }} <van-icon name="arrow" />
               </div>
               <div class="brief-row">
                 {{ item.brief }}
               </div>
               <div class="complete-row">
                 <div class="num">
-                  100%
+                  {{ parseInt((item.completeNum / item.totalNum) * 100) }}%
                 </div>
                 <div class="progress-box">
                   <van-progress
