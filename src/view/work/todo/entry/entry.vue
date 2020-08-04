@@ -57,7 +57,7 @@
         </infoShow>
       </div>
     </div>
-    <div class="btn">
+    <div class="info-botton-btn">
       <van-button
         block
         type="info"
@@ -224,15 +224,5 @@ export default {
       font-weight: bold;
     }
   }
-}
-.btn {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 40px;
-  padding: 16px;
-  box-shadow: 0px -2px 7px 0px rgba(28, 34, 87, 0.2);
-  background-color: #fff;
 }
 </style>
