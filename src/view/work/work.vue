@@ -187,7 +187,7 @@
                       <span class="custom-title">{{ item.title }}</span>
                       <span
                         v-if="ifShowWarn(item)"
-                        class="emerType"
+                        class="emerType-style"
                       >
                         停滞{{ getWarnText(item) }}天
                       </span>
@@ -257,7 +257,6 @@
           class="matters"
         >
           <van-cell title="我的任务" />
-
           <template v-for="(item, index) in taskList">
             <van-cell
               v-if="index < 3"
@@ -283,8 +282,12 @@
                     <div class="title-top">
                       <span class="custom-title">{{ item.title }}</span>
                       <span
-                        class="emerType"
-                        v-text="getEmrTypeText(item.emerType)"
+                        class="emerType-style"
+                        :style="{
+                          color: getEmrTypeText(item.emerType).color,
+                          borderColor: getEmrTypeText(item.emerType).color
+                        }"
+                        v-text="getEmrTypeText(item.emerType).text"
                       />
                     </div>
                     <div class="title-bottom">
@@ -341,6 +344,7 @@ files.keys().forEach((key) => {
   const name = path.basename(key, '.png')
   imgModules[name] = files(key).default || files(key)
 })
+import { Toast } from 'vant'
 import { apprStatusCN, FormKeysCN } from '@/const/approve'
 import { todoTypeCN } from '@/const/todo'
 import { EmerTypeCN } from '@/const/myTask'
@@ -495,6 +499,7 @@ export default {
      * 跳转到审批详情
      */
     toApprovalDetail() {
+      Toast('开发中...')
       // console.log('跳转到审批详情==', data)
     },
     /**
@@ -507,7 +512,8 @@ export default {
      * 跳转到审批列表页面
      */
     getMoreApproveList() {
-      this.$router.push({ path: '/work/interviewDetail' })
+      Toast('开发中...')
+      // this.$router.push({ path: '/work/interviewDetail' })
     },
     /**
      * 展示条件：今天是否在比较时间相同或者之后
@@ -679,7 +685,7 @@ export default {
             margin-right: 11px;
             color: #000;
           }
-          .emerType {
+          .emerType-style {
             display: inline-block;
             padding: 0px 10px;
             color: #ff6464;

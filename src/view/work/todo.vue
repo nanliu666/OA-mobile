@@ -42,12 +42,13 @@
                 </div>
                 <div class="title">
                   <div class="title-top">
-                    <span class="custom-title">{{ item.title }}</span><van-tag
+                    <span class="custom-title">{{ item.title }}</span>
+                    <span
                       v-if="ifShowWarn(item)"
-                      type="danger"
+                      class="emerType-style"
                     >
                       停滞{{ getWarnText(item) }}天
-                    </van-tag>
+                    </span>
                   </div>
                   <div class="title-bottom">
                     <span class="custom-title">{{ item.beginDate }}</span>
@@ -253,6 +254,14 @@ export default {
 }
 /deep/.van-tab--active {
   color: #207efa;
+}
+.emerType-style {
+  display: inline-block;
+  padding: 0px 10px;
+  color: #ff6464;
+  border: 1px solid #ff6464;
+  border-radius: 3px;
+  font-size: 12px;
 }
 .person-cell {
   display: flex;
