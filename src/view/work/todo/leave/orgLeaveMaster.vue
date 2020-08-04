@@ -7,10 +7,10 @@
           {{ listData.userName }} 的离职交接事项
         </div>
         <div
-          v-if="listData.data"
+          v-if="hasRenderObj"
           class="status"
         >
-          {{ listData.data[0].status | filterStatus }}
+          {{ renderObj.status | filterStatus }}
         </div>
       </div>
       <div class="info-row">
@@ -23,14 +23,14 @@
       </div>
     </div>
     <div
-      v-if="listData.data"
+      v-if="hasRenderObj"
       class="main-wrap"
     >
       <div class="tips-row">
         员工 {{ listData.userName }},请尽快为他办理以下离职交接事项并确认：
       </div>
       <div
-        v-for="category in listData.data[0].categories"
+        v-for="category in renderObj.categories"
         :key="category.categoryId"
         class="category-box"
       >
@@ -46,9 +46,8 @@
         </div>
       </div>
     </div>
-
     <div
-      v-if="listData.data && listData.data[0].status !== 'Confirmed'"
+      v-if="hasRenderObj && renderObj.status !== 'Confirmed'"
       class="btn-box"
     >
       <div
@@ -72,6 +71,7 @@ import { Toast } from 'vant'
 import { getLeaveNote, postConfirmleaveNote, postUrgeleaveNote } from '@/api/todo'
 import { Dialog } from 'vant'
 import StickyHeader from '@/components/stickyHeader/stickyHeader'
+import { validatenull } from '@/util/validate'
 export default {
   name: 'OrgLeave',
   components: {
@@ -89,10 +89,11 @@ export default {
   },
   data() {
     return {
+      hasRenderObj: true,
       leaveUserId: '',
       groupId: '',
-      listData: {},
-      userId: ''
+      renderObj: {},
+      listData: {}
     }
   },
 
@@ -103,14 +104,21 @@ export default {
     loadingData() {
       this.leaveUserId = this.$route.query.leaveUserId
       this.groupId = this.$route.query.groupId
-      this.userId = this.$store.state.user.userInfo.user_id
       let params = {
-        userId: this.userId,
+        userId: this.$store.state.user.userInfo.user_id,
         leaveUserId: this.leaveUserId,
         groupId: this.groupId
       }
       getLeaveNote(params).then((res) => {
         this.listData = res
+        if (res.data.length !== 0) {
+          this.renderObj = res.data[0]
+        }
+        // 空值处理
+        if (validatenull(this.renderObj)) {
+          this.hasRenderObj = false
+        }
+        // console.log('this.listData==', this.listData)
       })
     },
     confirmleaveNote() {
