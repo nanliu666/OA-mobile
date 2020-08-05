@@ -11,11 +11,14 @@
         <router-view />
       </keep-alive>
     </div>
-    <van-tabbar v-model="curentPage">
+    <van-tabbar
+      v-model="currentPage"
+      @change="onChange"
+    >
       <van-tabbar-item
         v-for="(item, index) in tabbarList"
         :key="index"
-        :class="{ 'van-tabbar-item--active': curentPage === item.code }"
+        :class="{ 'van-tabbar-item--active': currentPage === item.code }"
         :name="item.code"
       >
         <svg
@@ -24,11 +27,11 @@
           aria-hidden="true"
         >
           <use
-            v-show="curentPage !== item.code"
+            v-show="currentPage !== item.code"
             :[symbolKey]="'#' + item.icon"
           />
           <use
-            v-show="curentPage === item.code"
+            v-show="currentPage === item.code"
             :[symbolKey]="'#' + item.activeIcon"
           />
         </svg>
@@ -41,59 +44,30 @@
   <router-view v-else />
 </template>
 <script>
+import { TabbarList } from '@/const/myTask'
 export default {
   name: 'Home',
   data() {
     return {
       symbolKey: 'xlink:href',
-      curentPage: 'work',
-      tabbarList: [
-        {
-          to: '/work',
-          name: '工作',
-          code: 'work',
-          icon: 'icon-mobile-homepage-work',
-          activeIcon: 'icon-mobile-homepage-workblue'
-        },
-        {
-          to: '/addressBook',
-          code: 'addressBook',
-          name: '通讯录',
-          icon: 'icon-mobile-homepage-directories',
-          activeIcon: 'icon-mobile-homepage-directoriesblue'
-        },
-        {
-          to: '/message',
-          code: 'message',
-          name: '消息',
-          icon: 'icon-mobile-homepage-message',
-          activeIcon: 'icon-mobile-homepage-messageblue'
-        },
-        {
-          to: '/me',
-          code: 'me',
-          name: '我的',
-          icon: 'icon-mobile-homepage-personal',
-          activeIcon: 'icon-mobile-homepage-personalblue'
-        }
-      ]
+      currentPage: 'work',
+      tabbarList: TabbarList
     }
   },
   created() {
-    switch (this.$route.path) {
-      case '/work/index':
-        this.curentPage = 'work'
-        break
-      case '/addressBook/index':
-        this.curentPage = 'addressBook'
-        break
-      case '/message/index':
-        this.curentPage = 'message'
-        break
-      case '/me/index':
-        this.curentPage = 'me'
-        break
-    }
+    this.getCurrentPage()
+  },
+  methods: {
+    getCurrentPage() {
+      let pageMap = {
+        '/work/index': 'work',
+        '/addressBook/index': 'addressBook',
+        '/message/index': 'message',
+        '/me/index': 'me'
+      }
+      this.currentPage = pageMap[this.$route.path]
+    },
+    onChange() {}
   }
 }
 </script>
