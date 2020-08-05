@@ -6,7 +6,10 @@
         <div class="name-box">
           {{ WaitPersonData.name }}
         </div>
-        <div class="status">
+        <div
+          v-if="WaitPersonData.status"
+          class="status"
+        >
           {{ WaitPersonData.status ? (WaitPersonData.status == 7 ? '待入职' : '') : '' }}
         </div>
       </div>
@@ -44,11 +47,19 @@
           </template>
           <!-- 工作地址 -->
           <template #workAddress>
-            {{ `${employmentData.workProviceName}${employmentData.workCityName}` }}
+            {{
+              employmentData.workProviceName
+                ? `${employmentData.workProviceName}${employmentData.workCityName}`
+                : ''
+            }}
           </template>
           <!-- 工作城市 -->
           <template #workCity>
-            {{ `${employmentData.workProviceName}${employmentData.workCityName}` }}
+            {{
+              employmentData.workProviceName
+                ? `${employmentData.workProviceName}${employmentData.workCityName}`
+                : ''
+            }}
           </template>
           <!-- 入职登记表 -->
           <template #register>
@@ -129,25 +140,26 @@ export default {
     this.getCommonDict()
   },
   methods: {
-    loading() {
+    async loading() {
       this.personId = this.$route.query.bizId
-      getWaitEmploy({ personId: this.personId })
-        .then((res) => {
-          this.WaitPersonData = res
-          // 基本信息
-          this.infoColumns.forEach((item) => {
-            item.value = res[item.prop]
-          })
-          this.entryData.forEach((item) => {
-            item.value = res[item.prop]
-          })
-          // 录用申请ID
-          let id = res.applyId
-          return getOfferApply({ id })
+      let applyId = ''
+      await getWaitEmploy({ personId: this.personId }).then((res) => {
+        this.WaitPersonData = res
+        // console.log('this.WaitPersonData==', this.WaitPersonData)
+        // 基本信息
+        this.infoColumns.forEach((item) => {
+          item.value = res[item.prop]
         })
-        .then((res) => {
-          this.employmentData = res
+        this.entryData.forEach((item) => {
+          item.value = res[item.prop]
         })
+        // 录用申请ID
+        applyId = res.applyId
+      })
+      if (!applyId) return
+      getOfferApply({ id: applyId }).then((res) => {
+        this.employmentData = res
+      })
     },
     // 获取相关字典组
     getCommonDict() {
@@ -173,14 +185,13 @@ export default {
 .page {
   padding-bottom: 72px;
   .header {
-    padding-left: 16px;
     background: #ffffff;
-    border-top: 1px solid #dddddd;
-    border-bottom: 1px solid #dddddd;
+    padding: 15px 0;
     margin-top: 1px;
     .name-row {
       display: flex;
-      padding: 8px 0;
+      padding: 0 16px;
+
       .name-box {
         font-size: 16px;
         color: #000000;
@@ -201,7 +212,8 @@ export default {
       }
     }
     .job-row {
-      padding: 8px 0;
+      border-bottom: 1px solid #f2f2f2;
+      padding: 0px 16px 10px;
       span {
         font-size: 14px;
         color: #757c85;
@@ -213,9 +225,11 @@ export default {
   .detail-box {
     width: 100%;
     box-sizing: border-box;
-    // padding-left: 16px;
-    padding-top: 20px;
-
+    padding: 10px 16px;
+    border-bottom: 1px solid #f2f2f2;
+    &:last-child {
+      border-bottom: 0;
+    }
     .title {
       margin-bottom: 8px;
       font-size: 17px;
