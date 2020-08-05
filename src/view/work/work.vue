@@ -188,9 +188,8 @@
                       <span
                         v-if="ifShowWarn(item)"
                         class="emerType-style"
-                      >
-                        停滞{{ getWarnText(item) }}天
-                      </span>
+                        v-text="getWarnText(item)"
+                      />
                     </div>
                     <div class="title-bottom">
                       <span class="custom-title">{{ item.beginDate }}</span>
@@ -519,14 +518,21 @@ export default {
      * 展示条件：今天是否在比较时间相同或者之后
      */
     ifShowWarn(row) {
-      let isShowWarn = moment().isSameOrAfter(moment(row.endDate)) && row.status === 'UnFinished'
+      let isShowWarn =
+        moment().isSameOrAfter(moment(row.endDate), 'day') && row.status === 'UnFinished'
       return isShowWarn
     },
     /**
      * 获取滞留的天数（今天天数 - 结束日期）
      */
     getWarnText(row) {
-      return moment().diff(moment(row.endDate), 'days')
+      let showText = ''
+      if (moment().isSame(moment(row.endDate), 'day')) {
+        showText = '今天'
+      } else {
+        showText = `停滞${moment().diff(moment(row.endDate), 'days')}天`
+      }
+      return showText
     },
     /**
      * 点击icon图标

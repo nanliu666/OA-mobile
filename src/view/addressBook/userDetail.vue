@@ -155,6 +155,7 @@ export default {
       }
     },
     copyEmail() {
+      if (!this.userInfo.email) return
       this.$copyText(this.userInfo.email)
         .then(() => {
           Toast('已复制')
@@ -164,9 +165,11 @@ export default {
         })
     },
     toOrgDetail() {
+      if (!this.userInfo.orgId) return
       this.$router.push('/addressBook/orgDetail/' + this.userInfo.orgId)
     },
     toLeaderDetail() {
+      if (!this.userInfo.leaderName) return
       this.$router.push('/addressBook/userDetail/' + this.userInfo.leaderId)
     }
   }
