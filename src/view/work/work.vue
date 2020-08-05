@@ -335,14 +335,7 @@ import { getTodoList, getScheduleList, getMyApproveList } from '@/api/work'
 import moment from 'moment'
 import { fetchTaskList } from '@/api/metask'
 import { todoJumpFun } from './common'
-// 批量引入图片
-const path = require('path')
-const files = require.context('@/assets/images/homeImages', false, /\.png$/) //这句话的意思是引入图片文件夹下的所有图片
-const imgModules = {}
-files.keys().forEach((key) => {
-  const name = path.basename(key, '.png')
-  imgModules[name] = files(key).default || files(key)
-})
+import { improtAllFiles } from '@/util/util'
 import { Toast } from 'vant'
 import { apprStatusCN, FormKeysCN } from '@/const/approve'
 import { todoTypeCN } from '@/const/todo'
@@ -358,7 +351,7 @@ export default {
         pageSize: 3,
         userId: this.$store.state.user.userInfo.user_id
       },
-      imgModules: imgModules,
+      imgModules: {},
       today: moment().format('YYYY-MM-DD'),
       userInfo: {},
       todoList: [],
@@ -369,6 +362,10 @@ export default {
     }
   },
   created() {
+    this.imgModules = improtAllFiles(
+      require.context('@/assets/images/homeImages', false, /\.png$/),
+      '.png'
+    )
     this.initData()
   },
   methods: {
@@ -542,7 +539,7 @@ export default {
         todo: '/work/todo',
         schedule: '/todaySchedule/calendar',
         task: '/work/task',
-        approve: '/work/task'
+        approve: '/approval/index'
       }
       // 当点击任务icon时，重置nav标签
       if (iconName === 'task') {
