@@ -36,7 +36,7 @@ export const todoJumpFun = (item, router) => {
     case 'Leave':
       router.push({ path: '/todo/leaveHandel', query: { biz_id: item.bizId } })
       break
-    case 'Approve':
+    case 'approve':
       Toast('开发中...')
       // router.push({ path: '/todo/recruitment', query: { bizId: item.bizId } })
       break
