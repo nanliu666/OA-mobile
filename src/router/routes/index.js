@@ -1,10 +1,6 @@
-import addressBook from './addressBook'
-import me from './me'
-import work from './work'
-import task from './task'
-import todo from './todo'
 import Layout from '@/view/Layout/Layout'
-
+import { improtAllFiles } from '@/util/util'
+const routesModules = improtAllFiles(require.context('./', false, /\.js$/), '.js')
 export default [
   {
     path: '/',
@@ -37,9 +33,10 @@ export default [
       }
     ]
   },
-  addressBook,
-  me,
-  work,
-  ...task,
-  ...todo
+  routesModules.addressBook,
+  routesModules.me,
+  routesModules.work,
+  routesModules.approval,
+  ...routesModules.task,
+  ...routesModules.todo
 ]
