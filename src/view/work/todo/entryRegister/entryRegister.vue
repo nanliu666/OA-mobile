@@ -1,17 +1,5 @@
 <template>
   <div class="page">
-    <!-- <stickyHeader :title="`${infoData.name}的入职登记表`">
-			<template #footer>
-				<van-tabs v-model="active">
-					<van-tab
-						v-for="(item, index) in tabList"
-						:key="index"
-						:title="item.title"
-						:name="item.name"
-					/>
-				</van-tabs>
-			</template>
-		</stickyHeader> -->
     <div class="sticky-box">
       <van-nav-bar
         title="入职登记表"
@@ -548,25 +536,21 @@ export default {
     width: 100%;
   }
 }
-// .page {
-// 	padding-bottom: 72px;
-// }
 .detail-box {
   width: 100%;
   box-sizing: border-box;
-  padding-left: 16px;
-  padding-top: 20px;
+  padding: 10px 16px 6px;
+  border-bottom: 1px solid #dddddd;
 
   .title {
-    margin-bottom: 8px;
+    margin-bottom: 10px;
     font-size: 17px;
     color: #000000;
     line-height: 25.5px;
     font-weight: bold;
   }
   .content {
-    border-bottom: 1px solid #dddddd;
-    padding: 10px 0;
+    // padding: 10px 0;
   }
 }
 // 材料附件

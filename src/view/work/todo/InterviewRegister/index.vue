@@ -469,19 +469,18 @@ export default {
 .detail-box {
   width: 100%;
   box-sizing: border-box;
-  padding-left: 16px;
-  padding-top: 20px;
+  padding: 10px 16px 6px;
+  border-bottom: 1px solid #dddddd;
 
   .title {
-    margin-bottom: 8px;
+    margin-bottom: 10px;
     font-size: 17px;
     color: #000000;
     line-height: 25.5px;
     font-weight: bold;
   }
   .content {
-    border-bottom: 1px solid #dddddd;
-    padding: 10px 0;
+    // padding: 10px 0;
   }
 }
 </style>
