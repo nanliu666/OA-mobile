@@ -54,7 +54,7 @@ instance.interceptors.request.use(
       config.headers['Captcha-Code'] = config.data.code
     }
     // 展示全局loading
-    if (config.showLoading && !loadingToast) {
+    if (!loadingToast) {
       loadingToast = Toast.loading({
         message: '加载中...',
         forbidClick: true,
