@@ -1,8 +1,5 @@
 <template>
   <div
-    v-if="
-      ['/work/index', '/addressBook/index', '/message/index', '/me/index'].indexOf($route.path) > -1
-    "
     data-title="百利宏移动办公"
     class="home"
   >
@@ -33,7 +30,7 @@
             :[symbolKey]="'#' + item.activeIcon"
           />
         </svg>
-        <router-link :to="item.to">
+        <router-link :to="item.path">
           {{ item.name }}
         </router-link>
       </van-tabbar-item>
