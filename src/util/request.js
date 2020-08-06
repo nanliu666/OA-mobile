@@ -14,7 +14,37 @@ import { client } from '@/config/const'
 import { Base64 } from 'js-base64'
 
 let loadingToast = null
-
+let loadingCount = 0
+/**
+ * 每请求一次loading，增加一次次数
+ */
+function addLoading() {
+  loadingCount++
+  if (!loadingToast) {
+    loadingToast = Toast.loading({
+      message: '加载中...',
+      forbidClick: true,
+      loadingType: 'spinner',
+      duration: 0
+    })
+  }
+}
+/**
+ *  每请求完成一次loading，减少一次次数
+ */
+function reduceLoading() {
+  loadingCount--
+  if (loadingCount == 0) {
+    isCloseLoading()
+  }
+}
+/**
+ * 关闭loading
+ */
+function isCloseLoading() {
+  loadingToast && loadingToast.clear()
+  loadingToast = null
+}
 const instance = axios.create({
   timeout: 100000, //默认超时时间
   withCredentials: true, //跨域请求，允许保存cookie
@@ -53,20 +83,11 @@ instance.interceptors.request.use(
       config.headers['Captcha-Key'] = config.data.key
       config.headers['Captcha-Code'] = config.data.code
     }
-    // 展示全局loading
-    if (!loadingToast) {
-      loadingToast = Toast.loading({
-        message: '加载中...',
-        forbidClick: true,
-        loadingType: 'spinner',
-        duration: 0
-      })
-    }
+    addLoading()
     return config
   },
   (error) => {
-    loadingToast && loadingToast.clear()
-    loadingToast = null
+    isCloseLoading()
     return Promise.reject(error)
   }
 )
@@ -83,8 +104,7 @@ instance.interceptors.response.use(
       message = '授权失败'
     }
     // 如果请求为非200否者默认统一处理
-    loadingToast && loadingToast.clear()
-    loadingToast = null
+    reduceLoading()
     if (status !== 200) {
       Toast({ message })
       return Promise.reject(new Error(message))
@@ -95,8 +115,7 @@ instance.interceptors.response.use(
     return res.data.response
   },
   (error) => {
-    loadingToast && loadingToast.clear()
-    loadingToast = null
+    isCloseLoading()
     return Promise.reject(new Error(error))
   }
 )
