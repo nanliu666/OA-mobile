@@ -22,9 +22,7 @@
             @click="handleClickOrg(item)"
           >
             <template #title>
-              <span class="custom-title">{{
-                item.orgName + (item.users.length > 0 ? `（${item.users.length + 1}）` : '')
-              }}</span>
+              <span class="custom-title">{{ item.orgName + item.workNum }}</span>
             </template>
           </van-cell>
         </template>
@@ -46,13 +44,6 @@
                 <div class="title">
                   <div class="title-top">
                     <span class="custom-title">{{ item.name }}</span>
-                    <!-- <van-tag
-                        v-if="items.userId === item.userId"
-                        type="primary"
-                        plain
-                      >
-                        负责人
-                    </van-tag>-->
                   </div>
                   <div class="title-bottom">
                     <span class="custom-title">{{ item.orgName + ' - ' + item.jobName }}</span>
@@ -76,8 +67,7 @@
   </div>
 </template>
 <script>
-import { validatenull } from '@/util/validate'
-import { Toast } from 'vant'
+import { getAddressOrg, getAddressuser } from '@/api/addressBook'
 export default {
   name: 'FindOrgUser',
   data() {
@@ -87,44 +77,46 @@ export default {
       userData: []
     }
   },
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      if (from.path === '/addressBook/index') {
+        vm.orgData = [] // 清空原有数据
+        vm.userData = [] // 清空原有数据
+      }
+    })
+  },
   methods: {
     handleCancel() {
       this.$router.go(-1)
     },
-    handleSearch(val) {
-      // window.console.log('this.search==', this.search)
-      if (validatenull(this.search)) {
-        Toast('搜索参数不能为空')
-        return
-      }
-      let data = this.findOrgUser(this.$store.state.orgUserTree.orgUserTree, val)
-      this.orgData = data.orgData
-      this.userData = data.userData
+    handleSearch() {
+      this.initData()
     },
-    findOrgUser(tree, val) {
-      let orgData = []
-      let userData = []
-      function deep(arr) {
-        arr.forEach((item) => {
-          item.orgName.indexOf(val) > -1 && orgData.push(item)
-          Array.isArray(item.users) &&
-            item.users.forEach((userItem) => {
-              if (userItem.name.indexOf(val) > -1) {
-                userItem.orgName = item.orgName
-                userData.push(userItem)
-              }
-            })
-          Array.isArray(item.children) && deep(item.children)
-        })
+    /**
+     * 获取数据
+     */
+    initData() {
+      let orgParmas = {
+        orgName: this.search,
+        parentOrgId: ''
       }
-      deep(tree)
-      return { orgData, userData }
+      let userParmas = {
+        name: this.search,
+        orgId: ''
+      }
+      getAddressOrg(orgParmas).then((res) => {
+        this.orgData = res
+      })
+      getAddressuser(userParmas).then((res) => {
+        this.userData = res
+      })
     },
     handleClickOrg(item) {
       this.$router.push('/addressBook/orgDetail/' + item.orgId)
     },
     toUserDetail(item) {
-      this.$router.push('/addressBook/userDetail/' + item.userId)
+      this.$store.commit('SET_USERDETAIL', item)
+      this.$router.push('/addressBook/userDetail/')
     }
   }
 }
