@@ -33,7 +33,7 @@ export default [
       }
     ]
   },
-  routesModules.addressBook,
+  ...routesModules.addressBook,
   routesModules.me,
   routesModules.work,
   routesModules.approval,

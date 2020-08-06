@@ -20,48 +20,44 @@
             @click="handleClickOrg(item)"
           >
             <template #title>
-              <span class="custom-title">{{
-                item.orgName + (item.users.length > 0 ? `（${item.users.length + 1}）` : '')
-              }}</span>
+              <span class="custom-title">{{ item.orgName + item.workNum }}</span>
             </template>
           </van-cell>
         </template>
       </div>
       <div class="user">
-        <template v-for="items in orgData">
-          <template v-for="item in items.users">
-            <van-cell
-              :key="item.userId"
-              @click="toUserDetail(item)"
-            >
-              <!-- 使用 title 插槽来自定义标题 -->
-              <template #title>
-                <div class="person-cell">
-                  <van-image
-                    round
-                    class="avatarClass"
-                    :src="item.avatarUrl"
-                  />
+        <template v-for="item in userData">
+          <van-cell
+            :key="item.userId"
+            @click="toUserDetail(item)"
+          >
+            <!-- 使用 title 插槽来自定义标题 -->
+            <template #title>
+              <div class="person-cell">
+                <van-image
+                  round
+                  class="avatarClass"
+                  :src="item.avatarUrl"
+                />
 
-                  <div class="title">
-                    <div class="title-top">
-                      <span class="custom-title">{{ item.name }}</span>
-                      <van-tag
-                        v-if="items.userId === item.userId"
-                        type="primary"
-                        plain
-                      >
-                        负责人
-                      </van-tag>
-                    </div>
-                    <div class="title-bottom">
-                      <span class="custom-title">{{ item.jobName }}</span>
-                    </div>
+                <div class="title">
+                  <div class="title-top">
+                    <span class="custom-title">{{ item.name }}</span>
+                    <van-tag
+                      v-if="item.leaderId === item.userId"
+                      type="primary"
+                      plain
+                    >
+                      负责人
+                    </van-tag>
+                  </div>
+                  <div class="title-bottom">
+                    <span class="custom-title">{{ item.jobName }}</span>
                   </div>
                 </div>
-              </template>
-            </van-cell>
-          </template>
+              </div>
+            </template>
+          </van-cell>
         </template>
       </div>
     </div>
@@ -69,32 +65,65 @@
 </template>
 
 <script>
-import { getOrgUserTree } from '@/api/addressBook'
+import { getAddressOrg, getAddressuser } from '@/api/addressBook'
+import { mapGetters } from 'vuex'
 export default {
   name: 'AddressBook',
   data() {
     return {
       search: '',
-      orgData: []
+      orgData: [],
+      userData: []
     }
   },
+  computed: {
+    ...mapGetters(['orgTree', 'adressTree'])
+  },
   created() {
-    getOrgUserTree().then((res) => {
-      this.$store.commit('SET_ORG_USER_TREE', res)
-      if (res[0]) {
-        this.orgData = res[0].children
-      }
-    })
+    this.initData()
   },
   methods: {
+    /**
+     * 初始化数据，拉取通讯录部门查询接口以及通讯录员工查询接口
+     */
+    initData() {
+      // 部门数据已存入vuex就不使用接口
+      if (this.orgTree.length !== 0) {
+        this.orgData = this.orgTree
+      } else {
+        getAddressOrg().then((res) => {
+          this.orgData = res
+          this.$store.commit('SET_ORG', res)
+        })
+      }
+      // 员工数据已存入vuex就不使用接口
+      if (this.adressTree.length !== 0) {
+        this.userData = this.adressTree
+      } else {
+        getAddressuser().then((res) => {
+          this.userData = res
+          this.$store.commit('SET_ADDRESS', res)
+        })
+      }
+    },
+    /**
+     * 进入搜索页面
+     */
     toSearch() {
       this.$router.push('/addressBook/findOrgUser')
     },
+    /**
+     * 去部门
+     */
     handleClickOrg(item) {
       this.$router.push('/addressBook/orgDetail/' + item.orgId)
     },
+    /**
+     * 去用户详情
+     */
     toUserDetail(item) {
-      this.$router.push('/addressBook/userDetail/' + item.userId)
+      this.$store.commit('SET_USERDETAIL', item)
+      this.$router.push('/addressBook/userDetail/')
     }
   }
 }
@@ -103,6 +132,9 @@ export default {
 <style lang="less" scoped>
 .page {
   background-color: #f5f6f6;
+  .contain {
+    padding-bottom: 50px;
+  }
 }
 .van-search {
   height: 44px;

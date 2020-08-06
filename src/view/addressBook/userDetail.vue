@@ -63,7 +63,7 @@
           </div>
         </template>
       </van-cell>
-      <van-cell is-link>
+      <van-cell>
         <!-- 使用 title 插槽来自定义标题 -->
         <template #title>
           <div class="cell-top">
@@ -100,8 +100,8 @@
   </div>
 </template>
 <script>
+import { mapGetters } from 'vuex'
 import StickyHeader from '@/components/stickyHeader/stickyHeader'
-import { getUserInfo } from '@/api/user'
 import { Toast, Dialog } from 'vant'
 export default {
   components: {
@@ -110,23 +110,28 @@ export default {
   data() {
     return {
       userInfo: {
-        name: 'SugarKing',
-        workNo: '0253',
-        phonenum: '18888888888',
-        email: 'maomao@bailihong.com.cn',
-        orgName: '交互设计一组',
-        jobName: '交互设计师',
-        leaderName: '王嘉尔'
+        name: '',
+        workNo: '',
+        phonenum: '',
+        email: '',
+        orgName: '',
+        jobName: '',
+        leaderName: ''
       },
       copyPhoneShow: false,
       actions: [{ name: '呼叫' }, { name: '复制' }]
     }
   },
-  created() {
-    getUserInfo({ userId: this.$route.params.userId }).then((res) => {
-      this.userInfo = res
-    })
+  computed: {
+    ...mapGetters(['adressDetail'])
   },
+  created() {
+    this.userInfo = this.adressDetail
+    // getUserInfo({ userId: this.$route.params.userId }).then((res) => {
+    //   this.userInfo = res
+    // })
+  },
+
   methods: {
     onCancel() {},
     showPhoneCopy() {
