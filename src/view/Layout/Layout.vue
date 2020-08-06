@@ -7,9 +7,7 @@
     class="home"
   >
     <div class="tab-contain">
-      <keep-alive>
-        <router-view />
-      </keep-alive>
+      <router-view />
     </div>
     <van-tabbar
       v-model="currentPage"
@@ -41,7 +39,6 @@
       </van-tabbar-item>
     </van-tabbar>
   </div>
-  <router-view v-else />
 </template>
 <script>
 import { TabbarList } from '@/const/myTask'
@@ -50,7 +47,7 @@ export default {
   data() {
     return {
       symbolKey: 'xlink:href',
-      currentPage: 'work',
+      currentPage: '',
       tabbarList: TabbarList
     }
   },
@@ -59,13 +56,7 @@ export default {
   },
   methods: {
     getCurrentPage() {
-      let pageMap = {
-        '/work/index': 'work',
-        '/addressBook/index': 'addressBook',
-        '/message/index': 'message',
-        '/me/index': 'me'
-      }
-      this.currentPage = pageMap[this.$route.path]
+      this.currentPage = TabbarList.filter((i) => i.path === this.$route.path)[0].code
     },
     onChange() {}
   }

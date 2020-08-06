@@ -34,9 +34,9 @@ export default [
     ]
   },
   ...routesModules.addressBook,
-  routesModules.me,
-  routesModules.work,
-  routesModules.approval,
+  ...routesModules.me,
+  ...routesModules.work,
+  ...routesModules.approval,
   ...routesModules.task,
   ...routesModules.todo
 ]

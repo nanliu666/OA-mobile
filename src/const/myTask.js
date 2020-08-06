@@ -22,6 +22,7 @@ export const EmerTypeCN = {
 export const TabbarList = [
   {
     to: '/work',
+    path: '/work/index',
     name: '工作',
     code: 'work',
     icon: 'icon-mobile-homepage-work',
@@ -29,6 +30,7 @@ export const TabbarList = [
   },
   {
     to: '/addressBook',
+    path: '/addressBook/index',
     code: 'addressBook',
     name: '通讯录',
     icon: 'icon-mobile-homepage-directories',
@@ -36,6 +38,7 @@ export const TabbarList = [
   },
   {
     to: '/message',
+    path: '/message/index',
     code: 'message',
     name: '消息',
     icon: 'icon-mobile-homepage-message',
@@ -44,6 +47,7 @@ export const TabbarList = [
   {
     to: '/me',
     code: 'me',
+    path: '/me/index',
     name: '我的',
     icon: 'icon-mobile-homepage-personal',
     activeIcon: 'icon-mobile-homepage-personalblue'
