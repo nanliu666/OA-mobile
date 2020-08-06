@@ -11,6 +11,9 @@ import longpress from '@/directive/longpress'
 // 日历组件
 import vueHashCalendar from 'vue-hash-calendar'
 import 'vue-hash-calendar/lib/vue-hash-calendar.css'
+// loadsh使用CND形式挂载在原型上
+const _ = require('lodash')
+Vue.prototype._ = _
 Vue.use(Vant)
 Vue.use(VueClipboard)
 

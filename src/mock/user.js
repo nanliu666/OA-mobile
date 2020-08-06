@@ -36,8 +36,8 @@ export default ({ mock }) => {
   const userData = Mock.mock({
     'list|6-12': [
       {
-        'userId|+1': [`${Mock.Random.id()}`, `${Mock.Random.id()}`],
-        'leaderId|+1': [`${Mock.Random.id()}`, `${Mock.Random.id()}`],
+        'userId|+1': [`${Mock.Random.id()}`, `${Mock.Random.id()}`, '1'],
+        'leaderId|+1': [`${Mock.Random.id()}`, `${Mock.Random.id()}`, '1'],
         'orgId|+1': [`${Mock.Random.id()}`, `${Mock.Random.id()}`],
         'jobId|+1': [`${Mock.Random.id()}`, `${Mock.Random.id()}`],
         'workNo|+1': [`${Mock.Random.id()}`, `${Mock.Random.id()}`],

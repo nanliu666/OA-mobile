@@ -1,6 +1,6 @@
 import { improtAllFiles } from '@/util/util'
 const mockModules = improtAllFiles(require.context('./', false, /\.js$/), '.js')
-const options = { mock: true }
+const options = { mock: false }
 mockModules.user(options)
 mockModules.message(options)
 mockModules.metask(options)
