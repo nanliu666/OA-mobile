@@ -21,7 +21,12 @@
       :loading="skeletonLoading"
       class="skeleton-class"
     >
-      <div class="user">
+      <div
+        class="user"
+        :class="{
+          'index-user': $route.path === '/addressBook/index'
+        }"
+      >
         <!-- 独立负责人 -->
         <van-cell
           v-if="adressOptions.orgHeadData && adressOptions.orgHeadData.name"
@@ -137,20 +142,13 @@ export default {
      */
     getEmty() {
       let flagArr = [this.adressOptions.orgData.length, this.adressOptions.pingyinSortData.length]
-      return this._.every(flagArr, Boolean)
+      return !this._.every(flagArr, Boolean)
     },
     /**
      * 去部门
      */
     handleClickOrg(item) {
       this.$emit('toOrg', item)
-      // this.$router.push({
-      //   path: `/addressBook/orgDetail/${item.orgId}`,
-      //   query: {
-      //     title: item.orgName
-      //   }
-      // })
-      // this.$store.commit('PUSH_ORGPATH_LIST', item)
     },
     /**
      * 去用户详情
@@ -179,7 +177,6 @@ export default {
   }
 }
 .user {
-  padding-bottom: 52px;
   .van-cell {
     border-bottom: 1px solid #ebedf0;
     height: 70px;
@@ -199,6 +196,9 @@ export default {
       }
     }
   }
+}
+.index-user {
+  padding-bottom: 52px;
 }
 .avatarClass {
   width: 50px;
