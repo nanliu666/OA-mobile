@@ -1,6 +1,7 @@
 const work = {
   state: {
-    taskActive: 'UnFinished'
+    taskActive: 'UnFinished',
+    todoActive: 0
   },
   actions: {},
   mutations: {
@@ -9,6 +10,12 @@ const work = {
     },
     RESET_TASK_NAV: (state) => {
       state.taskActive = 'UnFinished'
+    },
+    SET_TODO_NAV: (state, active) => {
+      state.todoActive = active
+    },
+    RESET_TODO_NAV: (state) => {
+      state.todoActive = 0
     }
   }
 }

@@ -1,18 +1,21 @@
 <template>
   <div class="page">
     <van-sticky>
-      <stickyHeader :title="orgData.orgName || ' '">
-        <template #footer>
+      <stickyHeader :title="$route.query.title">
+        <template
+          v-if="oraPathList.length !== 0"
+          #footer
+        >
           <div class="header-footer">
             <div
               ref="org-path"
               class="org-path"
             >
-              <template v-for="(item, index) in orgData.orgPath">
+              <template v-for="(item, index) in oraPathList">
                 <span :key="item.orgId">
                   <span @click="toDetail(item)">{{ item.orgName }}</span>
                   <i
-                    v-if="index !== orgData.orgPath.length -1"
+                    v-if="index !== oraPathList.length - 1"
                     class="iconfont icon-arrow-right-outlined"
                   />
                 </span>
@@ -29,258 +32,113 @@
         </template>
       </stickyHeader>
     </van-sticky>
-    <div class="contain">
-      <div class="org">
-        <template v-for="item in orgData.children">
-          <van-cell
-            :key="item.orgId"
-            is-link
-            @click="toDetail(item)"
-          >
-            <template #title>
-              <span
-                class="custom-title"
-              >{{ item.orgName + (item.users.length > 0 ? `（${item.users.length +1}）` : '' ) }}</span>
-            </template>
-          </van-cell>
-        </template>
-      </div>
-      <div class="user">
-        <template v-if="orgData.users && orgData.users.length> 28 && sortUserPinyin().length >= 2">
-          <van-cell @click="toUserDetail(orgHeadData)">
-            <!-- 使用 title 插槽来自定义标题 -->
-            <template #title>
-              <div class="person-cell">
-                <van-image
-                  round
-                  class="avatarClass"
-                  :src="orgHeadData.avatarUrl"
-                />
-                <div class="title">
-                  <div class="title-top">
-                    <span class="custom-title">{{ orgHeadData.name }}</span>
-                    <van-tag
-                      type="primary"
-                      plain
-                    >
-                      负责人
-                    </van-tag>
-                  </div>
-                  <div class="title-bottom">
-                    <span class="custom-title">{{ orgHeadData.jobName }}</span>
-                  </div>
-                </div>
-              </div>
-            </template>
-            <template v-slot:error>
-              加载失败
-            </template>
-          </van-cell>
-          <van-index-bar :index-list="pingyinArr">
-            <template v-for="item in pingyinSortData">
-              <van-index-anchor
-                :key="item.sortTag"
-                :index="item.sortTag"
-              >
-                {{ item.sortTag }}
-              </van-index-anchor>
-              <template v-for="it in item">
-                <van-cell
-                  :key="it.userId"
-                  @click="toUserDetail(item)"
-                >
-                  <!-- 使用 title 插槽来自定义标题 -->
-                  <template #title>
-                    <div class="person-cell">
-                      <van-image
-                        round
-                        class="avatarClass"
-                        :src="it.avatarUrl"
-                      />
-                      <div class="title">
-                        <div class="title-top">
-                          <span class="custom-title">{{ it.name }}</span>
-                        </div>
-                        <div class="title-bottom">
-                          <span class="custom-title">{{ it.jobName }}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </template>
-                  <template v-slot:error>
-                    加载失败
-                  </template>
-                </van-cell>
-              </template>
-            </template>
-          </van-index-bar>
-        </template>
-        <template
-          v-for="item in simpleSortUser"
-          v-else
-        >
-          <van-cell
-            :key="item.userId"
-            @click="toUserDetail(item)"
-          >
-            <!-- 使用 title 插槽来自定义标题 -->
-            <template #title>
-              <div class="person-cell">
-                <van-image
-                  round
-                  class="avatarClass"
-                  :src="item.avatarUrl"
-                />
-                <div class="title">
-                  <div class="title-top">
-                    <span class="custom-title">{{ item.name }}</span>
-                    <van-tag
-                      v-if="item.userId === orgData.userId"
-                      type="primary"
-                      plain
-                    >
-                      负责人
-                    </van-tag>
-                  </div>
-                  <div class="title-bottom">
-                    <span class="custom-title">{{ item.jobName }}</span>
-                  </div>
-                </div>
-              </div>
-            </template>
-            <template v-slot:error>
-              加载失败
-            </template>
-          </van-cell>
-        </template>
-      </div>
-      <van-empty
-        v-if=" (!orgData.children || orgData.children.length === 0) && simpleSortUser.length === 0"
-        class="custom-image"
-        image="https://img.yzcdn.cn/vant/custom-empty-image.png"
-        description="无下级部门或成员"
-      />
-    </div>
+    <addressList
+      ref="addressList"
+      :adress-options.sync="adressOptions"
+      @toOrg="handleClickOrg"
+    />
   </div>
 </template>
 <script>
 import StickyHeader from '@/components/stickyHeader/stickyHeader'
+import { getAddressOrg, getAddressuser } from '@/api/addressBook'
+import addressList from './adressList'
+import { commonSortPinyin, commonAdressOptionsType } from './commonSortPinyin'
+import { deepClone } from '@/util/util'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'OrgDetail',
   components: {
-    StickyHeader
+    StickyHeader,
+    addressList
   },
   data() {
     return {
-      search: '',
-      orgData: {},
-      orgHeadData: {},
-      pingyinSortData: [],
-      pingyinArr: [],
-      simpleSortUser:[]
+      adressOptions: deepClone(commonAdressOptionsType)
     }
+  },
+  computed: {
+    ...mapGetters(['oraPathList'])
   },
   watch: {
     '$route.params.orgId': {
-      handler(val) {
-        this.orgData = this.findOrg(this.$store.state.orgUserTree.orgUserTree, val)
-        this.sortUser()
-        this.$nextTick(() => {
-          if (this.$refs['org-path'])
-            this.$refs['org-path'].scrollLeft = this.$refs['org-path'].scrollWidth
-        })
+      handler() {
+        this.initData()
       }
     }
   },
   mounted() {
-    this.orgData = this.findOrg(this.$store.state.orgUserTree.orgUserTree, this.$route.params.orgId)
-    this.sortUser()
-    this.$nextTick(() => {
-      if (this.$refs['org-path'])
-        this.$refs['org-path'].scrollLeft = this.$refs['org-path'].scrollWidth
-    })
+    this.initData()
   },
   methods: {
-    getOrgHead() {
-      if (this.orgData.users && this.orgData.users.length > 0) {
-        for (const item of this.orgData.users) {
-          if (item.userId === this.orgData.userId) return item
-        }
-      }
+    /**
+     * 初始化数据，拉取通讯录部门查询接口以及通讯录员工查询接口
+     */
+    initData() {
+      let orgParmas = { parentOrgId: this.$route.params.orgId, orgName: '' }
+      let userParmas = { orgId: this.$route.params.orgId, orgName: '' }
+      getAddressOrg(orgParmas).then((res) => {
+        this.adressOptions.orgData = res
+      })
+      getAddressuser(userParmas).then((res) => {
+        this.sortUserPinyin(res)
+      })
     },
+    /**
+     * 前往搜索
+     */
     toSearch() {
       this.$router.push('/addressBook/findOrgUser')
     },
-    findOrg(tree, orgId) {
-      let data = {}
-      function deep(arr) {
-        for (const item of arr) {
-          if (item.orgId === orgId) {
-            data = item
-          }
-          Array.isArray(item.children) && deep(item.children)
-        }
-      }
-      deep(tree)
-      return data
+    /**
+     * 排序拼音
+     */
+    sortUserPinyin(res) {
+      let tempData = commonSortPinyin(res)
+      this.adressOptions = Object.assign(this.adressOptions, tempData)
+      this.$refs.addressList.skeletonLoading = false
     },
+    /**
+     * 替换路由
+     */
+    replaceRoute(item) {
+      this.$router.replace({
+        path: `/addressBook/orgDetail/${item.orgId}`,
+        query: {
+          title: item.orgName
+        }
+      })
+    },
+    /**
+     * 通过头部面包屑前往组织详情
+     */
     toDetail(item) {
-      this.$router.replace('/addressBook/orgDetail/' + item.orgId)
+      this.replaceRoute(item)
+      let findIndex = this._.findIndex(this.oraPathList, function(o) {
+        return o.orgId == item.orgId
+      })
+      this.$store.commit('DELETE_ORGPATH_LIST', findIndex + 1)
     },
-    sortUserPinyin() {
-      let arr = []
-      this.orgData.users.forEach((item) => {
-        if (this.orgData.userId && item.userId === this.orgData.userId) {
-          this.orgHeadData = item
-        } else {
-          let index = arr.findIndex((it) => {
-            return it.sortTag === item.pinyin.toUpperCase()[0]
-          })
-          index > -1
-            ? arr[index].data.push(item)
-            : arr.push({ sortTag: item.pinyin.toUpperCase()[0], data: [item] })
-        }
-      })
-      arr.sort((a, b) => {
-        return a.sortTag.localeCompare(b.sortTag)
-      })
-      arr.forEach((item) => {
-        item.data.sort((a, b) => {
-          return a.pinyin.localeCompare(b.pinyin)
-        })
-      })
-      this.pingyinArr = arr.map((item) => {
-        return item.sortTag
-      })
-      this.pingyinSortData = arr
-      return arr
+    /**
+     * 通过渲染的部门列表去部门
+     */
+    handleClickOrg(item) {
+      this.replaceRoute(item)
+      this.$store.commit('PUSH_ORGPATH_LIST', item)
     },
-    sortUser() {
-      let arr = []
-      if (Array.isArray(this.orgData.users)) {
-        arr = [...this.orgData.users]
-      } else {
-        return arr
-      }
-      arr.sort((a, b) => {
-        return a.pinyin.localeCompare(b.pinyin)
-      })
-      let index = arr.findIndex((item) => {
-        return item.userId === this.orgData.userId
-      })
-      this.orgData.userId && index > -1 && arr.splice(0, 0, arr.splice(index, 1)[0])
-      this.simpleSortUser = arr
-      return arr
-    },
-      toUserDetail(item){
-this.$router.push('/addressBook/userDetail/'+ item.userId)
+    /**
+     * 前往用户详情
+     */
+    toUserDetail(item) {
+      this.$store.commit('SET_USERDETAIL', item)
+      this.$router.push('/addressBook/userDetail')
     }
   }
 }
 </script>
 
-<style lang='less' scoped>
+<style lang="less" scoped>
 .page {
   background-color: #f5f6f6;
   min-height: 100%;

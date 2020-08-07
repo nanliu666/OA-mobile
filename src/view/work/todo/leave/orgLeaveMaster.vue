@@ -6,8 +6,11 @@
         <div class="name-box">
           {{ listData.userName }} 的离职交接事项
         </div>
-        <div class="status">
-          {{ listData.status | filterStatus }}
+        <div
+          v-if="hasRenderObj"
+          class="status"
+        >
+          {{ renderObj.status | filterStatus }}
         </div>
       </div>
       <div class="info-row">
@@ -19,12 +22,15 @@
         </div>
       </div>
     </div>
-    <div class="main-wrap">
+    <div
+      v-if="hasRenderObj"
+      class="main-wrap"
+    >
       <div class="tips-row">
         员工 {{ listData.userName }},请尽快为他办理以下离职交接事项并确认：
       </div>
       <div
-        v-for="category in listData.data"
+        v-for="category in renderObj.categories"
         :key="category.categoryId"
         class="category-box"
       >
@@ -40,8 +46,10 @@
         </div>
       </div>
     </div>
-
-    <div class="btn-box">
+    <div
+      v-if="hasRenderObj && renderObj.status !== 'Confirmed'"
+      class="btn-box"
+    >
       <div
         class="urge"
         @click="urgeleaveNote"
@@ -63,6 +71,7 @@ import { Toast } from 'vant'
 import { getLeaveNote, postConfirmleaveNote, postUrgeleaveNote } from '@/api/todo'
 import { Dialog } from 'vant'
 import StickyHeader from '@/components/stickyHeader/stickyHeader'
+import { validatenull } from '@/util/validate'
 export default {
   name: 'OrgLeave',
   components: {
@@ -80,10 +89,11 @@ export default {
   },
   data() {
     return {
+      hasRenderObj: true,
       leaveUserId: '',
       groupId: '',
-      listData: {},
-      userId: ''
+      renderObj: {},
+      listData: {}
     }
   },
 
@@ -92,19 +102,23 @@ export default {
   },
   methods: {
     loadingData() {
-      // let arrId = this.$route.query.biz_id.split(',')
-      // this.leaveUserId = arrId[0]
-      // this.groupId = arrId[1]
       this.leaveUserId = this.$route.query.leaveUserId
       this.groupId = this.$route.query.groupId
-      this.userId = this.$store.state.user.userInfo.user_id
       let params = {
-        userId: this.userId,
+        userId: this.$store.state.user.userInfo.user_id,
         leaveUserId: this.leaveUserId,
         groupId: this.groupId
       }
       getLeaveNote(params).then((res) => {
-        this.listData = res[0]
+        this.listData = res
+        if (res.data.length !== 0) {
+          this.renderObj = res.data[0]
+        }
+        // 空值处理
+        if (validatenull(this.renderObj)) {
+          this.hasRenderObj = false
+        }
+        // console.log('this.listData==', this.listData)
       })
     },
     confirmleaveNote() {
@@ -126,6 +140,7 @@ export default {
         .catch(() => {})
     },
     async urgeleaveNote() {
+      // TODO:原先的催办是不是存在只能催办一次？
       let res = await postUrgeleaveNote({
         groupId: this.groupId,
         userId: this.userId,

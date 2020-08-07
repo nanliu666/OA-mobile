@@ -20,7 +20,7 @@
       </template>
     </stickyHeader>
     <div class="detail">
-      <van-cell is-link>
+      <van-cell>
         <!-- 使用 title 插槽来自定义标题 -->
         <template #title>
           <div class="cell-top">
@@ -35,13 +35,14 @@
           </div>
         </template>
       </van-cell>
-      <van-cell is-link>
+      <van-cell>
         <!-- 使用 title 插槽来自定义标题 -->
         <template #title>
           <div class="cell-top">
             公司邮箱
           </div>
           <div
+            v-if="userInfo.email"
             v-longpress="copyEmail"
             class="cell-bottom"
           >
@@ -50,7 +51,7 @@
         </template>
       </van-cell>
       <van-cell
-        is-link
+        :[linkSymbol]="getLinkBoolean(userInfo.orgId)"
         @click="toOrgDetail"
       >
         <!-- 使用 title 插槽来自定义标题 -->
@@ -58,24 +59,31 @@
           <div class="cell-top">
             部门
           </div>
-          <div class="cell-bottom">
+          <div
+            v-if="userInfo.orgName"
+            class="cell-bottom"
+          >
             {{ userInfo.orgName }}
           </div>
         </template>
       </van-cell>
-      <van-cell is-link>
+      <van-cell>
         <!-- 使用 title 插槽来自定义标题 -->
         <template #title>
           <div class="cell-top">
             职位
           </div>
-          <div class="cell-bottom">
+          <div
+            v-if="userInfo.jobName"
+            class="cell-bottom"
+          >
             {{ userInfo.jobName }}
           </div>
         </template>
       </van-cell>
       <van-cell
-        is-link
+        v-if="userInfo.leaderId"
+        :[linkSymbol]="getLinkBoolean(userInfo.leaderName)"
         @click="toLeaderDetail"
       >
         <!-- 使用 title 插槽来自定义标题 -->
@@ -83,7 +91,10 @@
           <div class="cell-top">
             上级领导
           </div>
-          <div class="cell-bottom">
+          <div
+            v-if="userInfo.leaderName"
+            class="cell-bottom"
+          >
             {{ userInfo.leaderName }}
           </div>
         </template>
@@ -100,8 +111,8 @@
   </div>
 </template>
 <script>
+import { mapGetters } from 'vuex'
 import StickyHeader from '@/components/stickyHeader/stickyHeader'
-import { getUserInfo } from '@/api/user'
 import { Toast, Dialog } from 'vant'
 export default {
   components: {
@@ -109,25 +120,34 @@ export default {
   },
   data() {
     return {
+      linkSymbol: 'is-link',
       userInfo: {
-        name: 'SugarKing',
-        workNo: '0253',
-        phonenum: '18888888888',
-        email: 'maomao@bailihong.com.cn',
-        orgName: '交互设计一组',
-        jobName: '交互设计师',
-        leaderName: '王嘉尔'
+        name: '',
+        workNo: '',
+        phonenum: '',
+        email: '',
+        orgName: '',
+        jobName: '',
+        leaderName: ''
       },
       copyPhoneShow: false,
       actions: [{ name: '呼叫' }, { name: '复制' }]
     }
   },
+  computed: {
+    ...mapGetters(['adressDetail'])
+  },
   created() {
-    getUserInfo({ userId: this.$route.params.userId }).then((res) => {
-      this.userInfo = res
-    })
+    this.userInfo = this.adressDetail
+    // console.log('员工详情==', this.userInfo)
   },
   methods: {
+    /**
+     * 获取当前的link是否存在
+     */
+    getLinkBoolean(orgId) {
+      return orgId ? true : false
+    },
     onCancel() {},
     showPhoneCopy() {
       this.copyPhoneShow = true
@@ -155,6 +175,7 @@ export default {
       }
     },
     copyEmail() {
+      if (!this.userInfo.email) return
       this.$copyText(this.userInfo.email)
         .then(() => {
           Toast('已复制')
@@ -164,7 +185,13 @@ export default {
         })
     },
     toOrgDetail() {
-      this.$router.push('/addressBook/orgDetail/' + this.userInfo.orgId)
+      // this.$router.push('/addressBook/orgDetail/' + this.userInfo.orgId)
+      this.$router.replace({
+        path: `/addressBook/orgDetail/${this.userInfo.orgId}`,
+        query: {
+          title: this.userInfo.orgName
+        }
+      })
     },
     toLeaderDetail() {
       this.$router.push('/addressBook/userDetail/' + this.userInfo.leaderId)

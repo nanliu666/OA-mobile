@@ -93,7 +93,7 @@
 </template>
 
 <script>
-import { getRecruitmentDetail } from '@/api/metask'
+import { getRecruitmentDetail } from '@/api/work'
 export default {
   filters: {
     filterProgress(val) {

@@ -11,90 +11,91 @@
         @click="toSearch"
       />
     </van-sticky>
-    <div class="contain">
-      <div class="org">
-        <template v-for="item in orgData">
-          <van-cell
-            :key="item.orgId"
-            is-link
-            @click="handleClickOrg(item)"
-          >
-            <template #title>
-              <span class="custom-title">{{
-                item.orgName + (item.users.length > 0 ? `（${item.users.length + 1}）` : '')
-              }}</span>
-            </template>
-          </van-cell>
-        </template>
-      </div>
-      <div class="user">
-        <template v-for="items in orgData">
-          <template v-for="item in items.users">
-            <van-cell
-              :key="item.userId"
-              @click="toUserDetail(item)"
-            >
-              <!-- 使用 title 插槽来自定义标题 -->
-              <template #title>
-                <div class="person-cell">
-                  <van-image
-                    round
-                    class="avatarClass"
-                    :src="item.avatarUrl"
-                  />
-
-                  <div class="title">
-                    <div class="title-top">
-                      <span class="custom-title">{{ item.name }}</span>
-                      <van-tag
-                        v-if="items.userId === item.userId"
-                        type="primary"
-                        plain
-                      >
-                        负责人
-                      </van-tag>
-                    </div>
-                    <div class="title-bottom">
-                      <span class="custom-title">{{ item.jobName }}</span>
-                    </div>
-                  </div>
-                </div>
-              </template>
-            </van-cell>
-          </template>
-        </template>
-      </div>
-    </div>
+    <addressList
+      ref="addressList"
+      :adress-options.sync="adressOptions"
+      @toOrg="handleClickOrg"
+    />
   </div>
 </template>
 
 <script>
-import { getOrgUserTree } from '@/api/addressBook'
+import addressList from './adressList'
+import { getAddressOrg, getAddressuser } from '@/api/addressBook'
+import { mapGetters } from 'vuex'
+import { validatenull } from '@/util/validate'
+import { deepClone } from '@/util/util'
+import { commonSortPinyin, commonAdressOptionsType } from './commonSortPinyin'
 export default {
   name: 'AddressBook',
+  components: {
+    addressList
+  },
   data() {
     return {
       search: '',
-      orgData: []
+      // 需要使用深克隆，避免导致共用一个对象
+      adressOptions: deepClone(commonAdressOptionsType)
     }
   },
-  created() {
-    getOrgUserTree().then((res) => {
-      this.$store.commit('SET_ORG_USER_TREE', res)
-      if (res[0]) {
-        this.orgData = res[0].children
-      }
-    })
+  computed: {
+    ...mapGetters(['addressOptionsVuex'])
+  },
+  mounted() {
+    this.initData()
   },
   methods: {
+    /**
+     * 初始化数据，拉取通讯录部门查询接口以及通讯录员工查询接口
+     */
+    initData() {
+      // 部门数据已存入vuex就不使用接口
+      if (!validatenull(this.addressOptionsVuex)) {
+        this.adressOptions = this.addressOptionsVuex
+        this.$refs.addressList.skeletonLoading = false
+      } else {
+        getAddressOrg().then((res) => {
+          this.adressOptions.orgData = res
+        })
+        getAddressuser().then((res) => {
+          this.sortUserPinyin(res)
+        })
+      }
+    },
+    /**
+     * 排序拼音
+     */
+    sortUserPinyin(res) {
+      let tempData = commonSortPinyin(res)
+      this.adressOptions = Object.assign(this.adressOptions, tempData)
+      this.$refs.addressList.skeletonLoading = false
+      this.$store.commit('SET_ADDRESS_OPTIONS', this.adressOptions)
+    },
+    /**
+     * 进入搜索页面
+     */
     toSearch() {
       this.$router.push('/addressBook/findOrgUser')
     },
+    /**
+     * 去部门
+     */
     handleClickOrg(item) {
-      this.$router.push('/addressBook/orgDetail/' + item.orgId)
+      this.$router.push({
+        path: `/addressBook/orgDetail/${item.orgId}`,
+        query: {
+          title: item.orgName
+        }
+      })
+      this.$store.commit('SET_ORGPATH_LIST')
+      this.$store.commit('PUSH_ORGPATH_LIST', item)
     },
+    /**
+     * 去用户详情
+     */
     toUserDetail(item) {
-      this.$router.push('/addressBook/userDetail/' + item.userId)
+      this.$store.commit('SET_USERDETAIL', item)
+      this.$router.push('/addressBook/userDetail')
     }
   }
 }
@@ -103,6 +104,9 @@ export default {
 <style lang="less" scoped>
 .page {
   background-color: #f5f6f6;
+  .contain {
+    min-height: calc(100vh - 90px);
+  }
 }
 .van-search {
   height: 44px;
@@ -125,6 +129,7 @@ export default {
   }
 }
 .user {
+  padding-bottom: 52px;
   .van-cell {
     border-bottom: 1px solid #ebedf0;
     height: 70px;
@@ -134,10 +139,8 @@ export default {
       .title {
         margin-left: 14px;
         .title-top {
-          margin-bottom: 6px;
           .custom-title {
             font-size: 16px;
-            margin-right: 11px;
           }
         }
         .title-bottom {

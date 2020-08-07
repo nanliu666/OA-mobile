@@ -3,7 +3,6 @@ import App from './App'
 import router from './router'
 import store from './store'
 import Vant from 'vant'
-// import 'vant/lib/index.css'
 import '@/styles/vant.less'
 import '@/styles/index.less'
 import 'vant/lib/index.less'
@@ -12,10 +11,9 @@ import longpress from '@/directive/longpress'
 // 日历组件
 import vueHashCalendar from 'vue-hash-calendar'
 import 'vue-hash-calendar/lib/vue-hash-calendar.css'
-// import preview from 'vue-photo-preview'
-// import 'vue-photo-preview/dist/skin.css'
-
-// Vue.use(preview)
+// loadsh使用CND形式挂载在原型上
+const _ = require('lodash')
+Vue.prototype._ = _
 Vue.use(Vant)
 Vue.use(VueClipboard)
 

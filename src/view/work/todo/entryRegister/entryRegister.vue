@@ -1,17 +1,5 @@
 <template>
   <div class="page">
-    <!-- <stickyHeader :title="`${infoData.name}的入职登记表`">
-			<template #footer>
-				<van-tabs v-model="active">
-					<van-tab
-						v-for="(item, index) in tabList"
-						:key="index"
-						:title="item.title"
-						:name="item.name"
-					/>
-				</van-tabs>
-			</template>
-		</stickyHeader> -->
     <div class="sticky-box">
       <van-nav-bar
         title="入职登记表"
@@ -245,7 +233,7 @@
         </div>
       </div>
 
-      <div class="btn">
+      <div class="info-botton-btn">
         <van-button
           block
           type="info"
@@ -548,25 +536,21 @@ export default {
     width: 100%;
   }
 }
-// .page {
-// 	padding-bottom: 72px;
-// }
 .detail-box {
   width: 100%;
   box-sizing: border-box;
-  padding-left: 16px;
-  padding-top: 20px;
+  padding: 10px 16px 6px;
+  border-bottom: 1px solid #dddddd;
 
   .title {
-    margin-bottom: 8px;
+    margin-bottom: 10px;
     font-size: 17px;
     color: #000000;
     line-height: 25.5px;
     font-weight: bold;
   }
   .content {
-    border-bottom: 1px solid #dddddd;
-    padding: 10px 0;
+    // padding: 10px 0;
   }
 }
 // 材料附件
@@ -576,14 +560,5 @@ export default {
     margin-bottom: 5px;
     font-size: 14px;
   }
-}
-.btn {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 40px;
-  padding: 16px;
-  background-color: #fff;
 }
 </style>

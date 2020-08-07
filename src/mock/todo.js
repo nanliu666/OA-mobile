@@ -202,46 +202,44 @@ export default ({ mock }) => {
   })
   // 员工离职交接事项
   Mock.mock(new RegExp('/user/v1/user/leave/note' + '.*'), 'get', () => {
-    let arr = [
-      {
-        userId: '3211',
-        userName: '张三',
-        createTime: '2009-08-08 04:18:37',
-        status: 'UnConfirm',
-        isUrge: 1,
-        urgeTime: '2009-08-08 04:18:37',
-        data: [
-          {
-            categoryId: '4645646',
-            categoryName: '办公物品回收',
-            details: [
-              {
-                detailId: '2313213',
-                detailName: '计算机查验'
-              },
-              {
-                detailId: '231321465643',
-                detailName: '计算机查验'
-              }
-            ]
-          },
-          {
-            categoryId: '46546',
-            categoryName: '办公物品回收',
-            details: [
-              {
-                detailId: '645646',
-                detailName: '计算机查验'
-              },
-              {
-                detailId: '6445645646',
-                detailName: '计算机查验'
-              }
-            ]
-          }
-        ]
-      }
-    ]
+    let arr = {
+      userId: '3211',
+      userName: '张三',
+      createTime: '2009-08-08 04:18:37',
+      status: 'UnConfirm',
+      isUrge: 1,
+      urgeTime: '2009-08-08 04:18:37',
+      data: [
+        {
+          categoryId: '4645646',
+          categoryName: '办公物品回收',
+          details: [
+            {
+              detailId: '2313213',
+              detailName: '计算机查验'
+            },
+            {
+              detailId: '231321465643',
+              detailName: '计算机查验'
+            }
+          ]
+        },
+        {
+          categoryId: '46546',
+          categoryName: '办公物品回收',
+          details: [
+            {
+              detailId: '645646',
+              detailName: '计算机查验'
+            },
+            {
+              detailId: '6445645646',
+              detailName: '计算机查验'
+            }
+          ]
+        }
+      ]
+    }
     return {
       response: arr
     }

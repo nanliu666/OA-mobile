@@ -187,10 +187,9 @@
                       <span class="custom-title">{{ item.title }}</span>
                       <span
                         v-if="ifShowWarn(item)"
-                        class="emerType"
-                      >
-                        停滞{{ getWarnText(item) }}天
-                      </span>
+                        class="emerType-style"
+                        v-text="getWarnText(item)"
+                      />
                     </div>
                     <div class="title-bottom">
                       <span class="custom-title">{{ item.beginDate }}</span>
@@ -257,7 +256,6 @@
           class="matters"
         >
           <van-cell title="我的任务" />
-
           <template v-for="(item, index) in taskList">
             <van-cell
               v-if="index < 3"
@@ -265,6 +263,7 @@
               style="align-items: flex-start"
               :class="index === 2 ? 'noBorderBottom' : ''"
               is-link
+              @click="toTaskDetail(item)"
             >
               <!-- 使用 title 插槽来自定义标题 -->
               <template #title>
@@ -281,7 +280,14 @@
                   <div class="title">
                     <div class="title-top">
                       <span class="custom-title">{{ item.title }}</span>
-                      <span class="emerType">{{ EmerType[item.emerType] }}</span>
+                      <span
+                        class="emerType-style"
+                        :style="{
+                          color: getEmrTypeText(item.emerType).color,
+                          borderColor: getEmrTypeText(item.emerType).color
+                        }"
+                        v-text="getEmrTypeText(item.emerType).text"
+                      />
                     </div>
                     <div class="title-bottom">
                       <span class="custom-title">{{ item.brief }}</span>
@@ -329,16 +335,11 @@ import { getTodoList, getScheduleList, getMyApproveList } from '@/api/work'
 import moment from 'moment'
 import { fetchTaskList } from '@/api/metask'
 import { todoJumpFun } from './common'
-// 批量引入图片
-const path = require('path')
-const files = require.context('@/assets/images/homeImages', false, /\.png$/) //这句话的意思是引入图片文件夹下的所有图片
-const imgModules = {}
-files.keys().forEach((key) => {
-  const name = path.basename(key, '.png')
-  imgModules[name] = files(key).default || files(key)
-})
+import { improtAllFiles } from '@/util/util'
+import { Toast } from 'vant'
 import { apprStatusCN, FormKeysCN } from '@/const/approve'
 import { todoTypeCN } from '@/const/todo'
+import { EmerTypeCN } from '@/const/myTask'
 export default {
   data() {
     return {
@@ -350,31 +351,30 @@ export default {
         pageSize: 3,
         userId: this.$store.state.user.userInfo.user_id
       },
-      imgModules: imgModules,
+      imgModules: {},
       today: moment().format('YYYY-MM-DD'),
       userInfo: {},
       todoList: [],
       scheduleList: [],
       myApproveList: [],
       approveTotalNum: 0,
-      taskList: [],
-      EmerType: {
-        Super: '特级',
-        urgent: '急',
-        common: '一般',
-        suit: '有合适的人选再进'
-      }
+      taskList: []
     }
   },
   created() {
-    this.$store.dispatch('CommonDict', 'EmerType').then((res) => {
-      res.forEach((item) => {
-        this.EmerType[item.dictKey] = item.dictValue
-      })
-    })
+    this.imgModules = improtAllFiles(
+      require.context('@/assets/images/homeImages', false, /\.png$/),
+      '.png'
+    )
     this.initData()
   },
   methods: {
+    /**
+     * 兑换紧急程度文本
+     */
+    getEmrTypeText(emerTypeKey) {
+      return EmerTypeCN[emerTypeKey]
+    },
     /**
      * 初始化数据
      */
@@ -386,12 +386,14 @@ export default {
         this.getUser(),
         this.getApproveList()
       ]).then((res) => {
-        this.todoList = res[0].data
-        this.taskList = res[1].data
-        this.scheduleList = res[2]
-        this.userInfo = res[3]
-        this.myApproveList = res[4].data
-        this.approveTotalNum = res[4].totalNum
+        // 使用赋值解构，重写这部分
+        [
+          { data: this.todoList },
+          { data: this.taskList },
+          this.scheduleList,
+          this.userInfo,
+          { data: this.myApproveList, totalNum: this.approveTotalNum }
+        ] = res
         this.skeletonLoading = false
         this.jugeFreeLine()
       })
@@ -400,12 +402,16 @@ export default {
      * 判断当前是否是空闲状态
      */
     jugeFreeLine() {
-      if (
-        this.todoList.length === 0 &&
-        this.scheduleList.length === 0 &&
-        this.myApproveList.length === 0 &&
-        this.taskList.length === 0
-      ) {
+      // 判断内容为我的申请，待办事项，今日安排以及我的任务列表长度
+      const isAllFreeArray = [
+        this.todoList.length,
+        this.scheduleList.length,
+        this.myApproveList.length,
+        this.taskList.length
+      ]
+      // 当所有的长度都为0时
+      const isAllFreeFlag = isAllFreeArray.every((f) => f === 0)
+      if (isAllFreeFlag) {
         this.isAllFree = true
       }
     },
@@ -485,14 +491,11 @@ export default {
     toPersonalcenter() {
       this.$router.push('/me/index')
     },
-    toTudo() {
-      this.$router.push('/work/todo')
-    },
-
     /**
      * 跳转到审批详情
      */
     toApprovalDetail() {
+      Toast('开发中...')
       // console.log('跳转到审批详情==', data)
     },
     /**
@@ -505,20 +508,28 @@ export default {
      * 跳转到审批列表页面
      */
     getMoreApproveList() {
-      this.$router.push({ path: '/work/interviewDetail' })
+      Toast('开发中...')
+      // this.$router.push({ path: '/work/interviewDetail' })
     },
     /**
      * 展示条件：今天是否在比较时间相同或者之后
      */
     ifShowWarn(row) {
-      let isShowWarn = moment().isSameOrAfter(moment(row.endDate)) && row.status === 'UnFinished'
+      let isShowWarn =
+        moment().isSameOrAfter(moment(row.endDate), 'day') && row.status === 'UnFinished'
       return isShowWarn
     },
     /**
      * 获取滞留的天数（今天天数 - 结束日期）
      */
     getWarnText(row) {
-      return moment().diff(moment(row.endDate), 'days')
+      let showText = ''
+      if (moment().isSame(moment(row.endDate), 'day')) {
+        showText = '今天'
+      } else {
+        showText = `停滞${moment().diff(moment(row.endDate), 'days')}天`
+      }
+      return showText
     },
     /**
      * 点击icon图标
@@ -528,16 +539,28 @@ export default {
         todo: '/work/todo',
         schedule: '/todaySchedule/calendar',
         task: '/work/task',
-        approve: '/work/task'
+        approve: '/approval/index'
       }
       // 当点击任务icon时，重置nav标签
       if (iconName === 'task') {
         this.$store.commit('RESET_TASK_NAV')
       }
+      if (iconName === 'todo') {
+        this.$store.commit('RESET_TODO_NAV')
+      }
       this.$router.push(obj[iconName])
     },
     handleClickCell(item) {
       todoJumpFun(item, this.$router)
+    },
+    // 点击跳转到任务详情
+    toTaskDetail({ bizId }) {
+      return this.$router.push({
+        path: '/work/taskDetail',
+        query: {
+          bizId
+        }
+      })
     }
   }
 }
@@ -665,7 +688,7 @@ export default {
             margin-right: 11px;
             color: #000;
           }
-          .emerType {
+          .emerType-style {
             display: inline-block;
             padding: 0px 10px;
             color: #ff6464;

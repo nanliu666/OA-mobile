@@ -4,8 +4,8 @@
     <div class="task-box">
       <div class="jobName-row">
         <div class="jobName-box">
-          <span>{{ recruitmentDetail.jobName }}</span>
-          <span>{{ recruitmentDetail.emerType | CommonDictType(EmerType) }}</span>
+          <span class="jobName-title">招聘需求：{{ recruitmentDetail.jobName }}</span>
+          <!-- <span>{{ recruitmentDetail.emerType | CommonDictType(EmerType) }}</span> -->
         </div>
         <div class="isFinished">
           {{ recruitmentDetail.status | filterStatus }}
@@ -49,10 +49,13 @@
             <div class="progress-box">
               <van-progress
                 :show-pivot="false"
-                color="#207EFA"
+                color="#72e7ae"
+                track-color="#d7d7d7"
                 :percentage="parseInt((item.entryNum / item.taskNum) * 100)"
               />
-              <p>计划招聘{{ item.entryNum }}人 已入职{{ item.taskNum }}人</p>
+              <div class="progress-text">
+                计划招聘{{ item.entryNum }}人 已入职{{ item.taskNum }}人
+              </div>
             </div>
           </div>
         </div>
@@ -91,7 +94,7 @@
 
     <div
       v-if="recruitmentDetail.status === 'UnHandle'"
-      class="btn"
+      class="info-botton-btn"
       @click="handelClick"
     >
       <van-button
@@ -103,7 +106,7 @@
     </div>
     <div
       v-else
-      class="btn"
+      class="info-botton-btn"
     >
       <van-button
         block
@@ -118,11 +121,10 @@
 <script>
 import { queryDistribution } from '@/api/todo'
 import StickyHeader from '@/components/stickyHeader/stickyHeader'
-import { getRecruitmentDetail } from '@/api/metask'
+import { getRecruitmentDetail } from '@/api/work'
 import infoShow from '@/components/infoShow/infoShow'
 export default {
   name: 'RecAllocated',
-
   components: {
     StickyHeader,
     infoShow
@@ -258,18 +260,23 @@ export default {
 
   .task-box {
     width: 100%;
-    height: 86.5px;
     padding-left: 16px;
     box-sizing: border-box;
     box-shadow: inset 0 -1px 0 0 #dddddd;
+    padding-bottom: 10px;
     .jobName-row {
       display: flex;
       justify-content: space-between;
-      margin: 20px 0 0 0;
+      padding: 10px 0;
       .jobName-box {
         font-size: 16px;
         color: #000000;
         line-height: 24px;
+        .jobName-title {
+          font-family: PingFangSC-Medium, PingFang SC;
+          font-weight: 550;
+          color: rgba(30, 30, 30, 1);
+        }
         :first-child {
           margin-right: 10px;
         }
@@ -292,10 +299,9 @@ export default {
   .distribution-box {
     width: 100%;
     box-sizing: border-box;
-    padding-left: 16px;
-    padding-top: 20px;
+    padding-top: 15px;
     .title {
-      margin-bottom: 8px;
+      padding: 0 16px;
       font-size: 17px;
       color: #000000;
       line-height: 25.5px;
@@ -303,11 +309,14 @@ export default {
     }
     .item {
       display: flex;
-      height: 130.5px;
+      margin: 10px 16px;
+      padding: 10px;
+      border-radius: 8px;
+      background-color: #f2f2f2;
       // 主要内容
       .left-content {
         .icon {
-          margin: 20px 15px 0 0;
+          margin: 0px 15px 0 0;
           height: 32px;
           width: 32px;
         }
@@ -315,9 +324,9 @@ export default {
       .main-content {
         box-sizing: border-box;
         flex: 1;
-        border-bottom: 1px solid #dddddd;
+        // border-bottom: 1px solid #dddddd;
         .title-row {
-          margin: 20px 0 8px 0;
+          margin: 0px 0 8px 0;
           font-size: 16px;
           color: #000000;
           line-height: 24px;
@@ -338,17 +347,22 @@ export default {
         }
         .complete-row {
           display: flex;
+          // justify-content: center;
           .num {
+            display: flex;
+            justify-content: center;
+            align-items: center;
             font-size: 28px;
             color: #78859c;
             text-align: right;
             line-height: 28px;
           }
           .progress-box {
-            p {
+            margin: 4px 0 0 10px;
+            .progress-text {
+              margin-top: 4px;
               font-size: 12px;
-              color: #718199;
-              line-height: 18px;
+              color: rgba(80, 80, 80, 1);
             }
           }
         }
@@ -360,7 +374,7 @@ export default {
     width: 100%;
     box-sizing: border-box;
     padding-left: 16px;
-    padding-top: 20px;
+    padding-top: 15px;
 
     .title {
       margin-bottom: 8px;
@@ -383,14 +397,5 @@ export default {
       line-height: 48px;
     }
   }
-}
-.btn {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 40px;
-  padding: 16px;
-  background-color: #fff;
 }
 </style>

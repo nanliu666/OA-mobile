@@ -5,7 +5,7 @@
         <div class="numBox">
           <div class="numItem">
             需求人数：
-            <span class="all">{{ all }}</span>
+            <span class="all">{{ totalNum }}</span>
           </div>
           <div class="numItem">
             已分配：
@@ -99,11 +99,19 @@ export default {
   },
   data() {
     let validator = (val) => {
-      return val >= 1 && val <= this.all
+      let tempAll = 0
+      this.workForm.map((item) => {
+        tempAll += item.taskNum
+      })
+      if (tempAll > this.totalNum) {
+        Toast('分配任务总数不能超过需求人数')
+      }
+      return val >= 1 && val <= this.totalNum && tempAll <= this.totalNum
     }
     return {
-      all: 25,
+      totalNum: 0,
       workForm: [{ userId: '', taskNum: '' }],
+      loading: false,
       userColumns: [],
       userParams: {
         pageNo: 1,
@@ -128,17 +136,17 @@ export default {
           num += item.taskNum
         }
       })
-      if (num > this.all) num = this.all
+      // if (num > this.totalNum) num = this.totalNum
       return num
     },
     willAllot() {
-      return this.all - this.alloted
+      return this.totalNum - this.alloted
     }
   },
   created() {
     this.getWorkList()
-    getRecruitmentDetail({ recruitmentId: this.$route.query.id }).then((res) => {
-      this.all = res.needNum
+    getRecruitmentDetail({ recruitmentId: this.$route.query.recruitmentId }).then((res) => {
+      this.totalNum = Number(res.needNum)
     })
   },
   methods: {
@@ -171,29 +179,28 @@ export default {
       })
     },
     submit() {
-      this.$refs.workForm
-        .validate()
-        .then(() => {
-          if (this.getAllAllotNum() > this.all) {
-            Toast('分配任务总数不能超过需求人数')
-            return
-          }
-          const params = {
-            recruitmentId: this.$route.query.id,
-            assignUser: this.$store.state.user.userInfo.user_id,
-            users: [...this.workForm]
-          }
-          this.loading = true
-          postRecruitmentTask(params).then(() => {
+      this.$refs.workForm.validate().then(() => {
+        if (this.getAllAllotNum() > this.all) {
+          Toast('分配任务总数不能超过需求人数')
+          return
+        }
+        const params = {
+          recruitmentId: this.$route.query.recruitmentId,
+          assignUser: this.$store.state.user.userInfo.user_id,
+          users: [...this.workForm]
+        }
+        this.loading = true
+        postRecruitmentTask(params).then(
+          () => {
             this.loading = false
             Toast('分配成功')
             this.$router.back()
-          })
-        })
-        .catch((error) => {
-          Toast(error[0].message)
-          this.$refs.workForm.scrollToField(error[0].name, { alignToTop: true })
-        })
+          },
+          () => {
+            this.loading = false
+          }
+        )
+      })
     },
     getAllAllotNum() {
       let num = 0
@@ -215,8 +222,10 @@ export default {
 }
 .numBox {
   display: flex;
+  justify-content: space-between;
+  padding: 0 20px;
+  background-color: #fff;
   .numItem {
-    flex: 1;
     text-align: center;
     height: 46px;
     background-color: #fff;

@@ -198,6 +198,7 @@ export default {
   left: 0;
   right: 0;
   height: 40px;
+  box-shadow: 0px -2px 7px 0px rgba(28, 34, 87, 0.2);
   padding: 16px;
   background-color: #fff;
 }

@@ -1,20 +1,8 @@
 <template>
   <div class="page">
-    <!-- <stickyHeader :title="`${infoData.name}(${jobName})的面试登记表`">
-			<template #footer>
-				<van-tabs v-model="active">
-					<van-tab
-						v-for="(item, index) in tabList"
-						:key="index"
-						:title="item.title"
-						:name="item.name"
-					/>
-				</van-tabs>
-			</template>
-		</stickyHeader> -->
     <div class="sticky-box">
       <van-nav-bar
-        :title="`${infoData.name}(${jobName})的面试登记表`"
+        :title="`${infoData.name}${jobName ? `(${jobName})` : ''}的面试登记表`"
         left-arrow
         @click-left="goBack"
       />
@@ -192,7 +180,7 @@
           </div>
         </div>
       </div>
-      <div class="btn">
+      <div class="info-botton-btn">
         <van-button
           block
           type="info"
@@ -208,7 +196,7 @@
 // import StickyHeader from '@/components/stickyHeader/stickyHeader'
 import infoShow from '@/components/infoShow/infoShow'
 import { getpersonInfo } from '@/api/todo'
-import { getRecruitmentDetail } from '@/api/metask'
+import { getRecruitmentDetail } from '@/api/work'
 export default {
   name: 'InterviewRegister',
   components: {
@@ -314,6 +302,7 @@ export default {
       this.recruitmentId = this.$route.query.bizId
       getpersonInfo({ personId: this.personId }).then((res) => {
         this.infoData = res
+        // console.log('this.infoData==', this.infoData)
         // 基本信息
         this.infoColumns.forEach((item) => {
           item.value = res[item.prop]
@@ -480,28 +469,18 @@ export default {
 .detail-box {
   width: 100%;
   box-sizing: border-box;
-  padding-left: 16px;
-  padding-top: 20px;
+  padding: 10px 16px 6px;
+  border-bottom: 1px solid #dddddd;
 
   .title {
-    margin-bottom: 8px;
+    margin-bottom: 10px;
     font-size: 17px;
     color: #000000;
     line-height: 25.5px;
     font-weight: bold;
   }
   .content {
-    border-bottom: 1px solid #dddddd;
-    padding: 10px 0;
+    // padding: 10px 0;
   }
-}
-.btn {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 40px;
-  padding: 16px;
-  background-color: #fff;
 }
 </style>

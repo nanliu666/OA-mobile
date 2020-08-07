@@ -1,11 +1,8 @@
-import user from './user.js'
-import message from './message.js'
-import metask from './metask'
-import todo from './todo'
-import work from './work'
+import { improtAllFiles } from '@/util/util'
+const mockModules = improtAllFiles(require.context('./', false, /\.js$/), '.js')
 const options = { mock: false }
-user(options)
-message(options)
-metask(options)
-todo(options)
-work(options)
+mockModules.user(options)
+mockModules.message(options)
+mockModules.metask(options)
+mockModules.todo(options)
+mockModules.work(options)

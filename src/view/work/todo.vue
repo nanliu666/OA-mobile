@@ -15,13 +15,13 @@
     <van-pull-refresh
       v-if="active === 0"
       v-model="toduStatus.refreshing"
-      @refresh="getToduList(1)"
+      @refresh="getTodoListFun(1)"
     >
       <van-list
         :value="toduStatus.loading"
         :finished="toduStatus.finished"
         finished-text="没有更多了"
-        @load="getToduList"
+        @load="getTodoListFun"
       >
         <template v-for="item in workMsgList">
           <van-cell
@@ -37,17 +37,17 @@
                     class="icon matterIcon"
                     aria-hidden="true"
                   >
-                    <use xlink:href="#icon-approval-recruit-bicolor" />
+                    <use :[symbolKey]="getTodoIcon(item.type)" />
                   </svg>
                 </div>
                 <div class="title">
                   <div class="title-top">
-                    <span class="custom-title">{{ item.title }}</span><van-tag
+                    <span class="custom-title">{{ item.title }}</span>
+                    <span
                       v-if="ifShowWarn(item)"
-                      type="danger"
-                    >
-                      停滞{{ getWarnText(item) }}天
-                    </van-tag>
+                      class="emerType-style"
+                      v-text="getWarnText(item)"
+                    />
                   </div>
                   <div class="title-bottom">
                     <span class="custom-title">{{ item.beginDate }}</span>
@@ -84,7 +84,7 @@
                     class="icon matterIcon"
                     aria-hidden="true"
                   >
-                    <use xlink:href="#icon-approval-recruit-bicolor" />
+                    <use :[symbolKey]="getTodoIcon(item.type)" />
                   </svg>
                 </div>
 
@@ -109,6 +109,8 @@ import { getTodoList } from '@/api/work'
 import StickyHeader from '@/components/stickyHeader/stickyHeader'
 import moment from 'moment'
 import { todoJumpFun } from './common'
+import { mapGetters } from 'vuex'
+import { todoTypeCN } from '@/const/todo'
 
 export default {
   name: 'Todo',
@@ -117,6 +119,7 @@ export default {
   },
   data() {
     return {
+      symbolKey: 'xlink:href',
       toduStatus: {
         loading: false,
         finished: false,
@@ -140,6 +143,9 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapGetters(['todoActive'])
+  },
   watch: {
     active(nVal, oVal) {
       this.scrollTop[oVal] = document.documentElement.scrollTop
@@ -147,22 +153,47 @@ export default {
     }
   },
   created() {
-    this.getToduList()
+    this.initSetting()
+    this.getTodoListFun()
     this.getDidList()
   },
   methods: {
+    /**
+     * 获取代办信息的icon
+     */
+    getTodoIcon(data) {
+      return `#${todoTypeCN[data].icon}`
+    },
+    /**
+     * 初始化设置
+     */
+    initSetting() {
+      this.active = this.todoActive
+    },
+    /**
+     * 展示条件：今天是否在比较时间相同或者之后
+     */
     ifShowWarn(row) {
-      return (
-        row.status === 'UnFinished' &&
-        moment()
-          .startOf('day')
-          .diff(moment(row.endDate)) > 0
-      )
+      let isShowWarn =
+        moment().isSameOrAfter(moment(row.endDate), 'day') && row.status === 'UnFinished'
+      return isShowWarn
     },
+    /**
+     * 获取滞留的天数（今天天数 - 结束日期）
+     */
     getWarnText(row) {
-      return moment().diff(moment(row.beginDate), 'days')
+      let showText = ''
+      if (moment().isSame(moment(row.endDate), 'day')) {
+        showText = '今天'
+      } else {
+        showText = `停滞${moment().diff(moment(row.endDate), 'days')}天`
+      }
+      return showText
     },
-    getToduList(pageNo) {
+    /**
+     * 获取待处理列表
+     */
+    getTodoListFun(pageNo) {
       if (this.toduStatus.loading) return
       if (pageNo) this.toduStatus.pageNo = pageNo
       const params = {
@@ -178,6 +209,7 @@ export default {
           if (this.toduStatus.refreshing) this.workMsgList = []
           this.workMsgList.push(...res.data)
           this.toduStatus.pageNo += 1
+          // console.log('this.workMsgList==', this.workMsgList)
           if (res.data.length < this.toduStatus.pageSize) this.toduStatus.finished = true
         } else {
           this.toduStatus.finished = true
@@ -211,6 +243,7 @@ export default {
     },
     handleClickCell(item) {
       todoJumpFun(item, this.$router)
+      this.$store.commit('SET_TODO_NAV', this.active)
     }
   }
 }
@@ -227,6 +260,14 @@ export default {
 }
 /deep/.van-tab--active {
   color: #207efa;
+}
+.emerType-style {
+  display: inline-block;
+  padding: 0px 10px;
+  color: #ff6464;
+  border: 1px solid #ff6464;
+  border-radius: 3px;
+  font-size: 12px;
 }
 .person-cell {
   display: flex;

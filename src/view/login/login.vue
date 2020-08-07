@@ -94,10 +94,21 @@ export default {
       this.$store.commit('SET_TENANRID', res.tenantId)
     })
   },
+  destroyed() {
+    // 销毁enter事件
+    document.removeEventListener('keyup', this.enterKey)
+  },
   mounted() {
     this.getOauthCaptcha()
+    document.addEventListener('keyup', this.enterKey)
   },
   methods: {
+    enterKey(event) {
+      const code = event.keyCode ? event.keyCode : event.which ? event.which : event.charCode
+      if (code == 13) {
+        this.handleLogin()
+      }
+    },
     handleForget() {
       this.$router.push('/forget')
     },
