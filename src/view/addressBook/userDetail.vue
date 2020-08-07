@@ -20,7 +20,7 @@
       </template>
     </stickyHeader>
     <div class="detail">
-      <van-cell is-link>
+      <van-cell>
         <!-- 使用 title 插槽来自定义标题 -->
         <template #title>
           <div class="cell-top">
@@ -35,13 +35,14 @@
           </div>
         </template>
       </van-cell>
-      <van-cell is-link>
+      <van-cell>
         <!-- 使用 title 插槽来自定义标题 -->
         <template #title>
           <div class="cell-top">
             公司邮箱
           </div>
           <div
+            v-if="userInfo.email"
             v-longpress="copyEmail"
             class="cell-bottom"
           >
@@ -50,7 +51,7 @@
         </template>
       </van-cell>
       <van-cell
-        is-link
+        :[linkSymbol]="getLinkBoolean(userInfo.orgId)"
         @click="toOrgDetail"
       >
         <!-- 使用 title 插槽来自定义标题 -->
@@ -58,7 +59,10 @@
           <div class="cell-top">
             部门
           </div>
-          <div class="cell-bottom">
+          <div
+            v-if="userInfo.orgName"
+            class="cell-bottom"
+          >
             {{ userInfo.orgName }}
           </div>
         </template>
@@ -69,13 +73,17 @@
           <div class="cell-top">
             职位
           </div>
-          <div class="cell-bottom">
+          <div
+            v-if="userInfo.jobName"
+            class="cell-bottom"
+          >
             {{ userInfo.jobName }}
           </div>
         </template>
       </van-cell>
       <van-cell
-        is-link
+        v-if="userInfo.leaderId"
+        :[linkSymbol]="getLinkBoolean(userInfo.leaderName)"
         @click="toLeaderDetail"
       >
         <!-- 使用 title 插槽来自定义标题 -->
@@ -83,7 +91,10 @@
           <div class="cell-top">
             上级领导
           </div>
-          <div class="cell-bottom">
+          <div
+            v-if="userInfo.leaderName"
+            class="cell-bottom"
+          >
             {{ userInfo.leaderName }}
           </div>
         </template>
@@ -109,6 +120,7 @@ export default {
   },
   data() {
     return {
+      linkSymbol: 'is-link',
       userInfo: {
         name: '',
         workNo: '',
@@ -127,12 +139,15 @@ export default {
   },
   created() {
     this.userInfo = this.adressDetail
-    // getUserInfo({ userId: this.$route.params.userId }).then((res) => {
-    //   this.userInfo = res
-    // })
+    // console.log('员工详情==', this.userInfo)
   },
-
   methods: {
+    /**
+     * 获取当前的link是否存在
+     */
+    getLinkBoolean(orgId) {
+      return orgId ? true : false
+    },
     onCancel() {},
     showPhoneCopy() {
       this.copyPhoneShow = true
@@ -170,11 +185,15 @@ export default {
         })
     },
     toOrgDetail() {
-      if (!this.userInfo.orgId) return
-      this.$router.push('/addressBook/orgDetail/' + this.userInfo.orgId)
+      // this.$router.push('/addressBook/orgDetail/' + this.userInfo.orgId)
+      this.$router.replace({
+        path: `/addressBook/orgDetail/${this.userInfo.orgId}`,
+        query: {
+          title: this.userInfo.orgName
+        }
+      })
     },
     toLeaderDetail() {
-      if (!this.userInfo.leaderName) return
       this.$router.push('/addressBook/userDetail/' + this.userInfo.leaderId)
     }
   }

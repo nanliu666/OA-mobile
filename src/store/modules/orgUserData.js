@@ -1,15 +1,21 @@
 const orgUserData = {
   state: {
-    orgTree: [],
-    adressTree: [],
+    addressOptionsVuex: {},
+    oraPathList: [],
     adressDetail: {}
   },
   mutations: {
-    SET_ORG: (state, data) => {
-      state.orgTree = data
+    SET_ADDRESS_OPTIONS: (state, data) => {
+      state.addressOptionsVuex = data
     },
-    SET_ADDRESS: (state, data) => {
-      state.adressTree = data
+    PUSH_ORGPATH_LIST: (state, data) => {
+      state.oraPathList.push(data)
+    },
+    SET_ORGPATH_LIST: (state) => {
+      state.oraPathList = []
+    },
+    DELETE_ORGPATH_LIST: (state, data) => {
+      state.oraPathList.splice(data)
     },
     SET_USERDETAIL: (state, data) => {
       state.adressDetail = data

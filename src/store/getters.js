@@ -1,8 +1,8 @@
 const getters = {
   userInfo: (state) => state.user.userInfo,
-  orgTree: (state) => state.orgUserData.orgTree,
-  adressTree: (state) => state.orgUserData.adressTree,
+  addressOptionsVuex: (state) => state.orgUserData.addressOptionsVuex,
   adressDetail: (state) => state.orgUserData.adressDetail,
+  oraPathList: (state) => state.orgUserData.oraPathList,
   taskActive: (state) => state.work.taskActive,
   todoActive: (state) => state.work.todoActive,
   userDetail: (state) => state.user.userDetail

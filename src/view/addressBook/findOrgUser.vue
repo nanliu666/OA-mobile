@@ -79,7 +79,8 @@ export default {
   },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
-      if (from.path === '/addressBook/index') {
+      let acceptPath = ['/addressBook/index', '/addressBook/orgDetail']
+      if (acceptPath.includes(from.path)) {
         vm.orgData = [] // 清空原有数据
         vm.userData = [] // 清空原有数据
       }
@@ -107,8 +108,10 @@ export default {
       getAddressOrg(orgParmas).then((res) => {
         this.orgData = res
       })
+      // this.filterAddressUser()
       getAddressuser(userParmas).then((res) => {
         this.userData = res
+        // console.log('res==', res)
       })
     },
     handleClickOrg(item) {
@@ -116,7 +119,7 @@ export default {
     },
     toUserDetail(item) {
       this.$store.commit('SET_USERDETAIL', item)
-      this.$router.push('/addressBook/userDetail/')
+      this.$router.push('/addressBook/userDetail')
     }
   }
 }
