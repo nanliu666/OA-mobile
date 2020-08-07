@@ -142,7 +142,7 @@ export default {
      */
     getEmty() {
       let flagArr = [this.adressOptions.orgData.length, this.adressOptions.pingyinSortData.length]
-      return !this._.every(flagArr, Boolean)
+      return !_.every(flagArr, Boolean)
     },
     /**
      * 去部门
