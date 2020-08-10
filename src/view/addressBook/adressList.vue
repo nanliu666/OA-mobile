@@ -105,16 +105,10 @@
       </div>
     </van-skeleton>
     <van-empty
-      v-if="adressOptions.pingyinSortData.length === 0"
+      v-if="isShowEmty"
       class="custom-image"
       image="https://img.yzcdn.cn/vant/custom-empty-image.png"
-      description="部门内无成员"
-    />
-    <van-empty
-      v-if="getEmty()"
-      class="custom-image"
-      image="https://img.yzcdn.cn/vant/custom-empty-image.png"
-      description="无下级部门与成员"
+      :description="tipsText"
     />
   </div>
 </template>
@@ -132,17 +126,32 @@ export default {
   },
   data() {
     return {
+      tipsText: '',
       linkSymbol: 'is-link',
       skeletonLoading: true
+    }
+  },
+  computed: {
+    isShowEmty() {
+      return this.getEmpty()
     }
   },
   methods: {
     /**
      * 判断当前下属部门或者员工都为空
      */
-    getEmty() {
+    getEmpty() {
       let flagArr = [this.adressOptions.orgData.length, this.adressOptions.pingyinSortData.length]
-      return !_.every(flagArr, Boolean)
+      let isShowEmty = false // 是否展示空白图片
+      if (this.adressOptions.pingyinSortData.length === 0) {
+        this.tipsText = '部门内无成员'
+        isShowEmty = true
+      }
+      if (_.every(flagArr, Boolean)) {
+        isShowEmty = true
+        this.tipsText = '无下级部门与成员'
+      }
+      return isShowEmty
     },
     /**
      * 去部门

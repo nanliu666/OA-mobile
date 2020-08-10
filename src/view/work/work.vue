@@ -548,7 +548,11 @@ export default {
       if (iconName === 'todo') {
         this.$store.commit('RESET_TODO_NAV')
       }
-      this.$router.push(obj[iconName])
+      if (iconName === 'approve') {
+        Toast('开发中...')
+      } else {
+        this.$router.push(obj[iconName])
+      }
     },
     handleClickCell(item) {
       todoJumpFun(item, this.$router)
