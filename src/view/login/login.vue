@@ -134,7 +134,7 @@ export default {
         return
       }
       if (!this.code.trim()) {
-        Toast('密码不能为空')
+        Toast('验证码不能为空')
         return
       }
       const params = {

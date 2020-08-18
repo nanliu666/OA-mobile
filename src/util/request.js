@@ -104,11 +104,11 @@ instance.interceptors.response.use(
       message = '授权失败'
     }
     // 如果请求为非200否者默认统一处理
-    reduceLoading()
     if (status !== 200) {
       Toast({ message })
       return Promise.reject(new Error(message))
     }
+    reduceLoading()
     if (String.prototype.endsWith.call(res.config.url, '/oauth/token')) {
       return res.data
     }
