@@ -6,6 +6,7 @@ const orgUserData = {
   },
   mutations: {
     SET_ADDRESS_OPTIONS: (state, data) => {
+      // 测试
       state.addressOptionsVuex = data
     },
     PUSH_ORGPATH_LIST: (state, data) => {
