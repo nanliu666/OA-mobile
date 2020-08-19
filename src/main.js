@@ -8,6 +8,7 @@ import '@/styles/index.less'
 import 'vant/lib/index.less'
 import VueClipboard from 'vue-clipboard2'
 import longpress from '@/directive/longpress'
+import StickyHeader from '@/components/stickyHeader/stickyHeader'
 // 日历组件
 import vueHashCalendar from 'vue-hash-calendar'
 import 'vue-hash-calendar/lib/vue-hash-calendar.css'
@@ -22,6 +23,7 @@ Vue.use(vueHashCalendar)
 // 自定义vue指令
 Vue.use(longpress)
 
+Vue.component('StickyHeader', StickyHeader)
 new Vue({
   router,
   store,

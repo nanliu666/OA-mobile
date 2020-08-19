@@ -6,6 +6,7 @@
       v-bind="$attrs"
       readonly
       is-link
+      :rules="rules"
       @click="show = !show"
     />
     <van-popup
@@ -27,6 +28,7 @@
 
 <script>
 export default {
+  name: 'VanFieldSelectPicker',
   model: {
     prop: 'value',
     event: 'change'
@@ -47,6 +49,10 @@ export default {
     value: {
       type: [String, Number, Boolean],
       default: ''
+    },
+    rules: {
+      type: Array,
+      default: () => []
     }
   },
   data() {
