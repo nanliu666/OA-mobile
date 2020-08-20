@@ -3,7 +3,7 @@
     <van-image
       class="logo"
       round
-      src
+      :src="logoSrc"
     >
       <template v-slot:error>
         加载失败
@@ -71,12 +71,13 @@ import { getTenantId } from '@/api/common'
 import { getOauthCaptcha, userLogin } from '@/api/user'
 import { Toast } from 'vant'
 import md5 from 'js-md5'
-
+import logoSrc from '@/assets/images/login/logo.png'
 export default {
   name: 'Login',
   data() {
     return {
       workNo: '',
+      logoSrc,
       password: '',
       code: '',
       passwordType: 'password', //输入框类型
