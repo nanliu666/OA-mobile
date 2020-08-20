@@ -331,13 +331,14 @@
 </template>
 <script>
 import { getUserInfo } from '@/api/user'
-import { getTodoList, getScheduleList, getMyApproveList } from '@/api/work'
+import { getTodoList, getScheduleList } from '@/api/work'
+import { getMyApproveList } from '@/api/approval'
 import moment from 'moment'
 import { fetchTaskList } from '@/api/metask'
 import { todoJumpFun } from './common'
 import { improtAllFiles } from '@/util/util'
 import { Toast } from 'vant'
-import { apprStatusCN, FormKeysCN } from '@/const/approve'
+import { STATUS_TO_TEXT, FormKeysCN } from '@/const/approve'
 import { todoTypeCN } from '@/const/todo'
 import { EmerTypeCN } from '@/const/myTask'
 export default {
@@ -483,7 +484,7 @@ export default {
      * 获取当前的formKey.来兑换当前的icon
      */
     getApprIcon(data) {
-      return `#${FormKeysCN[data].icon}`
+      return `#${data ? FormKeysCN[data].icon : FormKeysCN.Recruitment.icon}`
     },
     /**
      * 前往个人中心
@@ -502,7 +503,7 @@ export default {
      * 获取审批中文文字以及文字颜色
      */
     getApprovalText(status) {
-      return apprStatusCN[status]
+      return STATUS_TO_TEXT[status]
     },
     /**
      * 跳转到审批列表页面
@@ -539,7 +540,7 @@ export default {
         todo: '/work/todo',
         schedule: '/todaySchedule/calendar',
         task: '/work/task',
-        approve: '/approval/index'
+        approve: '/approval/apprHome'
       }
       // 当点击任务icon时，重置nav标签
       if (iconName === 'task') {
@@ -548,11 +549,7 @@ export default {
       if (iconName === 'todo') {
         this.$store.commit('RESET_TODO_NAV')
       }
-      if (iconName === 'approve') {
-        Toast('开发中...')
-      } else {
-        this.$router.push(obj[iconName])
-      }
+      this.$router.push(obj[iconName])
     },
     handleClickCell(item) {
       todoJumpFun(item, this.$router)
