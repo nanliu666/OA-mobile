@@ -509,8 +509,12 @@ export default {
      * 跳转到审批列表页面
      */
     getMoreApproveList() {
-      Toast('开发中...')
-      // this.$router.push({ path: '/work/interviewDetail' })
+      this.$router.push({
+        path: `/approval/apprList`,
+        query: {
+          to: 'apprByMe'
+        }
+      })
     },
     /**
      * 展示条件：今天是否在比较时间相同或者之后
@@ -688,6 +692,9 @@ export default {
             font-size: 16px;
             margin-right: 11px;
             color: #000;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
           }
           .emerType-style {
             display: inline-block;
