@@ -115,7 +115,7 @@ export default {
      */
     toDetail(item) {
       this.replaceRoute(item)
-      let findIndex = this._.findIndex(this.oraPathList, function(o) {
+      let findIndex = _.findIndex(this.oraPathList, function(o) {
         return o.orgId == item.orgId
       })
       this.$store.commit('DELETE_ORGPATH_LIST', findIndex + 1)

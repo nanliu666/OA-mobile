@@ -5,14 +5,14 @@ const normalData = {
   msg: '操作成功',
   response: ''
 }
-const processListData = {
+const processListData = Mock.mock({
   ...normalData,
-  response: [
+  'response|1-10': [
     {
       'id|+1': [`${Mock.Random.id()}`, `${Mock.Random.id()}`],
       'name|+1': [`人事审批`, `业务审批`, '行政审批'],
       sort: 1,
-      processes: [
+      'processes|0-10': [
         {
           'processId|+1': [`${Mock.Random.id()}`, `${Mock.Random.id()}`],
           'processName|+1': [`入职申请1`, `入职申请2`, '入职申请3'],
@@ -25,7 +25,7 @@ const processListData = {
       ]
     }
   ]
-}
+})
 export default ({ mock }) => {
   if (!mock) return
   // v2版本接口
