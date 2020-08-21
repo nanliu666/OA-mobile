@@ -13,5 +13,10 @@ export default [
     path: '/approval/apprSelect',
     meta: { title: '获取条件' },
     component: () => import(/* webpackChunkName: "view" */ '@/view/approval/apprSelect.vue')
+  },
+  {
+    path: '/approval/approDetails',
+    meta: { title: '审批详情' },
+    component: () => import(/* webpackChunkName: "view" */ '@/view/approval/approDetails.vue')
   }
 ]

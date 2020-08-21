@@ -34,3 +34,5 @@ export const getCopyApproveList = (params) => get('/appr/v2/appr/cc/approve/list
  * 审批类型查询接口
  */
 export const getProcessTypeList = (params) => get('/appr/v2/appr/process/type', params)
+export const getApplyDetail = (params) => get('/api/appr/v2/appr/process/apply/detail', params)
+export const getApplyRecord = (params) => get('/api/appr/v2/appr/apply/record', params)
