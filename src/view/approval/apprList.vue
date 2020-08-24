@@ -18,7 +18,10 @@
         />
       </div>
     </StickyHeader>
-
+    <apprSelect
+      :options.sync="selectOptions"
+      @on-submit="onSubmit"
+    />
     <van-empty
       v-if="isShowEmpty"
       image="https://img.yzcdn.cn/vant/custom-empty-image.png"
@@ -67,18 +70,18 @@
                 </div>
                 <div class="des-box">
                   <span class="time">申 请 时 间：</span>
-                  <span class="des-content">{{
-                    moment(item.applyTime).format('YYYY-MM-DD hh:mm')
-                  }}</span>
+                  <span class="des-content">
+                    {{ moment(item.applyTime).format('YYYY-MM-DD hh:mm') }}
+                  </span>
                 </div>
                 <div
                   v-if="item.completeTime"
                   class="des-box"
                 >
                   <span class="time">完 成 时 间：</span>
-                  <span class="des-content">{{
-                    moment(item.completeTime).format('YYYY-MM-DD hh:mm')
-                  }}</span>
+                  <span class="des-content">
+                    {{ moment(item.completeTime).format('YYYY-MM-DD hh:mm') }}
+                  </span>
                 </div>
               </div>
               <div
@@ -98,7 +101,6 @@
   </div>
 </template>
 <script>
-import { mapGetters } from 'vuex'
 import moment from 'moment'
 import {
   getMyApproveList,
@@ -111,24 +113,18 @@ import { Toast } from 'vant'
 export default {
   name: 'Message',
   components: {
-    StickyHeader: () => import('@/components/stickyHeader/stickyHeader')
+    StickyHeader: () => import('@/components/stickyHeader/stickyHeader'),
+    apprSelect: () => import('./apprSelect')
   },
   data() {
     return {
+      selectOptions: {
+        visible: false
+      },
       headerTitle: '待我审批',
       isFristLoad: true,
       isShowEmpty: false,
-      queryInfo: {
-        pageNo: 1,
-        pageSize: 10,
-        status: '',
-        search: '',
-        processId: '',
-        orgId: '',
-        beginApplyTime: '',
-        endApplyTime: '',
-        userId: this.$store.state.user.userInfo.user_id
-      },
+      queryInfo: {},
       loadingSetting: {
         loading: false,
         finished: false,
@@ -138,18 +134,22 @@ export default {
       approvalList: []
     }
   },
-  computed: {
-    ...mapGetters(['filterContent', 'isRefresh'])
-  },
   activated() {
     this.hangleApprType()
-    this.queryInfo = _.assign(this.queryInfo, this.filterContent)
     this.resetParams()
-    if (this.isRefresh && !this.isFristLoad) {
+    if (!this.isFristLoad) {
       this.getWorkMsgList()
     }
   },
   methods: {
+    onSubmit(data) {
+      this.queryInfo = _.chain(this.queryInfo)
+        .assign(data)
+        .omit(['showDate', 'processName', 'visible', 'statusText'])
+        .value()
+      this.resetParams()
+      this.getWorkMsgList()
+    },
     hangleApprType() {
       switch (this.$route.query.to) {
         case 'waitAppr':
@@ -171,14 +171,24 @@ export default {
       }
     },
     toFilter() {
-      this.$router.push('/approval/apprSelect')
+      this.selectOptions.visible = true
     },
     onSearch() {
       this.resetParams()
       this.getWorkMsgList()
     },
     resetParams() {
-      this.queryInfo.pageNo = 1
+      this.queryInfo = {
+        pageNo: 1,
+        pageSize: 10,
+        status: '',
+        search: '',
+        processId: '',
+        orgId: '',
+        beginApplyTime: '',
+        endApplyTime: '',
+        userId: this.$store.state.user.userInfo.user_id
+      }
       this.loadingSetting.finished = false
     },
     moment,
