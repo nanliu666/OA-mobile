@@ -220,8 +220,6 @@ export default {
     width: 100%;
     display: flex;
     justify-content: space-between;
-    background-color: #fff;
-    // background: rgba(255, c255, 255, 0.85);
     box-shadow: 0px -2px 7px 0px rgba(126, 158, 230, 0.15);
     position: fixed;
     bottom: 0px;
