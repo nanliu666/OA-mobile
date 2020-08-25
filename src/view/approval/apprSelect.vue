@@ -89,7 +89,6 @@ import { STATUS_TO_TEXT } from '@/const/approve'
 import moment from 'moment'
 import { mapGetters } from 'vuex'
 import { getProcessTypeList } from '@/api/approval'
-import { getOrgTreeSimple } from '@/api/org'
 export default {
   name: 'ApprSelect',
   props: {
@@ -128,12 +127,18 @@ export default {
       this.formData.statusText = value
       this.showStatusPicker = false
     },
+    /**
+     * 确认类型后，处理数据
+     */
     onTypeConfirm(value) {
       let temp = this.typeList.filter((item) => item.processName === value)
       this.formData.processId = temp[0].processId
       this.formData.processName = value
       this.showTypePicker = false
     },
+    /**
+     * 选择时间后的数据处理
+     */
     onDateConfirm(date) {
       const [start, end] = date
       this.isShowDate = false
@@ -146,7 +151,6 @@ export default {
     resetFormData() {
       this.formData = {
         status: '',
-        orgId: '',
         beginApplyTime: '',
         endApplyTime: '',
         showDate: '',
@@ -169,24 +173,16 @@ export default {
     },
     initData() {
       this.resetFormData()
-      //   this.getOrgTree()
+      // 类型处理
       if (_.isEmpty(this.approvalType)) {
         this.getApprType()
       } else {
         this.typeList = this.approvalType.typeList
         this.typeColumns = this.approvalType.typeColumns
       }
+      // 状态兑换
       _.mapKeys(STATUS_TO_TEXT, (value) => {
         this.statusColumns.push(value.text)
-      })
-    },
-    /**
-     * 获取用人部门
-     */
-    getOrgTree() {
-      getOrgTreeSimple({ parentOrgId: 0 }).then(() => {
-        // this.searchPopoverConfig.popoverOptions[1].config.treeParams.data.push(...res)
-        // this.$refs['searchPopover'].treeDataUpdateFun(res, 'orgId')
       })
     },
     /**

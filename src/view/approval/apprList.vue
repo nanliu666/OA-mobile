@@ -42,7 +42,7 @@
           :value="loadingSetting.loading"
           :finished="loadingSetting.finished"
           :finished-text="approvalList.length === 0 ? '' : '没有更多了'"
-          @load="getWorkMsgList"
+          @load="getDataList"
         >
           <ul
             v-for="(item, index) in approvalList"
@@ -70,18 +70,18 @@
                 </div>
                 <div class="des-box">
                   <span class="time">申 请 时 间：</span>
-                  <span class="des-content">
-                    {{ moment(item.applyTime).format('YYYY-MM-DD hh:mm') }}
-                  </span>
+                  <span class="des-content">{{
+                    moment(item.applyTime).format('YYYY-MM-DD hh:mm')
+                  }}</span>
                 </div>
                 <div
                   v-if="item.completeTime"
                   class="des-box"
                 >
                   <span class="time">完 成 时 间：</span>
-                  <span class="des-content">
-                    {{ moment(item.completeTime).format('YYYY-MM-DD hh:mm') }}
-                  </span>
+                  <span class="des-content">{{
+                    moment(item.completeTime).format('YYYY-MM-DD hh:mm')
+                  }}</span>
                 </div>
               </div>
               <div
@@ -137,45 +137,56 @@ export default {
   activated() {
     this.hangleApprType()
     this.resetParams()
+    // 避免首次进入重复调用
     if (!this.isFristLoad) {
-      this.getWorkMsgList()
+      this.getDataList()
     }
   },
   methods: {
+    /**
+     * 搜索组件的回调函数
+     * 参数处理：去除搜索页面带过来的显示字段
+     */
     onSubmit(data) {
       this.queryInfo = _.chain(this.queryInfo)
         .assign(data)
         .omit(['showDate', 'processName', 'visible', 'statusText'])
         .value()
       this.resetParams()
-      this.getWorkMsgList()
+      this.getDataList()
     },
+    /**
+     * 此是待我审批、我已审批、抄送我的、我发起的处理
+     * 设置各自的headertitle以及加载函数
+     */
     hangleApprType() {
-      switch (this.$route.query.to) {
-        case 'waitAppr':
-          this.headerTitle = '待我审批'
-          this.loadFun = getWaitApproveList
-          break
-        case 'hasAppr':
-          this.loadFun = getHasApproveList
-          this.headerTitle = '我已审批'
-          break
-        case 'copyApprToMe':
-          this.loadFun = getCopyApproveList
-          this.headerTitle = '抄送我的'
-          break
-        case 'apprByMe':
-          this.loadFun = getMyApproveList
-          this.headerTitle = '我发起的'
-          break
+      const TYPE_CONST = {
+        waitAppr: {
+          headerTitle: '待我审批',
+          loadFun: getWaitApproveList
+        },
+        hasAppr: {
+          headerTitle: '我已审批',
+          loadFun: getHasApproveList
+        },
+        copyApprToMe: {
+          headerTitle: '抄送我的',
+          loadFun: getCopyApproveList
+        },
+        apprByMe: {
+          headerTitle: '我发起的',
+          loadFun: getMyApproveList
+        }
       }
+      this.headerTitle = TYPE_CONST[this.$route.query.to].headerTitle
+      this.loadFun = TYPE_CONST[this.$route.query.to].loadFun
     },
     toFilter() {
       this.selectOptions.visible = true
     },
     onSearch() {
       this.resetParams()
-      this.getWorkMsgList()
+      this.getDataList()
     },
     resetParams() {
       this.queryInfo = {
@@ -184,7 +195,6 @@ export default {
         status: '',
         search: '',
         processId: '',
-        orgId: '',
         beginApplyTime: '',
         endApplyTime: '',
         userId: this.$store.state.user.userInfo.user_id
@@ -195,6 +205,9 @@ export default {
     getStatus(status) {
       return STATUS_TO_TEXT[status]
     },
+    /**
+     * 显示中文审批人
+     */
     getUser(data) {
       let targetNameList = []
       data.map((approveUserItem) => {
@@ -207,9 +220,12 @@ export default {
     },
     reRestList() {
       this.resetParams()
-      this.getWorkMsgList()
+      this.getDataList()
     },
-    getWorkMsgList: _.debounce(function() {
+    /**
+     * 获取数据列表函数
+     */
+    getDataList: _.debounce(function() {
       if (this.loadingSetting.loading || this.loadingSetting.finished) return
       this.loadingSetting.loading = true
       this.loadFun(this.queryInfo).then((res) => {
