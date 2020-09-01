@@ -40,7 +40,7 @@ const details = {
     jobId: 1262996213457014800,
     jobName: '交付（业务）总监',
     nodeData:
-      '[{"type":"start","content":"所有人","properties":{"title":"发起人","initiator":"ALL","formOperates":[]},"nodeId":"Gb2","userList":[{"name":"Zeus","userId":"1258244944030916609","workNo":"0001","type":"user"}]},{"type":"approver","content":"Zeus","properties":{"title":"审批人","attribute":"1258244944030916609","approvers":[{"workNo":"0001","name":"Zeus","userId":"1258244944030916609","id":"1252523599903072258_1258244944030916609","type":"user"}],"assigneeType":"user","formOperates":[],"counterSign":true,"optionalMultiUser":false,"optionalRange":"USER"},"nodeId":"Kb2","prevId":"Gb2","userList":[{"workNo":"0001","name":"Zeus","userId":"1258244944030916609","id":"1252523599903072258_1258244944030916609","type":"user"}]},{"type":"approver","content":"Zeus","properties":{"title":"审批人","attribute":"1258244944030916609","approvers":[{"workNo":"0001","name":"Zeus","userId":"1258244944030916609","id":"1252523599903072258_1258244944030916609","type":"user"}],"assigneeType":"user","formOperates":[],"counterSign":true,"optionalMultiUser":false,"optionalRange":"USER"},"nodeId":"Lb2","prevId":"Kb2","userList":[{"workNo":"0001","name":"Zeus","userId":"1258244944030916609","id":"1252523599903072258_1258244944030916609","type":"user"}]}]',
+      '[{"type":"start","content":"所有人","properties":{"title":"发起人","initiator":"ALL","formOperates":[]},"nodeId":"Gb2","userList":[{"name":"Zeus","userId":"1258244944030916609","workNo":"0001","type":"user"}]},{"type":"approver","content":"Zeus","properties":{"title":"审批人","attribute":"1258244944030916609","approvers":[{"workNo":"0001","name":"Zeus","userId":"1258244944030916609","id":"1252523599903072258_1258244944030916609","type":"user"}],"assigneeType":"user","formOperates":[],"counterSign":true,"optionalMultiUser":false,"optionalRange":"USER"},"nodeId":"Kb2","prevId":"Gb2","userList":[{"workNo":"0001","name":"Zeus","userId":"1258244944030916609","id":"1252523599903072258_1258244944030916609","type":"user"}]},{"type":"approver","content":"Zeus","properties":{"title":"审批人","attribute":"1258244944030916609","approvers":[{"workNo":"0001","name":"Zeus","userId":"1258244944030916609","id":"1252523599903072258_1258244944030916609","type":"user"}],"assigneeType":"user","formOperates":[],"counterSign":false,"optionalMultiUser":false,"optionalRange":"USER"},"nodeId":"Lb2","prevId":"Kb2","userList":[{"workNo":"0001","name":"Zeus","userId":"1258244944030916609","id":"1252523599903072258_1258244944030916609","type":"user"}]}]',
     orgId: '1262951869450633218',
     orgName: 'OA自动化办公',
     processId: 'id2e8d4613d449fd768ffcef478d4bf5d4',
@@ -94,7 +94,7 @@ const record = {
         jobId: '1262996213457014785',
         jobName: '交付（业务）总监',
         approveTime: '2020-08-19 17:30:36',
-        result: 'Pass',
+        result: '',
         remark: '',
         createTime: '2020-08-18 17:02:30',
         nodeId: 'Lb2',

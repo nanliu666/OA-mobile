@@ -8,10 +8,13 @@
         </div>
         <div>
           <div class="title_name">
-            黄浩的用印申请
+            {{ detailData.title }}申请
           </div>
-          <div class="status">
-            审批中
+          <div
+            class="status"
+            :class="[detailData.status]"
+          >
+            {{ detailData.status | status }}
           </div>
         </div>
       </div>
@@ -21,209 +24,316 @@
         v-for="(item, index) in formData"
         :key="index"
       >
-        <span class="text">{{ item.text }}</span>：<span>{{ item.val }}</span>
+        <span class="text">{{ item.label }}</span>：<span>{{ item.value }}</span>
       </div>
     </div>
     <div class="progress_content">
-      <div class="line active">
-        <div class="icon_header">
-          <div class="iconfont icon-icon-personblue2 icon_Default" />
-        </div>
-        <div class="personalInfo">
-          <div class="title_name flex flex-between">
-            <div><span>发起申请</span> <span class="time">05-07 10：47</span></div>
-            <div class="start">
-              发起
-            </div>
+      <template>
+        <div
+          v-for="(item, i) in PassApproval"
+          :key="i"
+          class="line  active"
+          :class="[i === PassApproval.length - 1 ? 'record' : '']"
+        >
+          <div class="icon_header">
+            <div class="iconfont icon-icon-personblue2 icon_Default" />
           </div>
-          <div class="name">
-            张三
-          </div>
-        </div>
-      </div>
-      <div class="line">
-        <div class="icon_header">
-          <div class="iconfont icon-icon-personblue2 icon_Default" />
-        </div>
-        <div class="personalInfo">
-          <div class="title_name flex flex-between">
-            <div><span>发起申请</span> <span class="time">05-07 10：47</span></div>
-            <div class="Approve">
-              审批中
-            </div>
-          </div>
-          <div class="name">
-            张三
-          </div>
-        </div>
-      </div>
-      <div class="line">
-        <div class="icon_header">
-          <div class="iconfont icon-icon-personblue2 icon_Default" />
-        </div>
-        <div class="personalInfo">
-          <div class="title_name flex flex-between">
-            <div><span>发起申请</span> <span class="time">05-07 10：47</span></div>
-            <div class="Pass">
-              同意
-            </div>
-          </div>
-          <div class="name">
-            张三
-          </div>
-        </div>
-      </div>
-      <div class="line">
-        <div class="icon_header">
-          <div class="iconfont icon-icon-personblue2 icon_Default" />
-        </div>
-        <div class="personalInfo">
-          <div class="title_name flex flex-between">
-            <div><span>发起申请</span> <span class="time">05-07 10：47</span></div>
-            <div class="Reject">
-              已退回
-            </div>
-          </div>
-          <div class="name">
-            张三
-          </div>
-        </div>
-      </div>
-      <div class="line">
-        <div class="icon_header">
-          <div class="iconfont icon-icon-personblue2 icon_Default" />
-        </div>
-        <div class="personalInfo">
-          <div class="title_name flex flex-between">
-            <div><span>发起申请</span> <span class="time">05-07 10：47</span></div>
-            <div class="Cancel">
-              已撤回
-            </div>
-          </div>
-          <div class="name">
-            张三
-          </div>
-        </div>
-      </div>
-      <div class="line">
-        <div class="icon_header">
-          <div class="iconfont icon-icon-personblue2 icon_Default" />
-        </div>
-        <div class="personalInfo">
-          <div class="title_name flex flex-between">
-            <div>
-              <span>发起申请</span>
-              <!--              <span class="time" >05-07 10：47</span>-->
-            </div>
-            <!--            <div class="status_start" >发起</div>-->
-          </div>
-          <!--          <div class="name">-->
-          <!--            张三-->
-          <!--          </div>-->
-          <div class="countersign">
-            需要所有审批人同意
-          </div>
-          <div class="flex—wrap flex-center">
-            <div class="info">
-              <div class="iconfont icon-usercircle icon_default" />
-              <div class="info_text">
-                李思思
+          <div class="personalInfo">
+            <div class="title_name flex flex-between">
+              <div v-if="item.nodeId === 'start'">
+                <span>发起申请</span> <span class="time">{{ item.approveTime }}</span>
+              </div>
+              <div v-else>
+                <span>{{ item.nodeName }}</span> <span class="time">{{ item.approveTime }}</span>
+              </div>
+              <div
+                class="Approve "
+                :class="[item.result]"
+              >
+                {{ result(item.result, item.nodeId) }}
               </div>
             </div>
-            <div class="info">
-              <div class="iconfont icon-usercircle icon_default" />
-              <div class="info_text">
-                李思思
-              </div>
+            <div class="name">
+              {{ item.userName }}
             </div>
-            <div class="info">
-              <div class="iconfont icon-usercircle icon_default" />
-              <div class="info_text">
-                李思思
+          </div>
+        </div>
+      </template>
+      <template>
+        <div
+          v-for="item in showNodeData"
+          :key="item.nodeId"
+          class="line"
+        >
+          <div class="icon_header">
+            <div class="iconfont icon-icon-personblue2 icon_Default" />
+          </div>
+          <div class="personalInfo">
+            <div class="title_name flex flex-between">
+              <div>
+                <span>{{ item.properties.title }}</span>
+                <!--              <span class="time" >05-07 10：47</span>-->
               </div>
+              <!--            <div class="status_start" >发起</div>-->
             </div>
-            <div class="info">
-              <div class="iconfont icon-usercircle icon_default" />
-              <div class="info_text">
-                李思思
-              </div>
+            <!--          <div class="name">-->
+            <!--            张三-->
+            <!--          </div>-->
+            <div
+              v-if="item.properties.counterSign"
+              class="countersign"
+            >
+              需要所有审批人同意
             </div>
-            <div class="info">
-              <div class="iconfont icon-usercircle icon_default" />
-              <div class="info_text">
-                李思思
-              </div>
+            <div
+              v-if="item.properties.counterSign === false"
+              class="countersign"
+            >
+              1人同意即可
             </div>
-            <div class="info">
-              <div class="iconfont icon-usercircle icon_default" />
-              <div class="info_text">
-                李思思
-              </div>
-            </div>
-            <div class="info">
-              <div class="iconfont icon-usercircle icon_default" />
-              <div class="info_text">
-                李思思
-              </div>
-            </div>
-            <div class="info">
-              <div class="iconfont icon-usercircle icon_default" />
-              <div class="info_text">
-                李思思
-              </div>
-            </div>
-            <div class="info">
-              <div class="iconfont icon-usercircle icon_default" />
-              <div class="info_text">
-                李思思
-              </div>
-            </div>
-            <div class="info">
-              <div class="iconfont icon-usercircle icon_default" />
-              <div class="info_text">
-                李思思
+            <div class="flex—wrap flex-center">
+              <div
+                v-for="user in item.properties.approvers"
+                :key="user.id"
+                class="info"
+              >
+                <div class="iconfont icon-usercircle icon_default" />
+                <div class="info_text">
+                  {{ user.name }}
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="line">
-        <div class="icon_header">
-          <div class="iconfont icon-icon-personblue2 icon_Default" />
-        </div>
-        <div class="personalInfo">
-          <div class="title_name flex flex-between">
-            <div>
-              <span>发起申请</span>
-              <!--              <span class="time" >05-07 10：47</span>-->
-            </div>
-            <!--            <div class="status_start" >发起</div>-->
-          </div>
-          <!--          <div class="name">-->
-          <!--            张三-->
-          <!--          </div>-->
-          <!--          <div class='countersign'>-->
-          <!--            需要所有审批人同意-->
-          <!--          </div>-->
-          <div class="countersign">
-            1人同意即可
-          </div>
-          <div class="flex—wrap flex-center">
-            <div class="info">
-              <div class="iconfont icon-usercircle icon_default" />
-              <div class="info_text">
-                李思思
-              </div>
-            </div>
-            <div class="info">
-              <div class="iconfont icon-usercircle icon_default" />
-              <div class="info_text">
-                李思思
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      </template>
+      <!--      <div class="line">-->
+      <!--        <div class="icon_header">-->
+      <!--          <div class="iconfont icon-icon-personblue2 icon_Default" />-->
+      <!--        </div>-->
+      <!--        <div class="personalInfo">-->
+      <!--          <div class="title_name flex flex-between">-->
+      <!--            <div>-->
+      <!--              <span>发起申请</span>-->
+      <!--              <span class="time" >05-07 10：47</span>-->
+      <!--            </div>-->
+      <!--            &lt;!&ndash;            <div class="status_start" >发起</div>&ndash;&gt;-->
+      <!--          </div>-->
+      <!--          &lt;!&ndash;          <div class="name">&ndash;&gt;-->
+      <!--          &lt;!&ndash;            张三&ndash;&gt;-->
+      <!--          &lt;!&ndash;          </div>&ndash;&gt;-->
+      <!--          &lt;!&ndash;          <div class='countersign'>&ndash;&gt;-->
+      <!--          &lt;!&ndash;            需要所有审批人同意&ndash;&gt;-->
+      <!--          &lt;!&ndash;          </div>&ndash;&gt;-->
+      <!--          <div class="countersign">-->
+      <!--            1人同意即可-->
+      <!--          </div>-->
+      <!--          <div class="flex—wrap flex-center">-->
+      <!--            <div class="info">-->
+      <!--              <div class="iconfont icon-usercircle icon_default" />-->
+      <!--              <div class="info_text">-->
+      <!--                李思思-->
+      <!--              </div>-->
+      <!--            </div>-->
+      <!--            <div class="info">-->
+      <!--              <div class="iconfont icon-usercircle icon_default" />-->
+      <!--              <div class="info_text">-->
+      <!--                李思思-->
+      <!--              </div>-->
+      <!--            </div>-->
+      <!--          </div>-->
+      <!--        </div>-->
+      <!--      </div>-->
+      <!--      <div class="line">-->
+      <!--        <div class="icon_header">-->
+      <!--          <div class="iconfont icon-icon-personblue2 icon_Default" />-->
+      <!--        </div>-->
+      <!--        <div class="personalInfo">-->
+      <!--          <div class="title_name flex flex-between">-->
+      <!--            <div><span>发起申请</span> <span class="time">05-07 10：47</span></div>-->
+      <!--            <div class="start">-->
+      <!--              发起-->
+      <!--            </div>-->
+      <!--          </div>-->
+      <!--          <div class="name">-->
+      <!--            张三-->
+      <!--          </div>-->
+      <!--        </div>-->
+      <!--      </div>-->
+      <!--      <div class="line">-->
+      <!--        <div class="icon_header">-->
+      <!--          <div class="iconfont icon-icon-personblue2 icon_Default" />-->
+      <!--        </div>-->
+      <!--        <div class="personalInfo">-->
+      <!--          <div class="title_name flex flex-between">-->
+      <!--            <div><span>发起申请</span> <span class="time">05-07 10：47</span></div>-->
+      <!--            <div class="Approve">-->
+      <!--              审批中-->
+      <!--            </div>-->
+      <!--          </div>-->
+      <!--          <div class="name">-->
+      <!--            张三-->
+      <!--          </div>-->
+      <!--        </div>-->
+      <!--      </div>-->
+      <!--      <div class="line">-->
+      <!--        <div class="icon_header">-->
+      <!--          <div class="iconfont icon-icon-personblue2 icon_Default" />-->
+      <!--        </div>-->
+      <!--        <div class="personalInfo">-->
+      <!--          <div class="title_name flex flex-between">-->
+      <!--            <div><span>发起申请</span> <span class="time">05-07 10：47</span></div>-->
+      <!--            <div class="Pass">-->
+      <!--              同意-->
+      <!--            </div>-->
+      <!--          </div>-->
+      <!--          <div class="name">-->
+      <!--            张三-->
+      <!--          </div>-->
+      <!--        </div>-->
+      <!--      </div>-->
+      <!--      <div class="line">-->
+      <!--        <div class="icon_header">-->
+      <!--          <div class="iconfont icon-icon-personblue2 icon_Default" />-->
+      <!--        </div>-->
+      <!--        <div class="personalInfo">-->
+      <!--          <div class="title_name flex flex-between">-->
+      <!--            <div><span>发起申请</span> <span class="time">05-07 10：47</span></div>-->
+      <!--            <div class="Reject">-->
+      <!--              已退回-->
+      <!--            </div>-->
+      <!--          </div>-->
+      <!--          <div class="name">-->
+      <!--            张三-->
+      <!--          </div>-->
+      <!--        </div>-->
+      <!--      </div>-->
+      <!--      <div class="line">-->
+      <!--        <div class="icon_header">-->
+      <!--          <div class="iconfont icon-icon-personblue2 icon_Default" />-->
+      <!--        </div>-->
+      <!--        <div class="personalInfo">-->
+      <!--          <div class="title_name flex flex-between">-->
+      <!--            <div><span>发起申请</span> <span class="time">05-07 10：47</span></div>-->
+      <!--            <div class="Cancel">-->
+      <!--              已撤回-->
+      <!--            </div>-->
+      <!--          </div>-->
+      <!--          <div class="name">-->
+      <!--            张三-->
+      <!--          </div>-->
+      <!--        </div>-->
+      <!--      </div>-->
+      <!--      <div class="line">-->
+      <!--        <div class="icon_header">-->
+      <!--          <div class="iconfont icon-icon-personblue2 icon_Default" />-->
+      <!--        </div>-->
+      <!--        <div class="personalInfo">-->
+      <!--          <div class="title_name flex flex-between">-->
+      <!--            <div>-->
+      <!--              <span>发起申请</span>-->
+      <!--              &lt;!&ndash;              <span class="time" >05-07 10：47</span>&ndash;&gt;-->
+      <!--            </div>-->
+      <!--            &lt;!&ndash;            <div class="status_start" >发起</div>&ndash;&gt;-->
+      <!--          </div>-->
+      <!--          &lt;!&ndash;          <div class="name">&ndash;&gt;-->
+      <!--          &lt;!&ndash;            张三&ndash;&gt;-->
+      <!--          &lt;!&ndash;          </div>&ndash;&gt;-->
+      <!--          <div class="countersign">-->
+      <!--            需要所有审批人同意-->
+      <!--          </div>-->
+      <!--          <div class="flex—wrap flex-center">-->
+      <!--            <div class="info">-->
+      <!--              <div class="iconfont icon-usercircle icon_default" />-->
+      <!--              <div class="info_text">-->
+      <!--                李思思-->
+      <!--              </div>-->
+      <!--            </div>-->
+      <!--            <div class="info">-->
+      <!--              <div class="iconfont icon-usercircle icon_default" />-->
+      <!--              <div class="info_text">-->
+      <!--                李思思-->
+      <!--              </div>-->
+      <!--            </div>-->
+      <!--            <div class="info">-->
+      <!--              <div class="iconfont icon-usercircle icon_default" />-->
+      <!--              <div class="info_text">-->
+      <!--                李思思-->
+      <!--              </div>-->
+      <!--            </div>-->
+      <!--            <div class="info">-->
+      <!--              <div class="iconfont icon-usercircle icon_default" />-->
+      <!--              <div class="info_text">-->
+      <!--                李思思-->
+      <!--              </div>-->
+      <!--            </div>-->
+      <!--            <div class="info">-->
+      <!--              <div class="iconfont icon-usercircle icon_default" />-->
+      <!--              <div class="info_text">-->
+      <!--                李思思-->
+      <!--              </div>-->
+      <!--            </div>-->
+      <!--            <div class="info">-->
+      <!--              <div class="iconfont icon-usercircle icon_default" />-->
+      <!--              <div class="info_text">-->
+      <!--                李思思-->
+      <!--              </div>-->
+      <!--            </div>-->
+      <!--            <div class="info">-->
+      <!--              <div class="iconfont icon-usercircle icon_default" />-->
+      <!--              <div class="info_text">-->
+      <!--                李思思-->
+      <!--              </div>-->
+      <!--            </div>-->
+      <!--            <div class="info">-->
+      <!--              <div class="iconfont icon-usercircle icon_default" />-->
+      <!--              <div class="info_text">-->
+      <!--                李思思-->
+      <!--              </div>-->
+      <!--            </div>-->
+      <!--            <div class="info">-->
+      <!--              <div class="iconfont icon-usercircle icon_default" />-->
+      <!--              <div class="info_text">-->
+      <!--                李思思-->
+      <!--              </div>-->
+      <!--            </div>-->
+      <!--            <div class="info">-->
+      <!--              <div class="iconfont icon-usercircle icon_default" />-->
+      <!--              <div class="info_text">-->
+      <!--                李思思-->
+      <!--              </div>-->
+      <!--            </div>-->
+      <!--          </div>-->
+      <!--        </div>-->
+      <!--      </div>-->
+      <!--      <div class="line">-->
+      <!--        <div class="icon_header">-->
+      <!--          <div class="iconfont icon-icon-personblue2 icon_Default" />-->
+      <!--        </div>-->
+      <!--        <div class="personalInfo">-->
+      <!--          <div class="title_name flex flex-between">-->
+      <!--            <div>-->
+      <!--              <span>发起申请</span>-->
+      <!--            </div>-->
+      <!--          </div>-->
+      <!--          <div class="countersign">-->
+      <!--            1人同意即可-->
+      <!--          </div>-->
+      <!--          <div class="flex—wrap flex-center">-->
+      <!--            <div class="info">-->
+      <!--              <div class="iconfont icon-usercircle icon_default" />-->
+      <!--              <div class="info_text">-->
+      <!--                李思思-->
+      <!--              </div>-->
+      <!--            </div>-->
+      <!--            <div class="info">-->
+      <!--              <div class="iconfont icon-usercircle icon_default" />-->
+      <!--              <div class="info_text">-->
+      <!--                李思思-->
+      <!--              </div>-->
+      <!--            </div>-->
+      <!--          </div>-->
+      <!--        </div>-->
+      <!--      </div>-->
     </div>
   </div>
 </template>
@@ -237,11 +347,24 @@ export default {
   components: {
     StickyHeader
   },
+  filters: {
+    status(data) {
+      let status = {
+        Pass: '通过',
+        Approve: '审批中',
+        Cancel: '取消申请',
+        Reject: '已回退'
+      }
+      return status[data]
+    }
+  },
   data() {
     return {
       detailData: {},
       recordData: {},
+      PassApproval: [],
       active: 1,
+      nodeData: [],
       formData: [
         { text: '审批管理', val: '20200507000086' },
         { text: '所属部门', val: '销售部' },
@@ -254,11 +377,32 @@ export default {
       ]
     }
   },
+  computed: {
+    showNodeData: function() {
+      return this.nodeData.filter((item) => {
+        if (item.type !== 'copy' && item.type !== 'start' && item.userList.length == 0) {
+          return item
+        }
+      })
+    }
+  },
   async mounted() {
     await this.getDetails()
     await this.getRecord()
   },
   methods: {
+    result(data, type) {
+      let result = {
+        Pass: '通过',
+        Cancel: '已撤回',
+        Reject: '已退回'
+      }
+      if (type === 'start' && result[data] == 'Pass') {
+        return '发起'
+      } else {
+        return result[data] || '审批中'
+      }
+    },
     getDetails() {
       let params = {
         apprNo: this.$route.query.apprNo
@@ -268,6 +412,8 @@ export default {
           .then((res) => {
             this.detailData = res
             resolve(true)
+            this.formData = res.formData ? JSON.parse(res.formData) : []
+            this.nodeData = res.nodeData ? JSON.parse(res.nodeData) : []
           })
           .catch(() => {
             reject(false)
@@ -283,6 +429,18 @@ export default {
           .then((res) => {
             this.recordData = res.data
             resolve(true)
+            this.PassApproval = JSON.parse(JSON.stringify(this.recordData))
+            // this.recordData.map(item =>{
+            //   item.result === "Pass"&&(this.PassApproval.push(item))
+            //   item.result === "Cancel"&&(this.PassApproval.push(item))
+            //   item.result === "Reject"&&(this.PassApproval.push(item))
+            // })
+            this.nodeData.map((it) => {
+              it.userList = []
+              this.recordData.map((item) => {
+                item.nodeId == it.nodeId && it.userList.push(item)
+              })
+            })
           })
           .catch(() => {
             reject(false)
@@ -326,6 +484,10 @@ export default {
     font-size: 17px;
     line-height: 25.5px;
     color: #000000;
+    overflow: hidden;
+    text-overflow: ellipsis; //超出部分以省略号显示
+    white-space: nowrap;
+    width: 275px;
     /*font-weight: 0;*/
   }
   .status {
@@ -336,6 +498,18 @@ export default {
     font-size: 12px;
     text-align: center;
     margin-top: 6.5px;
+  }
+  .Approve {
+    color: #6aafff;
+  }
+  .Pass {
+    color: #7ad683;
+  }
+  .Reject {
+    color: #ff6464;
+  }
+  .Cancel {
+    color: #ff6464;
   }
 }
 .flex {
@@ -420,6 +594,12 @@ export default {
         letter-spacing: 0;
         margin-left: 8px;
       }
+      .Approve {
+        font-size: 17px;
+        color: #ffd122;
+        letter-spacing: 0;
+        margin-right: 16px;
+      }
       .start,
       .Pass {
         margin-right: 16px;
@@ -427,12 +607,7 @@ export default {
         font-size: 17px;
         letter-spacing: 0;
       }
-      .Approve {
-        font-size: 17px;
-        color: #ffd122;
-        letter-spacing: 0;
-        margin-right: 16px;
-      }
+
       .Reject,
       .Cancel {
         font-size: 17px;
@@ -473,6 +648,9 @@ export default {
   }
   .active {
     border-left: 1.5px solid #207efa;
+  }
+  .record {
+    border-left: 1.5px solid rgba(0, 0, 0, 0.15);
   }
   .line:last-child {
     border-left: 1px solid transparent;
