@@ -388,9 +388,10 @@ export default {
     border-radius: 50%;
     display: flex;
     justify-content: center;
-    width: 12px;
-    height: 12px;
+    width: 9px;
+    height: 9px;
     left: -1px;
+    top: 4px;
   }
   &__header {
     color: #323233;
@@ -398,17 +399,21 @@ export default {
   }
   &__wrapper {
     position: relative;
-    padding-left: 28px;
+    padding-left: 16px;
     top: -3px;
   }
   &__title {
-    font-size: 18px;
+    font-size: 14px;
     margin-right: 6px;
+  }
+  &__tips {
+    color: #757c85;
   }
   &__content {
     display: flex;
     flex-wrap: wrap;
     padding-bottom: 10px;
+    color: #323233;
   }
   &__avatar {
     width: 40px;
