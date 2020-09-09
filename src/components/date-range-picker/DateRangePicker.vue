@@ -69,7 +69,10 @@ export default {
         ...this.rules,
         {
           validator: (val) => {
-            if (new Date(val).getTime() >= new Date(this.value[0]).getTime()) {
+            if (
+              (!val && !this.value[0]) ||
+              new Date(val).getTime() >= new Date(this.value[0]).getTime()
+            ) {
               return true
             }
             return false

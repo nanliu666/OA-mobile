@@ -6,13 +6,10 @@ function renderFrom(h) {
   const { formConfCopy } = this
 
   return (
-    <div class="page">
-      <sticky-header title="个人信息" />
-      <van-form ref="form" input-align="right" show-error-message={false} submit-on-enter={false}>
-        {renderFormItem.call(this, h, formConfCopy.fields)}
-        {formBtns.call(this, h)}
-      </van-form>
-    </div>
+    <van-form ref="form" input-align="right" show-error-message={false} submit-on-enter={false}>
+      {renderFormItem.call(this, h, formConfCopy.fields)}
+      {formConfCopy.showButton && formBtns.call(this, h)}
+    </van-form>
   )
 }
 
@@ -27,7 +24,7 @@ function formBtns(h) {
   )
 }
 
-function renderFormItem(h, elementList) {
+function renderFormItem(h, elementList = []) {
   return elementList.map((scheme) => {
     const config = scheme.__config__
     return (
@@ -44,31 +41,56 @@ function renderFormItem(h, elementList) {
 }
 
 export default {
-  components: {
-    renderItem
-  },
   props: {
     formConf: {
       type: Object,
-      required: true
+      default: () => ({})
+    },
+    formData: {
+      type: Object,
+      default: () => ({})
     }
   },
   data() {
-    const data = {
-      formConfCopy: deepClone(this.formConf),
+    return {
+      formConfCopy: {},
       form: {}
     }
-    this.initFormData(data.formConfCopy.fields, data.form)
-    return data
+  },
+  computed: {},
+  watch: {
+    form: {
+      handler(val) {
+        this.$emit('update:formData', val)
+      },
+      deep: true
+    }
+  },
+  mounted() {
+    this.init(this.formConf)
   },
   methods: {
-    initFormData(componentList, formData) {
+    init(conf) {
+      if (_.isEmpty(conf)) {
+        return
+      }
+      const form = {}
+      this.formConfCopy = deepClone(conf)
+      this.initFormData(conf.fields, form)
+      this.form = form
+      this.$nextTick(() => {
+        this.$refs.form.resetValidation()
+      })
+    },
+    // 构建data属性
+    initFormData(componentList = [], formData) {
       componentList.forEach((cur) => {
         const config = cur.__config__
         if (cur.__vModel__) formData[cur.__vModel__] = config.defaultValue
         if (config.children) this.initFormData(config.children, formData)
       })
     },
+    // 构建校验规则
     buildRules(field) {
       const config = field.__config__
       const rules = []
@@ -77,20 +99,69 @@ export default {
       }
       return rules
     },
+    // 重置方法
     resetForm() {
-      this.formConfCopy = deepClone(this.formConf)
-      this.$refs.form.resetFields()
+      // this.formConfCopy = deepClone(this.formConf)
+      this.$refs.form.resetValidation()
     },
-    submitForm() {
-      this.$refs.form
-        .validate()
-        .then(() => {
-          this.$emit('submit', this.form)
-        })
-        .catch((error) => {
-          this.$toast && this.$toast(error[0].message)
-          this.$refs.form.scrollToField(error[0].name, { alignToTop: true })
-        })
+    getFieldContent(field) {
+      let options = field.__slot__.options
+      let content
+      const form = this.form
+      if (options && Array.isArray(form[field.__vModel__])) {
+        content = options
+          .filter((option) => form[field.__vModel__].includes(option.value))
+          .map((option) => option.label)
+          .join(',')
+      } else if (options) {
+        content = options
+          .filter((option) => form[field.__vModel__] === option.value)
+          .map((option) => option.label)
+          .join(',')
+      } else if (field.__config__.type === 'daterange') {
+        content = form[field.__vModel__].join(' 至 ')
+      } else {
+        content = form[field.__vModel__]
+      }
+      return content
+    },
+    // 将form对象封装成包含字段信息的对象数组
+    genFormFields(form) {
+      const formFields = []
+      this.formConfCopy.fields.forEach((item) => {
+        if (typeof item.__vModel__ !== 'undefined') {
+          formFields.push({
+            label: item.__config__.label,
+            prop: item.__vModel__,
+            value: form[item.__vModel__],
+            content: this.getFieldContent(item),
+            span: item.__pc__.span || 12
+          })
+        }
+      })
+      return formFields
+    },
+    // 内部按钮调用的提交方法
+    _submitForm() {
+      this.$refs.form.validate((valid) => {
+        if (!valid) return false
+        // 触发sumit事件
+        this.$emit('submit', { formData: this.form, formFields: this.genFormFields(this.form) })
+        return true
+      })
+    },
+    // 外部调用的提交方法
+    validate() {
+      return new Promise((resolve, reject) => {
+        this.$refs.form
+          .validate()
+          .then(() => {
+            resolve({ formData: this.form, formFields: this.genFormFields(this.form) })
+          })
+          .catch((err) => {
+            reject(err)
+          })
+      })
     }
   },
   render(h) {

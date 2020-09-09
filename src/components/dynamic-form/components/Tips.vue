@@ -20,5 +20,6 @@ export default {
   font-size: 3.733vw;
   line-height: 6.4vw;
   color: #757c85;
+  border-bottom: 1px solid #ebedf0;
 }
 </style>
