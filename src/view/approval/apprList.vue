@@ -107,7 +107,6 @@ import {
   getCopyApproveList
 } from '@/api/approval'
 import { STATUS_TO_TEXT } from '@/const/approve'
-import { Toast } from 'vant'
 export default {
   name: 'Message',
   components: {
@@ -193,7 +192,13 @@ export default {
       return targetNameList.length === 0 ? '暂无审批人' : targetNameList.join('，')
     },
     toDetail(item) {
-      Toast(item.title)
+      let params = {
+        apprNo: item.apprNo
+      }
+      this.$router.push({
+        path: '/approval/approDetails',
+        query: params
+      })
     },
     reRestList() {
       this.resetParams()
