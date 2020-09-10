@@ -174,7 +174,7 @@
               is-link
               @click="handleClickCell(item)"
             >
-              <div slot="title">
+              <template slot="title">
                 <div class="person-cell">
                   <svg
                     class="icon matterIcon"
@@ -196,16 +196,17 @@
                     </div>
                   </div>
                 </div>
-              </div>
+              </template>
             </van-cell>
           </ul>
         </div>
         <div class="matters">
-          <van-cell title="今日安排">
-            <template #right-icon>
-              <span @click="handleClickIcon('schedule')">{{ today }}</span>
-            </template>
-          </van-cell>
+          <van-cell
+            is-link
+            title="今日安排"
+            :value="today"
+            @click="handleClickIcon('schedule')"
+          />
           <template v-for="(item, index) in scheduleList">
             <van-cell
               v-if="index < 5"
@@ -676,13 +677,14 @@ export default {
       font-weight: 500;
     }
     .van-cell__value {
-      flex: 0 1 60px;
+      flex: 0 1 80px;
     }
     .person-cell {
       display: flex;
       align-items: center;
       .title {
         margin-left: 14px;
+        width: calc(100vw - 100px);
         &.needWidth {
           width: 224px;
         }
