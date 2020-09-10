@@ -104,7 +104,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import '@/styles/variables.less';
 .appr-apply {
+  background-color: @--color-background-gray;
   .footer {
     padding: 16px 16.5px;
     position: absolute;

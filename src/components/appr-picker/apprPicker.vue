@@ -1,5 +1,5 @@
 <template>
-  <div class="appr-user">
+  <div class="appr-picker">
     <van-form
       ref="form"
       :rules="rules"
@@ -22,6 +22,7 @@
       <van-field
         name="approver"
         :rules="rules.approver"
+        class="appr-picker-approver"
       >
         <template #input>
           <appr-picker-item
@@ -364,11 +365,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.appr-user {
-  &__title {
-    line-height: 20px;
-    padding-bottom: 8px;
-    color: #606266;
+.appr-picker {
+  .appr-picker-approver {
+    margin-top: 8px;
   }
   .process--error {
     color: #ee0a24;

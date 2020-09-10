@@ -1,7 +1,7 @@
 <template>
   <div class="appr-user-item__box">
     <div
-      v-show="!(data && data.noData)"
+      v-show="!(data && data.noData) && !loading"
       class="appr-user-item"
     >
       <div
@@ -67,6 +67,11 @@
         </div>
       </div>
     </div>
+    <van-loading
+      v-if="loading"
+      color="#1989fa"
+      size="28"
+    />
     <appr-picker-item
       v-if="data && (data.childNode || data.conditionNodes)"
       :path="`${path}-0`"
@@ -378,7 +383,8 @@ export default {
   position: relative;
   &__tail {
     position: absolute;
-    left: 4px;
+    left: 3px;
+    top: 4px;
     height: 100%;
     border-left: 2px solid #e4e7ed;
   }
@@ -388,9 +394,8 @@ export default {
     border-radius: 50%;
     display: flex;
     justify-content: center;
-    width: 9px;
-    height: 9px;
-    left: -1px;
+    width: 8px;
+    height: 8px;
     top: 4px;
   }
   &__header {

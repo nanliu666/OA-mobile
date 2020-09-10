@@ -27,27 +27,34 @@
         </button>
       </div>
       <van-list>
-        <van-cell
-          v-for="item in options"
-          :key="item[__props__.value]"
-          :is-link="!__props__.disable || !__props__.disable(item)"
-          center
-          :title="__props__.formatter ? __props__.formatter(item, options) : item[__props__.label]"
-          :class="{ 'picker-option__disable': __props__.disable && __props__.disable(item) }"
-          @click="handleCheck(item)"
-        >
-          <template #right-icon>
-            <div
-              :class="{
-                'van-checkbox__icon van-checkbox__icon--square': true,
-                'van-checkbox__icon--checked':
-                  data.findIndex((i) => i[__props__.value] === item[__props__.value]) !== -1
-              }"
-            >
-              <i class="van-icon van-icon-success" />
-            </div>
-          </template>
-        </van-cell>
+        <template v-if="options.length > 0">
+          <van-cell
+            v-for="item in options"
+            :key="item[__props__.value]"
+            :is-link="!__props__.disable || !__props__.disable(item)"
+            center
+            :title="
+              __props__.formatter ? __props__.formatter(item, options) : item[__props__.label]
+            "
+            :class="{ 'picker-option__disable': __props__.disable && __props__.disable(item) }"
+            @click="handleCheck(item)"
+          >
+            <template #right-icon>
+              <div
+                :class="{
+                  'van-checkbox__icon van-checkbox__icon--square': true,
+                  'van-checkbox__icon--checked':
+                    data.findIndex((i) => i[__props__.value] === item[__props__.value]) !== -1
+                }"
+              >
+                <i class="van-icon van-icon-success" />
+              </div>
+            </template>
+          </van-cell>
+        </template>
+        <template v-else>
+          <van-empty description="暂无数据" />
+        </template>
       </van-list>
     </van-popup>
   </div>
