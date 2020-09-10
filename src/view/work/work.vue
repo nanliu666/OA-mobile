@@ -495,8 +495,12 @@ export default {
     /**
      * 跳转到审批详情
      */
-    toApprovalDetail() {
+    toApprovalDetail(item) {
       Toast('开发中...')
+      this.$router.push({
+        path: '/approval/approDetails',
+        query: { apprNo: item.apprNo }
+      })
       // console.log('跳转到审批详情==', data)
     },
     /**

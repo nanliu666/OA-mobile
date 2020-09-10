@@ -3,7 +3,6 @@
  * @param {*} item 点击的每一项
  * @param {*} router vue的路由实例
  */
-import { Toast } from 'vant'
 export const todoJumpFun = (item, router) => {
   switch (item.type) {
     case 'Recruitment':
@@ -37,8 +36,7 @@ export const todoJumpFun = (item, router) => {
       router.push({ path: '/todo/leaveHandel', query: { biz_id: item.bizId } })
       break
     case 'approve':
-      Toast('开发中...')
-      // router.push({ path: '/todo/recruitment', query: { bizId: item.bizId } })
+      router.push({ path: '/approval/approDetails', query: { apprNo: item.apprNo } })
       break
   }
 }
