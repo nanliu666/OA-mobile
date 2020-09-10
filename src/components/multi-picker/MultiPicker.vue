@@ -1,14 +1,17 @@
 <template>
   <div>
-    <van-field
-      ref="vanField"
-      :value="showingLabel"
-      v-bind="$attrs"
-      readonly
-      is-link
-      :rules="rules"
-      @click="show = !show"
-    />
+    <div @click="show = !show">
+      <van-field
+        v-if="!$slots.default"
+        ref="vanField"
+        :value="showingLabel"
+        v-bind="$attrs"
+        readonly
+        is-link
+        :rules="rules"
+      />
+      <slot />
+    </div>
     <van-popup
       v-model="show"
       position="bottom"
@@ -24,26 +27,34 @@
         </button>
       </div>
       <van-list>
-        <van-cell
-          v-for="item in options"
-          :key="item[__props__.value]"
-          is-link
-          center
-          :title="item.formatter ? item.formatter(item, options) : item[__props__.label]"
-          @click="handleCheck(item)"
-        >
-          <template #right-icon>
-            <div
-              :class="{
-                'van-checkbox__icon van-checkbox__icon--square': true,
-                'van-checkbox__icon--checked':
-                  data.findIndex((i) => i[__props__.value] === item[__props__.value]) !== -1
-              }"
-            >
-              <i class="van-icon van-icon-success" />
-            </div>
-          </template>
-        </van-cell>
+        <template v-if="options.length > 0">
+          <van-cell
+            v-for="item in options"
+            :key="item[__props__.value]"
+            :is-link="!__props__.disable || !__props__.disable(item)"
+            center
+            :title="
+              __props__.formatter ? __props__.formatter(item, options) : item[__props__.label]
+            "
+            :class="{ 'picker-option__disable': __props__.disable && __props__.disable(item) }"
+            @click="handleCheck(item)"
+          >
+            <template #right-icon>
+              <div
+                :class="{
+                  'van-checkbox__icon van-checkbox__icon--square': true,
+                  'van-checkbox__icon--checked':
+                    data.findIndex((i) => i[__props__.value] === item[__props__.value]) !== -1
+                }"
+              >
+                <i class="van-icon van-icon-success" />
+              </div>
+            </template>
+          </van-cell>
+        </template>
+        <template v-else>
+          <van-empty description="暂无数据" />
+        </template>
       </van-list>
     </van-popup>
   </div>
@@ -70,6 +81,10 @@ export default {
     rules: {
       type: Array,
       default: () => []
+    },
+    single: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -85,32 +100,49 @@ export default {
     showingLabel() {
       return this.data
         .map((item) =>
-          item.formatter ? item.formatter(item, this.options) : item[this.__props__.label]
+          this.__props__.formatter
+            ? this.__props__.formatter(item, this.options)
+            : item[this.__props__.label]
         )
         .join(',')
     }
   },
-  mounted() {
-    this.data = this.options.filter((item) => this.value.includes(item[this.__props__.value]))
+  watch: {
+    value: {
+      immediate: true,
+      handler(value) {
+        this.data = this.options.filter((item) => value.includes(item[this.__props__.value]))
+      }
+    }
   },
+  mounted() {},
   methods: {
     submit() {
+      this.show = false
       this.$emit(
         'change',
-        this.data.map((item) => item[this.__props__.value])
+        this.data.map((item) => item[this.__props__.value]),
+        this.data
       )
-      this.show = false
     },
     cancel() {
-      this.data = this.options.filter((item) => this.value.includes(item[this.__props__.value]))
       this.show = false
+      this.data = this.options.filter((item) => this.value.includes(item[this.__props__.value]))
     },
     handleCheck(item) {
+      if (this.__props__.disable && this.__props__.disable(item)) {
+        return
+      }
       let index = this.data.findIndex((i) => i[this.__props__.value] === item[this.__props__.value])
       if (index !== -1) {
         this.data.splice(index, 1)
       } else {
-        this.data.push(item)
+        if (this.single) {
+          this.data = [item]
+          this.submit()
+        } else {
+          this.data.push(item)
+        }
       }
     }
   }
@@ -120,7 +152,11 @@ export default {
 <style lang="less">
 @import '@/styles/variables.less';
 .multi-select-pop {
+  padding-top: 44px;
   .header {
+    position: absolute;
+    top: 0;
+    width: 100%;
     display: flex;
     justify-content: space-between;
     height: 44px;
@@ -132,6 +168,13 @@ export default {
     background: none;
     color: @primaryColor;
     padding: 0 16px;
+  }
+  .van-list {
+    height: 40vh;
+    overflow: auto;
+  }
+  .picker-option__disable {
+    opacity: 0.5;
   }
 }
 </style>

@@ -89,7 +89,6 @@ const NAV_LIST = [
   }
 ]
 import StickyHeader from '@/components/stickyHeader/stickyHeader'
-import { Toast } from 'vant'
 export default {
   name: 'ApprovalIndex',
   components: {
@@ -113,7 +112,14 @@ export default {
   },
   methods: {
     toAppr(data) {
-      Toast(data.processName)
+      if (data.formKey) {
+        this.$toast({
+          message: '该申请不支持直接发起，请在相关业务处（如：人事管理模块）发起申请',
+          position: 'bottom'
+        })
+        return
+      }
+      this.$router.push({ path: '/approval/apprApply', query: { processId: data.processId } })
     },
     /**
      * 初始化数据
