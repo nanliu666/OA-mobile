@@ -99,7 +99,7 @@
             <div class="personalInfo">
               <div class="title_name flex flex-between">
                 <div>
-                  <span>{{ item.properties.title }}</span>
+                  <span>{{ item.properties && item.properties.title }}</span>
                   <!--              <span class="time" >05-07 10：47</span>-->
                 </div>
                 <!--            <div class="status_start" >发起</div>-->
@@ -108,13 +108,13 @@
               <!--            张三-->
               <!--          </div>-->
               <div
-                v-if="item.properties.counterSign"
+                v-if="item.properties && item.properties.counterSign"
                 class="countersign"
               >
                 需要所有审批人同意
               </div>
               <div
-                v-if="item.properties.counterSign === false"
+                v-if="item.properties && item.properties.counterSign === false"
                 class="countersign"
               >
                 1人同意即可
@@ -137,7 +137,7 @@
       </div>
 
       <div
-        v-if="!isFished && !isCancel"
+        v-if="!isFished && !isCancel && !isReject"
         class="footer"
       >
         <span
