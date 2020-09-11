@@ -1,87 +1,88 @@
 <template>
-  <van-popup
-    v-model="options.visible"
-    round
-    close-icon="close"
-    position="bottom"
-    :style="{ height: '80%' }"
-  >
-    <div class="apprSelect">
-      <section class="select-box">
-        <van-cell
-          title="审批类型"
-          :value="formData.processName"
-          is-link
-          @click="showTypePicker = true"
-        />
-        <van-cell
-          title="申请时间"
-          :value="formData.showDate"
-          is-link
-          @click="isShowDate = true"
-        />
-        <van-cell
-          title="审批状态"
-          is-link
-          :value="formData.statusText"
-          @click="showStatusPicker = true"
-        />
-      </section>
-      <!-- 选择日期 -->
-      <van-calendar
-        v-model="isShowDate"
-        type="range"
-        :min-date="new Date(2000, 0, 1)"
-        @confirm="onDateConfirm"
+  <div>
+    <van-popup
+      v-model="options.visible"
+      close-icon="close"
+      position="right"
+      :style="{ height: '100%', width: '80%' }"
+    >
+      <div class="apprSelect">
+        <section class="select-box">
+          <van-cell
+            title="审批类型"
+            :value="formData.processName"
+            is-link
+            @click="showTypePicker = true"
+          />
+          <van-cell
+            title="申请时间"
+            :value="formData.showDate"
+            is-link
+            @click="isShowDate = true"
+          />
+          <van-cell
+            title="审批状态"
+            is-link
+            :value="formData.statusText"
+            @click="showStatusPicker = true"
+          />
+        </section>
+
+        <!-- 按钮组 -->
+        <section class="button-box">
+          <van-button
+            class="cancel-button"
+            size="normal"
+            type="default"
+            @click="onReset()"
+          >
+            重置
+          </van-button>
+          <van-button
+            size="normal"
+            type="info"
+            @click="affirm()"
+          >
+            确认
+          </van-button>
+        </section>
+      </div>
+    </van-popup>
+    <!-- 选择日期 -->
+    <van-calendar
+      v-model="isShowDate"
+      type="range"
+      color="#207efa"
+      :min-date="new Date(2000, 0, 1)"
+      @confirm="onDateConfirm"
+    />
+    <!--  选择审批状态-->
+    <van-popup
+      v-model="showStatusPicker"
+      round
+      position="bottom"
+    >
+      <van-picker
+        show-toolbar
+        :columns="statusColumns"
+        @cancel="showStatusPicker = false"
+        @confirm="onStatusConfirm"
       />
-      <!--  选择审批状态-->
-      <van-popup
-        v-model="showStatusPicker"
-        round
-        position="bottom"
-      >
-        <van-picker
-          show-toolbar
-          :columns="statusColumns"
-          @cancel="showStatusPicker = false"
-          @confirm="onStatusConfirm"
-        />
-      </van-popup>
-      <!-- 选择审批类型 -->
-      <van-popup
-        v-model="showTypePicker"
-        round
-        position="bottom"
-      >
-        <van-picker
-          show-toolbar
-          :columns="typeColumns"
-          @cancel="showTypePicker = false"
-          @confirm="onTypeConfirm"
-        />
-      </van-popup>
-      <!-- 按钮组 -->
-      <section class="button-box">
-        <van-button
-          round
-          class="cancel-button"
-          size="normal"
-          type="default"
-          @click="onReset()"
-        >
-          重置
-        </van-button>
-        <van-button
-          round
-          size="normal"
-          type="info"
-          @click="affirm()"
-        >
-          确认
-        </van-button>
-      </section>
-    </div>
-  </van-popup>
+    </van-popup>
+    <!-- 选择审批类型 -->
+    <van-popup
+      v-model="showTypePicker"
+      round
+      position="bottom"
+    >
+      <van-picker
+        show-toolbar
+        :columns="typeColumns"
+        @cancel="showTypePicker = false"
+        @confirm="onTypeConfirm"
+      />
+    </van-popup>
+  </div>
 </template>
 
 <script>
