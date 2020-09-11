@@ -338,7 +338,6 @@ import moment from 'moment'
 import { fetchTaskList } from '@/api/metask'
 import { todoJumpFun } from './common'
 import { improtAllFiles } from '@/util/util'
-import { Toast } from 'vant'
 import { STATUS_TO_TEXT, FormKeysCN } from '@/const/approve'
 import { todoTypeCN } from '@/const/todo'
 import { EmerTypeCN } from '@/const/myTask'
@@ -497,7 +496,6 @@ export default {
      * 跳转到审批详情
      */
     toApprovalDetail(item) {
-      Toast('开发中...')
       this.$router.push({
         path: '/approval/approDetails',
         query: { apprNo: item.apprNo }
