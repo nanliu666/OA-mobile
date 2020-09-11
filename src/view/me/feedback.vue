@@ -24,7 +24,7 @@
           匿名
         </van-checkbox>
         <div class="prompt">
-          勾选匿名后，意见发亏内容将以匿名的方式提交
+          勾选匿名后，意见反馈内容将以匿名的方式提交
         </div>
       </div>
 
@@ -70,8 +70,8 @@
 </template>
 <script>
 import StickyHeader from '@/components/stickyHeader/stickyHeader'
-import {postUserFeedback} from '@/api/user'
-import {Toast} from 'vant'
+import { postUserFeedback } from '@/api/user'
+import { Toast } from 'vant'
 export default {
   name: 'Feedback',
   components: {
@@ -82,37 +82,39 @@ export default {
       content: '',
       anonymous: false,
       loading: false,
-      resolvePopup:false
+      resolvePopup: false
     }
   },
   methods: {
-      submit(){
-          if(!this.content.trim()){
-              Toast('意见反馈不能为空')
-              return
-          }
-          const params = {
-              userId: this.$store.state.user.userInfo.user_id,
-              content: this.content,
-              isUnknown : this.anonymous? 1 : 0
-          }
-          this.loading = true
-          postUserFeedback(params).then(() => {
-              Toast('反馈成功')
-              this.loading = false
-              this.resolvePopup = true
-          }).catch(() =>{
-              this.loading = false
-          })
-      },
-      backHome(){
-          this.$router.go(-1)
+    submit() {
+      if (!this.content.trim()) {
+        Toast('意见反馈不能为空')
+        return
       }
+      const params = {
+        userId: this.$store.state.user.userInfo.user_id,
+        content: this.content,
+        isUnknown: this.anonymous ? 1 : 0
+      }
+      this.loading = true
+      postUserFeedback(params)
+        .then(() => {
+          Toast('反馈成功')
+          this.loading = false
+          this.resolvePopup = true
+        })
+        .catch(() => {
+          this.loading = false
+        })
+    },
+    backHome() {
+      this.$router.go(-1)
+    }
   }
 }
 </script>
 
-<style lang='less' scoped>
+<style lang="less" scoped>
 .page {
   background-color: #f5f6f6;
   min-height: 100%;
