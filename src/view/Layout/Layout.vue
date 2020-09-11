@@ -6,33 +6,23 @@
     <div class="tab-contain">
       <router-view />
     </div>
-    <van-tabbar
-      v-model="currentPage"
-      @change="onChange"
-    >
+    <van-tabbar>
       <van-tabbar-item
         v-for="(item, index) in tabbarList"
         :key="index"
+        class="tabber-li"
         :class="{ 'van-tabbar-item--active': currentPage === item.code }"
         :name="item.code"
+        @click="handleClick(item)"
       >
         <svg
           slot="icon"
           class="icon"
           aria-hidden="true"
         >
-          <use
-            v-show="currentPage !== item.code"
-            :[symbolKey]="'#' + item.icon"
-          />
-          <use
-            v-show="currentPage === item.code"
-            :[symbolKey]="'#' + item.activeIcon"
-          />
+          <use :[symbolKey]="`#${currentPage === item.code ? item.activeIcon : item.icon}`" />
         </svg>
-        <router-link :to="item.path">
-          {{ item.name }}
-        </router-link>
+        <div>{{ item.name }}</div>
       </van-tabbar-item>
     </van-tabbar>
   </div>
@@ -51,7 +41,14 @@ export default {
   created() {
     this.getCurrentPage()
   },
+  activated() {
+    this.getCurrentPage()
+  },
   methods: {
+    handleClick(data) {
+      this.currentPage = data.code
+      this.$router.replace(data.path)
+    },
     getCurrentPage() {
       this.currentPage = TabbarList.filter((i) => i.path === this.$route.path)[0].code
     },

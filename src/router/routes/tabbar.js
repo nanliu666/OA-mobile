@@ -20,7 +20,7 @@ export default [
         path: '/me/index',
         name: '百利宏移动办公',
         component: () => import(/* webpackChunkName: "view" */ '@/view/me/me.vue'),
-        meta: { title: '个人中心' }
+        meta: { title: '个人中心', keepAlive: true }
       },
       {
         path: '/addressBook/index',

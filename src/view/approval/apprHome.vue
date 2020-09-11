@@ -88,6 +88,7 @@ const NAV_LIST = [
     icon: 'task'
   }
 ]
+import { mapGetters } from 'vuex'
 import StickyHeader from '@/components/stickyHeader/stickyHeader'
 export default {
   name: 'ApprovalIndex',
@@ -102,6 +103,9 @@ export default {
       imgModules: {},
       navList: NAV_LIST
     }
+  },
+  computed: {
+    ...mapGetters(['userId'])
   },
   created() {
     this.imgModules = improtAllFiles(
@@ -125,7 +129,11 @@ export default {
      * 初始化数据
      */
     initData() {
-      getProcessList().then((res) => {
+      let parmas = {
+        userId: this.userId,
+        processName: ''
+      }
+      getProcessList(parmas).then((res) => {
         this.aprrovalList = res
       })
     },
