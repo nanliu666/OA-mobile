@@ -16,7 +16,7 @@ VueRouter.prototype.push = function push(to) {
 
 const router = new VueRouter({
   mode: 'history',
-  // base: '/helper/',
+  base: '/selfhelper/',
   // https://router.vuejs.org/zh/guide/advanced/scroll-behavior.html#%E5%BC%82%E6%AD%A5%E6%BB%9A%E5%8A%A8
   // 这个方法 是控制滚动条
   // 如果 retuen falsy || {} ,则不发生滚动

@@ -5,7 +5,7 @@ const path = require('path')
 const rimraf = require('rimraf')
 const chalk = require('chalk')
 
-const p = path.resolve(__dirname, '../../oa_helper.zip')
+const p = path.resolve(__dirname, '../../oa_platform_mobile.zip')
 // create a file to stream archive data to.
 rimraf(p, () => {
   const output = fs.createWriteStream(p)
@@ -49,7 +49,7 @@ rimraf(p, () => {
   archive.pipe(output)
 
   // append files from a sub-directory, putting its contents at the root of archive
-  archive.directory('dist/', 'oa_helper')
+  archive.directory('dist/', 'oa_platform_mobile')
 
   // finalize the archive (ie we are done appending files but streams have to finish yet)
   // 'close', 'end' or 'finish' may be fired right after calling this method so register to them beforehand

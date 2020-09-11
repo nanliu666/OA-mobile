@@ -8,7 +8,7 @@ function resolve(dir) {
 }
 module.exports = {
   //路径前缀
-  publicPath: isProduction ? '/helper/' : '/',
+  publicPath: isProduction ? '/selfhelper/' : '/',
   lintOnSave: true,
   productionSourceMap: false,
   chainWebpack: (config) => {
