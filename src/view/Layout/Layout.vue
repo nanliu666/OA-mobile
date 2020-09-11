@@ -15,6 +15,7 @@
         :key="index"
         :class="{ 'van-tabbar-item--active': currentPage === item.code }"
         :name="item.code"
+        @click="handleClick(item)"
       >
         <svg
           slot="icon"
@@ -30,9 +31,7 @@
             :[symbolKey]="'#' + item.activeIcon"
           />
         </svg>
-        <router-link :to="item.path">
-          {{ item.name }}
-        </router-link>
+        <div>{{ item.name }}</div>
       </van-tabbar-item>
     </van-tabbar>
   </div>
@@ -52,6 +51,10 @@ export default {
     this.getCurrentPage()
   },
   methods: {
+    handleClick(data) {
+      this.currentPage = data.code
+      this.$router.replace(data.path)
+    },
     getCurrentPage() {
       this.currentPage = TabbarList.filter((i) => i.path === this.$route.path)[0].code
     },
