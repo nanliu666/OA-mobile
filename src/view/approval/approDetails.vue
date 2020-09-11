@@ -734,8 +734,8 @@ export default {
   padding: 2px;
   position: absolute;
   top: 18px;
-  left: 15px;
-  font-size: 8px;
+  left: 12px;
+  font-size: 12px;
 }
 
 .success {
@@ -744,7 +744,7 @@ export default {
   padding: 2px;
   position: absolute;
   top: 18px;
-  left: 15px;
-  font-size: 8px;
+  left: 12px;
+  font-size: 12px;
 }
 </style>
