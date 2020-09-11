@@ -144,17 +144,6 @@ export default {
      * 点击头部导航栏
      */
     handleClickIcon(data) {
-      let formData = {
-        status: '',
-        orgId: '',
-        beginApplyTime: '',
-        endApplyTime: '',
-        showDate: '',
-        processName: '',
-        statusText: '',
-        processId: ''
-      }
-      this.$store.commit('SET_FILTER_CONTENT', formData)
       this.$router.push({
         path: `/approval/apprList`,
         query: {
