@@ -36,7 +36,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-
 // /deep/ .van-icon-arrow-left {
 //   color: #d8d8d8;
 // }

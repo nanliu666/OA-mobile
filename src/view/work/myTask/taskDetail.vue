@@ -276,6 +276,7 @@ export default {
       }
       :nth-child(2) {
         color: #000000;
+        line-height: 16px;
       }
     }
   }

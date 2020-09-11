@@ -1,10 +1,12 @@
 <template>
-  <div :class="value ? '' : 'container'">
+  <div>
     <van-field
       ref="vanField"
       v-model="value"
       v-bind="$attrs"
       readonly
+      is-link
+      :rules="rules"
       @click="fieldClick"
     />
     <van-popup
@@ -46,19 +48,25 @@ export default {
     pickerType: {
       type: String,
       default: 'date'
+    },
+    rules: {
+      type: Array,
+      default: () => []
     }
   },
   data() {
     return {
       show: false,
-      data: '',
+      data: new Date(),
       minData: new Date(1949, 0, 1)
     }
   },
   watch: {
     value: {
       handler(val) {
-        this.data = val
+        if (val) {
+          this.data = new Date(val)
+        }
       },
       immediate: true
     }
@@ -66,9 +74,6 @@ export default {
   methods: {
     fieldClick() {
       this.show = !this.show
-      if (!this.value && this.pickerType === 'date') {
-        this.data = new Date()
-      }
     },
     dateConfirm() {
       this.$emit('change', dateFormat(this.data, dateType[this.pickerType]))
