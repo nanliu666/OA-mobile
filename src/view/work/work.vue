@@ -22,7 +22,7 @@
         @click="toPersonalcenter"
       >
         <template v-slot:error>
-          加载失败
+          <i class="icon-usercircle" />
         </template>
       </van-image>
     </div>
@@ -625,6 +625,11 @@ export default {
     /deep/ .van-image__loading {
       width: 60px;
       height: 60px;
+    }
+
+    /deep/ .icon-usercircle {
+      font-size: 64px;
+      opacity: 0.5;
     }
   }
 }

@@ -22,7 +22,14 @@
                 round
                 class="avatarClass"
                 :src="form.avatarUrl"
-              />
+              >
+                <template v-slot:error>
+                  <i
+                    class="icon-usercircle"
+                    style="opacity: .5;"
+                  />
+                </template>
+              </van-image>
             </van-uploader>
           </template>
         </van-field>

@@ -12,7 +12,11 @@
             round
             class="avatarClass"
             :src="userInfo.avatarUrl"
-          />
+          >
+            <template v-slot:error>
+              <i class="icon-usercircle" />
+            </template>
+          </van-image>
           <div class="title">
             <div class="title-top">
               <span class="custom-title">{{
@@ -123,6 +127,10 @@ export default {
 .avatarClass {
   width: 60px;
   height: 60px;
+  /deep/ .icon-usercircle {
+    font-size: 60px;
+    opacity: 0.5;
+  }
 }
 .setting {
   margin-top: 8px;
