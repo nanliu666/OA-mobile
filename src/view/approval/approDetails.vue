@@ -230,8 +230,10 @@ export default {
     showNodeData: function() {
       return this.newData.filter((item) => {
         if (
+          item.type &&
           item.type !== 'copy' &&
           item.type !== 'start' &&
+          item.type !== 'empty' &&
           item.appravalList &&
           item.appravalList.length == 0
         ) {
@@ -273,8 +275,14 @@ export default {
     }
   },
   async mounted() {
+    this.$toast.loading({
+      message: '加载中...',
+      forbidClick: true,
+      duration: 0
+    })
     await this.getDetails()
     await this.getRecord()
+    this.$toast.clear()
   },
   methods: {
     close() {
