@@ -199,6 +199,15 @@
               </template>
             </van-cell>
           </ul>
+          <div
+            v-if="todoTotalNum > 3"
+            class="more"
+            @click="handleClickIcon('task')"
+          >
+            <div class="btn">
+              查看更多
+            </div>
+          </div>
         </div>
         <div class="matters">
           <van-cell
@@ -344,6 +353,7 @@ import { EmerTypeCN } from '@/const/myTask'
 export default {
   data() {
     return {
+      todoTotalNum: 0,
       isAllFree: false, //所有的任务线都是空的
       skeletonLoading: true,
       symbolKey: 'xlink:href',
@@ -389,7 +399,7 @@ export default {
       ]).then((res) => {
         // 使用赋值解构，重写这部分
         [
-          { data: this.todoList },
+          { data: this.todoList, totalNum: this.todoTotalNum },
           { data: this.taskList },
           this.scheduleList,
           this.userInfo,
