@@ -5,20 +5,51 @@
         slot="footer"
         class="header-footer"
       >
-        <van-search
-          v-model="queryInfo.search"
-          class="search-box"
-          placeholder="请输入审批标题，审批编号"
-          @search="onSearch"
-        />
-        <span
-          style="color: #838991"
-          class="iconfont icon-basics-filter-outlined"
-          @click="toFilter"
-        />
+        <div class="search-container">
+          <van-search
+            v-model="queryInfo.search"
+            class="search-box"
+            placeholder="请输入审批标题，审批编号"
+            @search="onSearch"
+          />
+          <span
+            style="color: #838991"
+            class="iconfont icon-basics-filter-outlined"
+            @click="toFilter"
+          />
+        </div>
+
+        <ul
+          v-if="isShowFilterContainer()"
+          class="filter-container"
+        >
+          <div
+            :class="{ 'has-filter-margin': hasFilterMargin() }"
+            class="filter-title"
+          >
+            筛选项：
+          </div>
+          <li
+            v-for="(key, value) in showFilterData"
+            :key="value"
+            class="filter-item"
+          >
+            <van-tag
+              v-if="isShowTag(`is${value}`)"
+              type="primary"
+              color="#F4F5F7"
+              text-color="#202940"
+              closeable
+              @close="closeFilter(value)"
+            >
+              {{ key }}
+            </van-tag>
+          </li>
+        </ul>
       </div>
     </StickyHeader>
     <apprSelect
+      ref="apprSelect"
       :options.sync="selectOptions"
       @on-submit="onSubmit"
     />
@@ -71,7 +102,7 @@
                 <div class="des-box">
                   <span class="time">申 请 时 间：</span>
                   <span class="des-content">{{
-                    moment(item.applyTime).format('YYYY-MM-DD hh:mm')
+                    moment(item.applyTime).format('YYYY-MM-DD HH:mm')
                   }}</span>
                 </div>
                 <div
@@ -80,7 +111,7 @@
                 >
                   <span class="time">完 成 时 间：</span>
                   <span class="des-content">{{
-                    moment(item.completeTime).format('YYYY-MM-DD hh:mm')
+                    moment(item.completeTime).format('YYYY-MM-DD HH:mm')
                   }}</span>
                 </div>
               </div>
@@ -117,6 +148,10 @@ export default {
   },
   data() {
     return {
+      isshowDate: true,
+      isprocessName: true,
+      isstatusText: true,
+      showFilterData: {},
       selectOptions: {
         visible: false
       },
@@ -142,16 +177,83 @@ export default {
     }
   },
   methods: {
+    hasFilterMargin() {
+      return _.filter([...Object.values(this.showFilterData)], (item) => item).length === 3
+        ? true
+        : false
+    },
+    isShowFilterContainer() {
+      let isEmpty = false
+      // 有过滤数据
+      if (!_.isEmpty(this.showFilterData)) {
+        _.mapKeys(this.showFilterData, (value) => {
+          if (value) {
+            isEmpty = true
+          }
+        })
+      }
+      return isEmpty
+    },
+    isShowTag(value) {
+      return this[value]
+    },
     /**
      * 搜索组件的回调函数
      * 参数处理：去除搜索页面带过来的显示字段
      */
     onSubmit(data) {
+      this.getQueryInfo(data)
+      this.getShowFilterData(data)
+      this.resetShowStatus()
+      this.refreshLoadByParams()
+      this.getDataList()
+    },
+    getQueryInfo(data) {
       this.queryInfo = _.chain(this.queryInfo)
         .assign(data)
         .omit(['showDate', 'processName', 'visible', 'statusText'])
         .value()
-      this.resetParams()
+    },
+    getShowFilterData(data) {
+      this.showFilterData = _.chain(data)
+        .pickBy((value, key) => {
+          let CONDITION = ['statusText', 'processName', 'showDate']
+          if (_.indexOf(CONDITION, key) > -1 && value) {
+            return value
+          }
+        })
+        .value()
+    },
+    refreshLoadByParams() {
+      this.loadingSetting.finished = false
+      this.approvalList = []
+      this.queryInfo.pageNo = 1
+    },
+    resetShowKeys(data) {
+      this.queryInfo[data] = ''
+      this.$refs.apprSelect.formData[data] = ''
+      this.selectOptions[data] = ''
+    },
+    closeFilter(data) {
+      switch (data) {
+        case 'showDate':
+          this.isshowDate = false
+          this.resetShowKeys('beginApplyTime')
+          this.resetShowKeys('endApplyTime')
+          break
+        case 'processName':
+          this.isprocessName = false
+          this.resetShowKeys('processId')
+          break
+        case 'statusText':
+          this.isstatusText = false
+          this.resetShowKeys('status')
+          break
+      }
+      this.showFilterData[data] = ''
+      this.selectOptions[data] = ''
+      this.$refs.apprSelect.formData[data] = ''
+      this.refreshLoadByParams()
       this.getDataList()
     },
     /**
@@ -182,6 +284,11 @@ export default {
     },
     toFilter() {
       this.selectOptions.visible = true
+    },
+    resetShowStatus() {
+      this.isprocessName = true
+      this.isshowDate = true
+      this.isstatusText = true
     },
     onSearch() {
       this.resetParams()
@@ -258,6 +365,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
+* {
+  box-sizing: border-box;
+}
 .page {
   background-color: #f7f9fa;
   min-height: 100vh;
@@ -268,13 +378,34 @@ export default {
     padding-top: 20px;
   }
   .header-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     background-color: #fff;
-    padding-right: 10px;
-    .search-box {
-      flex: 1;
+    .search-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-right: 10px;
+
+      .search-box {
+        flex: 1;
+      }
+    }
+    .filter-container {
+      padding: 0 10px 10px;
+      display: flex;
+      flex-wrap: wrap;
+      .filter-title {
+        color: #202940;
+      }
+      .has-filter-margin {
+        margin-bottom: 6px;
+      }
+      .filter-item {
+        margin-right: 4px;
+        display: flex;
+        &:last-child {
+          margin-right: 0;
+        }
+      }
     }
   }
   .list-style {
