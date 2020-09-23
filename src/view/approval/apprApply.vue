@@ -107,9 +107,10 @@ export default {
 @import '@/styles/variables.less';
 .appr-apply {
   background-color: @--color-background-gray;
+  margin-bottom: 76px;
   .footer {
     padding: 16px 16.5px;
-    position: absolute;
+    position: fixed;
     bottom: 0;
     width: 100%;
     .van-button {
