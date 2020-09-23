@@ -36,7 +36,10 @@ export const todoJumpFun = (item, router) => {
       router.push({ path: '/todo/leaveHandel', query: { biz_id: item.bizId } })
       break
     case 'Approve':
-      router.push({ path: '/approval/approDetails', query: { apprNo: item.apprNo } })
+      router.push({
+        path: '/approval/approDetails',
+        query: { apprNo: item.apprNo ? item.apprNo : item.bizId }
+      })
       break
   }
 }
