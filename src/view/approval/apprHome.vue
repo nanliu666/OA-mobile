@@ -129,8 +129,7 @@ export default {
      */
     initData() {
       let parmas = {
-        userId: this.userId,
-        processName: ''
+        userId: this.userId
       }
       getProcessList(parmas).then((res) => {
         this.aprrovalList = res
