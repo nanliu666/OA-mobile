@@ -31,6 +31,7 @@ function renderFormItem(h, elementList = []) {
       <renderItem
         conf={scheme}
         rules={this.buildRules(scheme)}
+        required={config.required}
         onInput={(event) => {
           this.$set(config, 'defaultValue', event)
           this.$set(this.form, scheme.__vModel__, event)

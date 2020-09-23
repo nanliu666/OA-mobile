@@ -26,7 +26,8 @@ export default {
   render(h) {
     const dataObject = {
       attrs: {
-        label: this.conf.__config__.label
+        label: this.conf.__config__.label,
+        required: this.required
       },
       props: {
         rules: this.rules
@@ -73,5 +74,5 @@ export default {
 
     return h(this.conf.__mobile__.tag, dataObject)
   },
-  props: ['conf', 'rules']
+  props: ['conf', 'rules', 'required']
 }
