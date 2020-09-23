@@ -8,14 +8,12 @@
         class="iconItem"
         @click="handleClickIcon(item)"
       >
-        <van-image
-          class="iconImg"
-          :src="imgModules[item.icon]"
+        <svg
+          class="icon iconImg"
+          aria-hidden="true"
         >
-          <template v-slot:error>
-            加载失败
-          </template>
-        </van-image>
+          <use :[symbolKey]="'#' + item.icon" />
+        </svg>
         <div class="title">
           {{ item.name }}
         </div>
@@ -64,28 +62,27 @@
 </template>
 
 <script>
-import { improtAllFiles } from '@/util/util'
 import { getProcessList } from '@/api/approval'
 const NAV_LIST = [
   {
     name: '待我审批',
     to: 'waitAppr',
-    icon: 'approve'
+    icon: 'iconseal-bicolor'
   },
   {
     name: '我已审批',
     to: 'hasAppr',
-    icon: 'todo'
+    icon: 'iconapproval-bicolor'
   },
   {
     name: '抄送我的',
     to: 'copyApprToMe',
-    icon: 'schedule'
+    icon: 'iconCC-bicolor'
   },
   {
     name: '我发起的',
     to: 'apprByMe',
-    icon: 'task'
+    icon: 'iconlaunch-bicolor'
   }
 ]
 import { mapGetters } from 'vuex'
@@ -100,7 +97,6 @@ export default {
       hasIndexList: [],
       aprrovalList: [],
       symbolKey: 'xlink:href',
-      imgModules: {},
       navList: NAV_LIST
     }
   },
@@ -108,10 +104,6 @@ export default {
     ...mapGetters(['userId'])
   },
   created() {
-    this.imgModules = improtAllFiles(
-      require.context('@/assets/images/homeImages', false, /\.png$/),
-      '.png'
-    )
     this.initData()
   },
   methods: {
