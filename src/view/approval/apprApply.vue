@@ -84,9 +84,13 @@ export default {
             processName: this.basicSetting.processName
           })
           .then(() => {
-            this.$toast.success('审批提交成功')
-
-            this.goBack()
+            this.$toast.success({
+              message: '审批提交成功',
+              duration: 1000,
+              onClose: () => {
+                this.goBack()
+              }
+            })
           })
           .finally(() => {
             this.submiting = false
