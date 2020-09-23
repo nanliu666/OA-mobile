@@ -17,6 +17,12 @@
         <div class="title">
           {{ item.name }}
         </div>
+        <div
+          v-if="waitTotalNum && index === 0"
+          class="corner-mark"
+        >
+          {{ waitTotalNum }}
+        </div>
       </div>
     </div>
     <ul class="approval-list">
@@ -62,7 +68,7 @@
 </template>
 
 <script>
-import { getProcessList } from '@/api/approval'
+import { getProcessList, getWaitApproveList } from '@/api/approval'
 const NAV_LIST = [
   {
     name: '待我审批',
@@ -94,6 +100,7 @@ export default {
   },
   data() {
     return {
+      waitTotalNum: 0,
       hasIndexList: [],
       aprrovalList: [],
       symbolKey: 'xlink:href',
@@ -127,6 +134,14 @@ export default {
       }
       getProcessList(parmas).then((res) => {
         this.aprrovalList = res
+      })
+      let waitParmas = {
+        pageNo: 1,
+        pageSize: 1,
+        userId: this.$store.state.user.userInfo.user_id
+      }
+      getWaitApproveList(waitParmas).then(({ totalNum }) => {
+        this.waitTotalNum = totalNum
       })
     },
     /**
@@ -165,12 +180,27 @@ export default {
     background-color: #fff;
     padding: 15px 0;
     .iconItem {
+      position: relative;
       flex: 1;
       text-align: center;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
+      .corner-mark {
+        position: absolute;
+        right: 25px;
+        top: -6px;
+        background-color: #ee3e37;
+        color: #ffff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 20px;
+        height: 20px;
+        border-radius: 100%;
+        font-size: 12px;
+      }
       .iconImg {
         height: 41px;
         width: 41px;
