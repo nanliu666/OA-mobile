@@ -291,7 +291,7 @@ export default {
       this.isstatusText = true
     },
     onSearch() {
-      this.resetParams()
+      this.refreshLoadByParams()
       this.getDataList()
     },
     resetParams() {
