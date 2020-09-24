@@ -3,9 +3,7 @@
 // 临时测试号
 // const isProduction = process.env.NODE_ENV === 'production'
 
-
-
 export const client = {
-  clientId: 'saber',
-  client_secret: 'saber_secret'
+  clientId: 'mobile',
+  client_secret: 'mobile_secret'
 }

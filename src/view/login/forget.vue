@@ -1,7 +1,7 @@
 <template>
   <div>
     <stickyHeader
-      :title="step === 0 ? '手机号码': '新密码'"
+      :title="step === 0 ? '手机号码' : '新密码'"
       @leftClick="handleBack"
     />
     <template v-if="step === 0">
@@ -19,6 +19,19 @@
           :formatter="formatter"
         />
         <van-field
+          v-model="captchaCode"
+          label="辩证码"
+          placeholder="请输入辩证码"
+        >
+          <template #right-icon>
+            <van-image
+              class="captcha"
+              :src="captchaImg"
+              @click="refreshCode"
+            />
+          </template>
+        </van-field>
+        <van-field
           v-model.trim="code"
           type="number"
           center
@@ -27,7 +40,7 @@
         >
           <template #button>
             <span
-              :class="timeout ? 'loading': 'ready'"
+              :class="timeout ? 'loading' : 'ready'"
               @click="sendCode"
             >获取验证码{{ timeout ? `(${countdown})` : '' }}</span>
           </template>
@@ -100,17 +113,20 @@
 
 <script>
 import StickyHeader from '@/components/stickyHeader/stickyHeader'
-import { sendSms, checkPhoneSms,changePassword } from '@/api/user'
+import { sendSms, checkPhoneSms, changePassword, getOauthCaptcha } from '@/api/user'
 import { Toast } from 'vant'
 import md5 from 'js-md5'
 
 export default {
-  name:'Forget',
+  name: 'Forget',
   components: {
     StickyHeader
   },
   data() {
     return {
+      captchaCode: '',
+      captchaImg: '',
+      captchaKey: '',
       tel: '',
       code: '',
       countdown: 60,
@@ -125,7 +141,16 @@ export default {
       changeSuccess: false
     }
   },
+  created() {
+    this.refreshCode()
+  },
   methods: {
+    refreshCode() {
+      getOauthCaptcha().then((res) => {
+        this.captchaImg = res.image
+        this.captchaKey = res.key
+      })
+    },
     handleBack() {
       if (this.step === 1) {
         this.step = 0
@@ -144,7 +169,7 @@ export default {
         return
       }
       this.smsLoading = true
-      sendSms({ phone: this.tel }).then(() => {
+      sendSms({ phonenum: this.tel }).then(() => {
         this.countdown = 60
         this.timeout = setInterval(() => {
           if (this.countdown === 0) {
@@ -167,9 +192,15 @@ export default {
         Toast('请填写验证码')
         return
       }
+      if (!this.captchaCode.trim()) {
+        Toast('请填写辩证码')
+        return
+      }
       const params = {
         phonenum: this.tel,
-        smsCode: this.code
+        smsCode: this.code,
+        captchaCode: this.captchaCode,
+        captchaKey: this.captchaKey
       }
       this.checkLoading = true
       checkPhoneSms(params)
@@ -182,40 +213,51 @@ export default {
           this.checkLoading = false
         })
     },
-    handelConfirm(){
-        if(!this.newPassword.trim() || !this.checkPassword.trim()){
-            Toast('密码不能为空')
-            return
-        }
-        if(this.newPassword !== this.checkPassword){
-            Toast('两次密码不一致')
-            return
-        }
-        const params ={
-            userId: this.userInfo.userId,
-            newPassword: md5(this.newPassword),
-            phonenum: this.tel,
-            smsCode: this.code
-        }
-        this.changeLoading = true
-        changePassword(params).then(() =>{
-            this.changeLoading = false
-            this.changeSuccess = true
-        }).catch(() =>{
-            this.changeLoading = false
+    handelConfirm() {
+      if (!this.newPassword.trim() || !this.checkPassword.trim()) {
+        Toast('密码不能为空')
+        return
+      }
+      if (this.newPassword !== this.checkPassword) {
+        Toast('两次密码不一致')
+        return
+      }
+      if (!this.captchaCode.trim()) {
+        Toast('验证码不能为空')
+        return
+      }
+      const params = {
+        userId: this.userInfo.userId,
+        newPassword: md5(this.newPassword),
+        phonenum: this.tel,
+        smsCode: this.code
+      }
+      this.changeLoading = true
+      changePassword(params)
+        .then(() => {
+          this.changeLoading = false
+          this.changeSuccess = true
+        })
+        .catch(() => {
+          this.changeLoading = false
         })
     },
-    toLogin(){
-        this.$router.replace('/login')
+    toLogin() {
+      this.$router.replace('/login')
     }
   }
 }
 </script>
 
-    <style
-      lang="less"
-      scoped
-    >
+<style lang="less" scoped>
+/deep/ .van-field__label {
+  display: flex;
+  align-items: center;
+}
+.captcha {
+  height: 32px;
+  width: 77px;
+}
 .inputBox {
   .title {
     font-size: 16px;

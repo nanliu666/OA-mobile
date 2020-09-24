@@ -70,7 +70,7 @@ export default {
       }
     }
   },
-  created() {
+  activated() {
     getUserInfo({ userId: this.$store.state.user.userInfo.user_id }).then((res) => {
       this.userInfo = res
       this.$store.commit('SET_USER_DETAIL', res)

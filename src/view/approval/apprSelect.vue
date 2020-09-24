@@ -15,6 +15,7 @@
             @click="showTypePicker = true"
           />
           <van-cell
+            class="time-title"
             title="申请时间"
             :value="formData.showDate"
             is-link
@@ -207,6 +208,15 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.time-title {
+  /deep/ .van-cell__title {
+    flex-grow: 0;
+    span {
+      display: flex;
+      width: 80px;
+    }
+  }
+}
 .apprSelect {
   .select-box {
     padding-top: 10px;
