@@ -143,8 +143,6 @@ export default {
         { label: '部门', value: '', prop: 'orgName' },
         { label: '职位', value: '', prop: 'jobName' },
         { label: '上级领导', value: '', prop: 'leaderName' },
-        { label: '工作地址', value: '', prop: 'address' },
-        { label: '工作城市', value: '', prop: 'workCity', slot: true },
         { label: '招聘渠道', value: '', prop: 'recruitment', slot: true },
         { label: '备注', value: '', prop: 'userRemark' }
       ],
