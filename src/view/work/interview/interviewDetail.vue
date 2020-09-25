@@ -59,10 +59,16 @@
           <span>{{ RecruitmentChannel[value] }}</span>
         </template>
         <template #resumeUrl="{value}">
-          <a :href="value" />
+          <a
+            v-if="value"
+            :href="value"
+          >{{ personInfo.name }}的简历</a>
         </template>
         <template #attachmentUrl="{value}">
-          <a :href="value" />
+          <a
+            v-if="value"
+            :href="value"
+          >{{ personInfo.attachmentName }}</a>
         </template>
       </info-show>
     </div>

@@ -4,6 +4,6 @@
 // const isProduction = process.env.NODE_ENV === 'production'
 
 export const client = {
-  clientId: 'mobile',
-  client_secret: 'mobile_secret'
+  clientId: 'OAMobile',
+  client_secret: 'OA_Mobile_2020ePRO'
 }

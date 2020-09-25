@@ -54,6 +54,10 @@
               <template #householdType>
                 {{ infoData.householdType | CommonDictType(HouseholdType) }}
               </template>
+              <!-- 籍贯 -->
+              <template #native>
+                {{ infoData.nativeProvinceName || '' }}{{ infoData.nativeCityName || '' }}
+              </template>
             </infoShow>
           </div>
         </div>
@@ -252,7 +256,7 @@ export default {
         { label: '健康状况', value: '', prop: 'health' },
         { label: '民族', value: '', prop: 'nation', slot: true },
         { label: '政治面貌', value: '', prop: 'politicalStatus', slot: true },
-        { label: '籍贯', value: '', prop: 'name' },
+        { label: '籍贯', value: '', prop: 'native', slot: true },
         { label: '户籍类型', value: '', prop: 'householdType', slot: true },
         { label: '身份证地址', value: '', prop: 'idAddress' },
         { label: '现住址', value: '', prop: 'userAddress' }
