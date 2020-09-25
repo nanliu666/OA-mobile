@@ -129,16 +129,22 @@
                   </svg>
                   <div class="title needWidth">
                     <div class="title-top">
-                      <span class="custom-title">{{ item.title }}</span>
+                      <span class="custom-title">{{ item.processName }}</span>
                     </div>
                     <div class="title-bottom">
                       <span class="custom-title">申请时间：{{ item.applyTime }}</span>
                     </div>
                     <div
-                      v-if="item.approveName"
+                      v-if="item.approveUser.length !== 0"
                       class="title-bottom"
                     >
-                      <span class="custom-title">当前审批人：{{ item.approveName || '' }}</span>
+                      <span
+                        class="custom-title"
+                      >当前审批人：{{ getApproveUser(item.approveUser) }}</span>
+                      <span
+                        class="custom-buttton"
+                        @click.stop="handelUrge(item)"
+                      >催一下</span>
                     </div>
                   </div>
                 </div>
@@ -199,6 +205,15 @@
               </template>
             </van-cell>
           </ul>
+          <div
+            v-if="todoTotalNum > 3"
+            class="more"
+            @click="handleClickIcon('task')"
+          >
+            <div class="btn">
+              查看更多
+            </div>
+          </div>
         </div>
         <div class="matters">
           <van-cell
@@ -333,7 +348,7 @@
 <script>
 import { getUserInfo } from '@/api/user'
 import { getTodoList, getScheduleList } from '@/api/work'
-import { getMyApproveList } from '@/api/approval'
+import { getMyApproveList, createApprUrge } from '@/api/approval'
 import moment from 'moment'
 import { fetchTaskList } from '@/api/metask'
 import { todoJumpFun } from './common'
@@ -344,6 +359,7 @@ import { EmerTypeCN } from '@/const/myTask'
 export default {
   data() {
     return {
+      todoTotalNum: 0,
       isAllFree: false, //所有的任务线都是空的
       skeletonLoading: true,
       symbolKey: 'xlink:href',
@@ -370,6 +386,31 @@ export default {
     this.initData()
   },
   methods: {
+    // 点击催一下
+    handelUrge(item) {
+      this.$toast.loading({
+        message: '加载中...',
+        forbidClick: true,
+        duration: 0
+      })
+      createApprUrge({
+        apprNo: item.apprNo,
+        processInstanceId: item.processInstanceId
+      })
+        .then(() => {
+          this.$toast.clear()
+          this.$toast({ type: 'success', message: '催办成功' })
+        })
+        .catch(() => {
+          this.$toast.clear()
+          this.$toast('今天已经催办过了')
+        })
+    },
+    getApproveUser(data) {
+      let userList = []
+      data.map((item) => userList.push(item.userName))
+      return userList.join('，')
+    },
     /**
      * 兑换紧急程度文本
      */
@@ -389,7 +430,7 @@ export default {
       ]).then((res) => {
         // 使用赋值解构，重写这部分
         [
-          { data: this.todoList },
+          { data: this.todoList, totalNum: this.todoTotalNum },
           { data: this.taskList },
           this.scheduleList,
           this.userInfo,
@@ -688,6 +729,10 @@ export default {
       .title {
         margin-left: 14px;
         width: calc(100vw - 100px);
+        .custom-buttton {
+          color: #5d82f7;
+          margin-left: 4px;
+        }
         &.needWidth {
           width: 224px;
         }
@@ -705,6 +750,7 @@ export default {
             text-overflow: ellipsis;
             white-space: nowrap;
           }
+
           .emerType-style {
             display: inline-block;
             padding: 0px 10px;

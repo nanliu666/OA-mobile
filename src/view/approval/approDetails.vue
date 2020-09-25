@@ -445,10 +445,6 @@ export default {
         .then(() => {
           this.$toast.clear()
           this.$toast({ type: 'success', message: '催办成功' })
-          // this.$message({
-          //   type: 'success',
-          //   message: '催办成功'
-          // })
         })
         .catch(() => {
           this.$toast.clear()

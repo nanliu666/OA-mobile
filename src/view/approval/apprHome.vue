@@ -8,16 +8,20 @@
         class="iconItem"
         @click="handleClickIcon(item)"
       >
-        <van-image
-          class="iconImg"
-          :src="imgModules[item.icon]"
+        <svg
+          class="icon iconImg"
+          aria-hidden="true"
         >
-          <template v-slot:error>
-            加载失败
-          </template>
-        </van-image>
+          <use :[symbolKey]="'#' + item.icon" />
+        </svg>
         <div class="title">
           {{ item.name }}
+        </div>
+        <div
+          v-if="waitTotalNum && index === 0"
+          class="corner-mark"
+        >
+          {{ waitTotalNum }}
         </div>
       </div>
     </div>
@@ -64,28 +68,27 @@
 </template>
 
 <script>
-import { improtAllFiles } from '@/util/util'
-import { getProcessList } from '@/api/approval'
+import { getProcessList, getWaitApproveList } from '@/api/approval'
 const NAV_LIST = [
   {
     name: '待我审批',
     to: 'waitAppr',
-    icon: 'approve'
+    icon: 'iconseal-bicolor'
   },
   {
     name: '我已审批',
     to: 'hasAppr',
-    icon: 'todo'
+    icon: 'iconapproval-bicolor'
   },
   {
     name: '抄送我的',
     to: 'copyApprToMe',
-    icon: 'schedule'
+    icon: 'iconCC-bicolor'
   },
   {
     name: '我发起的',
     to: 'apprByMe',
-    icon: 'task'
+    icon: 'iconlaunch-bicolor'
   }
 ]
 import { mapGetters } from 'vuex'
@@ -97,10 +100,10 @@ export default {
   },
   data() {
     return {
+      waitTotalNum: 0,
       hasIndexList: [],
       aprrovalList: [],
       symbolKey: 'xlink:href',
-      imgModules: {},
       navList: NAV_LIST
     }
   },
@@ -108,10 +111,6 @@ export default {
     ...mapGetters(['userId'])
   },
   created() {
-    this.imgModules = improtAllFiles(
-      require.context('@/assets/images/homeImages', false, /\.png$/),
-      '.png'
-    )
     this.initData()
   },
   methods: {
@@ -130,11 +129,18 @@ export default {
      */
     initData() {
       let parmas = {
-        userId: this.userId,
-        processName: ''
+        userId: this.userId
       }
       getProcessList(parmas).then((res) => {
         this.aprrovalList = res
+      })
+      let waitParmas = {
+        pageNo: 1,
+        pageSize: 1,
+        userId: this.$store.state.user.userInfo.user_id
+      }
+      getWaitApproveList(waitParmas).then(({ totalNum }) => {
+        this.waitTotalNum = totalNum
       })
     },
     /**
@@ -173,12 +179,27 @@ export default {
     background-color: #fff;
     padding: 15px 0;
     .iconItem {
+      position: relative;
       flex: 1;
       text-align: center;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
+      .corner-mark {
+        position: absolute;
+        right: 25px;
+        top: -6px;
+        background-color: #ee3e37;
+        color: #ffff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 20px;
+        height: 20px;
+        border-radius: 100%;
+        font-size: 12px;
+      }
       .iconImg {
         height: 41px;
         width: 41px;
