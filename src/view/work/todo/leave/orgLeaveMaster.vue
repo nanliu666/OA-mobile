@@ -72,6 +72,7 @@ import { getLeaveNote, postConfirmleaveNote, postUrgeleaveNote } from '@/api/tod
 import { Dialog } from 'vant'
 import StickyHeader from '@/components/stickyHeader/stickyHeader'
 import { validatenull } from '@/util/validate'
+import { mapGetters } from 'vuex'
 export default {
   name: 'OrgLeave',
   components: {
@@ -96,7 +97,9 @@ export default {
       listData: {}
     }
   },
-
+  computed: {
+    ...mapGetters(['userId'])
+  },
   created() {
     this.loadingData()
   },
@@ -105,7 +108,7 @@ export default {
       this.leaveUserId = this.$route.query.leaveUserId
       this.groupId = this.$route.query.groupId
       let params = {
-        userId: this.$store.state.user.userInfo.user_id,
+        userId: this.userId,
         leaveUserId: this.leaveUserId,
         groupId: this.groupId
       }
@@ -143,7 +146,7 @@ export default {
       // TODO:原先的催办是不是存在只能催办一次？
       let res = await postUrgeleaveNote({
         groupId: this.groupId,
-        userId: this.userId,
+        userId: this.leaveUserId,
         type: 'B2C'
       })
       Toast.success(res)
