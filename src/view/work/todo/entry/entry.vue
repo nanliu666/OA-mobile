@@ -45,22 +45,6 @@
           <template #workProperty>
             {{ employmentData.workProperty | CommonDictType(WorkProperty) }}
           </template>
-          <!-- 工作地址 -->
-          <template #workAddress>
-            {{
-              employmentData.workProviceName
-                ? `${employmentData.workProviceName}${employmentData.workCityName}`
-                : ''
-            }}
-          </template>
-          <!-- 工作城市 -->
-          <template #workCity>
-            {{
-              employmentData.workProviceName
-                ? `${employmentData.workProviceName}${employmentData.workCityName}`
-                : ''
-            }}
-          </template>
           <!-- 入职登记表 -->
           <template #register>
             {{ WaitPersonData.register === 1 ? '已发送' : '未发送' }}
@@ -129,8 +113,6 @@ export default {
         { label: '职位', value: '', prop: 'jobName' },
         { label: '岗位', value: '', prop: 'positionName' },
         { label: '工作性质', value: '', prop: 'workProperty', slot: true },
-        { label: '工作地址', value: '', prop: 'workAddress', slot: true },
-        { label: '工作城市', value: '', prop: 'workCity', slot: true },
         { label: '入职登记表', value: '', prop: 'register', slot: true }
       ]
     }

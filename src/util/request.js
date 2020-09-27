@@ -9,12 +9,13 @@ import axios from 'axios'
 import router from '@/router/'
 import store from '@/store/'
 import { getToken } from '@/util/auth'
-import { Toast } from 'vant'
+import { Toast, Dialog } from 'vant'
 import { client } from '@/config/const'
 import { Base64 } from 'js-base64'
 
 let loadingToast = null
 let loadingCount = 0
+let DialogCount = 0
 /**
  * 每请求一次loading，增加一次次数
  */
@@ -35,13 +36,13 @@ function addLoading() {
 function reduceLoading() {
   loadingCount--
   if (loadingCount == 0) {
-    isCloseLoading()
+    closeLoading()
   }
 }
 /**
  * 关闭loading
  */
-function isCloseLoading() {
+function closeLoading() {
   loadingToast && loadingToast.clear()
   loadingToast = null
 }
@@ -87,16 +88,33 @@ instance.interceptors.request.use(
     return config
   },
   (error) => {
-    isCloseLoading()
+    closeLoading()
     return Promise.reject(error)
   }
 )
+/**
+ * 多设备登录
+ * @param {*} message 后端返回信息
+ */
+function redirectLogin(message) {
+  reduceLoading()
+  if (DialogCount > 0) return
+  closeLoading()
+  DialogCount++
+  Dialog.alert({
+    title: '提示',
+    message,
+    confirmButtonText: '重新登录'
+  }).then(() => {
+    router.push({ path: '/login' })
+    DialogCount = 0
+  })
+}
 //http response 拦截
 instance.interceptors.response.use(
   (res) => {
     //获取状态码
     const status = res.data.resCode || res.status
-
     let message = res.data.resMsg || res.data.error_description || '网络错误'
     //如果是401则跳转到登录页面
     if (status === 401) {
@@ -105,17 +123,22 @@ instance.interceptors.response.use(
     }
     // 如果请求为非200否者默认统一处理
     if (status !== 200) {
-      Toast({ message })
-      return Promise.reject(new Error(message))
+      if (status === 8000) {
+        redirectLogin(message)
+      } else {
+        Toast({ message })
+        return Promise.reject(new Error(message))
+      }
+    } else {
+      reduceLoading()
     }
-    reduceLoading()
     if (String.prototype.endsWith.call(res.config.url, '/oauth/token')) {
       return res.data
     }
     return res.data.response
   },
   (error) => {
-    isCloseLoading()
+    closeLoading()
     return Promise.reject(new Error(error))
   }
 )
