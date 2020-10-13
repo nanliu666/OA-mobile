@@ -1,7 +1,7 @@
 <template>
   <div>
     <div
-      v-if="!isAgree"
+      v-show="!isAgree"
       class="details"
     >
       <stickyHeader title="审批详情" />
@@ -23,33 +23,40 @@
           </div>
         </div>
       </div>
+      <!-- 有修改权限的和无修改权限的展示原理不一样 -->
       <div
-        v-if="formData.length > 0"
+        v-if="!isIncludeCurrentApprove"
         class="form_content"
       >
         <div
-          v-for="(item, index) in formData"
+          v-for="(item, index) in formDetailData"
           :key="index"
         >
-          <span class="text">{{ item.label }}</span>：<span>{{ item.content }}</span>
+          <span class="text">{{ item.label }}</span>：<span>{{ item.defaultValue }}</span>
         </div>
       </div>
-      <div
-        class="progress_content"
-        :class="[!isFished && !isCancel && !isReject ? 'progress_bottom' : '']"
-      >
-        <template>
-          <div
-            v-for="(item, i) in PassApproval"
-            :key="i"
-            class="line  active"
-            :class="[i === PassApproval.length - 1 ? 'record' : '']"
-          >
-            <div class="icon_header">
-              <div class="iconfont icon-icon-personblue2 icon_Default" />
-            </div>
+      <dynamic-form
+        v-show="isIncludeCurrentApprove"
+        ref="formParser"
+      />
+      <div class="progress_content">
+        <div
+          v-for="(item, index) in showNodeData"
+          :key="index"
+          class="line"
+          :class="{ active: index < PassApproval.length - 1 }"
+        >
+          <div class="icon_header">
+            <svg
+              class="icon iconImg"
+              aria-hidden="true"
+            >
+              <use :[symbolKey]="`${getIcon(item)}`" />
+            </svg>
+          </div>
+          <span v-if="item.appravalList">
             <van-icon
-              v-if="item.result !== 'Cancel' && item.result == ''"
+              v-if="item.appravalList[0].result !== 'Cancel' && item.appravalList[0].result == ''"
               name="fail"
               color="#fff"
               class="fail"
@@ -60,84 +67,90 @@
               color="#fff"
               class="success"
             />
-            <div class="personalInfo">
-              <div class="title_name flex flex-between">
-                <div v-if="item.nodeId === 'start'">
-                  <span>发起申请</span> <span class="time">{{ item.approveTime }}</span>
-                </div>
-                <div v-else>
-                  <span>{{ item.nodeName }}</span> <span class="time">{{ item.approveTime }}</span>
-                </div>
-                <div
-                  class="Approve "
-                  :class="[
-                    item.result === 'Cancel'
-                      ? 'Cancel'
-                      : item.nodeId === 'start'
-                        ? 'start'
-                        : item.result
-                  ]"
-                >
-                  {{ result(item.result, item.nodeId) }}
-                </div>
+          </span>
+          <div class="personalInfo">
+            <div class="title_name flex flex-between">
+              <div>
+                <span>{{ item.type !== 'start' ? item.properties.title : '发起申请' }}</span>
+                <span
+                  v-if="item.appravalList && item.appravalList.length !== 0"
+                  class="time"
+                >{{
+                  item.appravalList[0].approveTime
+                }}</span>
               </div>
-              <div class="name">
-                {{ item.userName }}
-              </div>
-            </div>
-          </div>
-        </template>
-        <template v-if="!isReject && !isCancel">
-          <div
-            v-for="item in showNodeData"
-            :key="item.nodeId"
-            class="line"
-          >
-            <div class="icon_header">
-              <div class="iconfont icon-icon-personblue2 icon_Default" />
-            </div>
-            <div class="personalInfo">
-              <div class="title_name flex flex-between">
-                <div>
-                  <span>{{ item.properties && item.properties.title }}</span>
-                  <!--              <span class="time" >05-07 10：47</span>-->
-                </div>
-                <!--            <div class="status_start" >发起</div>-->
-              </div>
-              <!--          <div class="name">-->
-              <!--            张三-->
-              <!--          </div>-->
               <div
-                v-if="item.properties && item.properties.counterSign"
+                v-if="item.appravalList && item.appravalList.length !== 0"
+                class="Approve "
+                :class="[
+                  item.appravalList[0].result === 'Cancel'
+                    ? 'Cancel'
+                    : item.appravalList[0].nodeId === 'start'
+                      ? 'start'
+                      : item.appravalList[0].result
+                ]"
+              >
+                {{ getResult(item.appravalList[0].result, item.appravalList[0].nodeId) }}
+              </div>
+            </div>
+            <!-- 非起始/抄送节点，并且未经过的节点（result为空）才需要显示 -->
+            <div
+              v-if="
+                item.type !== 'copy' &&
+                  item.type !== 'start' &&
+                  item.appravalList &&
+                  item.appravalList[0].result === ''
+              "
+            >
+              <div
+                v-if="item.properties.counterSign"
                 class="countersign"
               >
                 需要所有审批人同意
               </div>
               <div
-                v-if="item.properties && item.properties.counterSign === false"
+                v-if="!item.properties.counterSign"
                 class="countersign"
               >
                 1人同意即可
               </div>
-              <div class="flex—wrap flex-center">
-                <div
-                  v-for="user in item.userList"
-                  :key="user.id"
-                  class="info"
-                >
-                  <div class="iconfont icon-usercircle icon_default" />
-                  <div class="info_text">
-                    {{ user.name }}
-                  </div>
+            </div>
+            <div
+              v-if="item.appravalList"
+              class="flex—wrap flex-center"
+            >
+              <div
+                v-for="(user, index) in item.appravalList"
+                :key="index"
+                class="info"
+              >
+                <div class="iconfont icon-usercircle icon_default" />
+                <div class="info_text">
+                  {{ user.userName }}
+                </div>
+              </div>
+            </div>
+            <div
+              v-if="!item.appravalList"
+              class="flex—wrap flex-center"
+            >
+              <div
+                v-for="(user, index) in item.userList"
+                :key="index"
+                class="info"
+              >
+                <div class="iconfont icon-usercircle icon_default" />
+                <div class="info_text">
+                  {{ user.name }}
                 </div>
               </div>
             </div>
           </div>
-        </template>
+        </div>
       </div>
-
+      <!-- 有无审批权限按钮，当前审批列表存在当前用户 -->
       <div
-        v-if="!isFished && !isCancel && !isReject"
+        v-if="isIncludeCurrentApprove"
         class="footer"
       >
         <span
@@ -156,33 +169,37 @@
           @click="handleAgree('Pass')"
         >同意</span>
         <span
-          v-if="!isCancel && !isReject && !isFished && isApplyUser"
+          v-if="isApplyUser"
           class="buttton"
           @click="handelUrge"
         >催办</span>
       </div>
     </div>
     <appro-idea
-      v-if="isAgree"
+      v-show="isAgree"
       :type="type"
       :process-id="detailData.processId"
       :task-id="taskId"
-      :process-instance-id="processInstanceId"
+      :process-instance-id="detailData.processInstanceId"
       @close="close"
     />
   </div>
 </template>
 
 <script>
+import DynamicForm from '@/components/dynamic-form/render'
 import StickyHeader from '@/components/stickyHeader/stickyHeader'
 import { getApplyDetail, getApplyRecord, createApprUrge, createApprCancel } from '@/api/approval'
 import approIdea from './approIdea'
+import { Base64 } from 'js-base64'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'ApproDetails',
   components: {
     StickyHeader,
-    approIdea
+    approIdea,
+    DynamicForm
   },
   filters: {
     status(data) {
@@ -197,51 +214,28 @@ export default {
   },
   data() {
     return {
+      symbolKey: 'xlink:href',
+      // 仅展示的数据容器
+      formDetailData: [],
+      isIncludeCurrentApprove: false,
       type: '',
       taskId: '',
-      newData: [],
-      processInstanceId: '',
-      applyUserId: '',
-      apprNo: '',
+      isApplyUser: false,
       isAgree: false,
       isReject: false,
-      activeStep: 0,
       isCancel: false,
       isFished: false,
       apprUserIdList: [],
       detailData: {},
       recordData: [],
       PassApproval: [],
-      active: 1,
-      nodeData: [],
-      formData: [
-        { text: '审批管理', val: '20200507000086' },
-        { text: '所属部门', val: '销售部' },
-        { text: '审批管理', val: '20200507000086' },
-        { text: '所属部门', val: '销售部' },
-        { text: '审批管理', val: '20200507000086' },
-        { text: '所属部门', val: '销售部' },
-        { text: '审批管理', val: '20200507000086' },
-        { text: '所属部门', val: '销售部' }
-      ]
+      nodeData: [], // 原始nodeData
+      showNodeData: [] //  根据当前状态，流转的记录合成的展示数据
     }
   },
   computed: {
-    showNodeData: function() {
-      return this.newData.filter((item) => {
-        if (
-          item.type &&
-          item.type !== 'copy' &&
-          item.type !== 'start' &&
-          item.type !== 'empty' &&
-          item.appravalList &&
-          item.appravalList.length == 0
-        ) {
-          return item
-        }
-      })
-    },
-    // 拒绝同意是否显示 审批节点的审批人的用户id和当前用户相同显示
+    ...mapGetters(['userId']),
+    // 拒绝/同意按钮是否显示 审批节点的审批人的用户id和当前用户相同显示
     isShowBtns() {
       let result = false
       this.apprUserIdList.forEach((item) => {
@@ -251,19 +245,10 @@ export default {
       })
       return result
     },
-    // 提交人跟当前用户是否同一个人
-    isApplyUser: function() {
-      if (this.$store.getters.userId !== this.applyUserId) {
-        return false
-      } else {
-        return true
-      }
-    },
     // 撤回按钮是否显示
     isShowCancel() {
       let res = false
       let result = []
-
       this.recordData.map((it) => {
         result.push(it.result)
       })
@@ -282,13 +267,31 @@ export default {
     })
     await this.getDetails()
     await this.getRecord()
+    this.initForm()
     this.$toast.clear()
   },
   methods: {
+    getIcon(icon) {
+      const iconSymbol = {
+        copy: 'iconCC-bicolor',
+        approver: 'iconseal-bicolor',
+        start: 'iconrecruit-bicolor'
+      }
+      return `#${iconSymbol[icon.type]}`
+    },
     close() {
       this.isAgree = false
     },
     handleAgree(type) {
+      if (this.isIncludeCurrentApprove) {
+        this.$refs.formParser.validate().then(() => {
+          this.insetHandleAgree(type)
+        })
+      } else {
+        this.insetHandleAgree(type)
+      }
+    },
+    insetHandleAgree(type) {
       this.isAgree = true
       this.type = type
     },
@@ -301,10 +304,19 @@ export default {
       }
     },
     handleCannal() {
+      if (this.isIncludeCurrentApprove) {
+        this.$refs.formParser.validate().then(() => {
+          this.insetHandlerCancel()
+        })
+      } else {
+        this.insetHandlerCancel()
+      }
+    },
+    insetHandlerCancel() {
       let that = this
       this.$dialog.confirm({
         title: '标题',
-        message: '确定撤销申请吗？',
+        message: '确定撤回申请吗？',
         beforeClose: that.beforeClose
       })
     },
@@ -319,7 +331,6 @@ export default {
       })
 
       createApprCancel(params).then(() => {
-        //   console.log(res)
         this.$toast.clear()
         this.$toast({ type: 'success', message: '撤回成功' })
         setTimeout(() => {
@@ -327,7 +338,7 @@ export default {
         }, 2000)
       })
     },
-    result(data, type) {
+    getResult(data, type) {
       let result = {
         Pass: '通过',
         Cancel: '已撤回',
@@ -350,84 +361,159 @@ export default {
         getApplyDetail(params)
           .then((res) => {
             this.detailData = res
-            this.apprNo = res.apprNo
-            resolve(true)
-            this.formData = res.formData ? JSON.parse(res.formData) : []
             this.nodeData = res.nodeData ? JSON.parse(res.nodeData) : []
+            resolve(true)
           })
-          .catch(() => {
-            reject(false)
+          .catch((error) => {
+            reject(error)
           })
+      })
+    },
+    /**
+     * 在processData数据内寻找当前节点
+     */
+    findCurrentNode(processData) {
+      let currentNode = Object.create(null)
+      const compareNodeId = this.recordData[this.recordData.length - 1].nodeId
+      const loop = (node) => {
+        if (node.nodeId === compareNodeId || node.type === compareNodeId) {
+          currentNode = node
+        } else {
+          loop(node.childNode)
+        }
+      }
+      loop(processData)
+      return currentNode
+    },
+    /**
+     * 判断当前进行节点审批人是否包含当前用户
+     */
+    getIsInclude() {
+      this.isIncludeCurrentApprove =
+        _.findIndex(this.PassApproval[this.PassApproval.length - 1], (item) => {
+          return item.userId === this.userId
+        }) > -1
+    },
+    /**
+     * 获取仅在formPrivilege === 1 && 当前节点不是当前审批人时候
+     */
+    getFormDetail(formData) {
+      formData.fields.map((field) => {
+        if (field.__config__.defaultValue) {
+          this.formDetailData.push(field.__config__)
+        }
+      })
+    },
+    /**
+     * 处理生成符合动态表格的数据
+     */
+    handleFormData(processData, formData) {
+      if (typeof formData === 'object') {
+        const currentNode = this.findCurrentNode(processData)
+        const formOperates = currentNode.properties.formOperates
+        if (formOperates && formOperates.length > 0) {
+          formOperates.map((item) => {
+            formData.fields.map((formItem) => {
+              if (item.formId === formItem.__config__.formId) {
+                formItem.__config__.formPrivilege = item.formPrivilege
+              }
+            })
+          })
+        }
+        this.$refs.formParser.init(formData)
+      }
+    },
+    /**
+     * 初始化表单生成器的数据，拼接成当前节点的表单权限的数据
+     */
+    initForm() {
+      const { processData, formData } = JSON.parse(Base64.decode(this.detailData.formData))
+      this.getIsInclude()
+      // 仅展示的数据
+      if (!this.isIncludeCurrentApprove) {
+        this.getFormDetail(formData)
+      } else {
+        //动态表格数据
+        this.handleFormData(processData, formData)
+      }
+    },
+    /**
+     * PassApproval存在会签/或签（即多人审批）数据处理
+     */
+    getPassApproval() {
+      let group = _.groupBy(this.recordData, 'nodeId')
+      this.showNodeData = _.cloneDeep(this.nodeData)
+      _.mapKeys(group, (value, key) => {
+        this.showNodeData.map((item) => {
+          if (item.nodeId == key || item.type == key) {
+            item.appravalList = []
+            item.appravalList = value
+          }
+        })
+        this.PassApproval.push(value)
+      })
+    },
+    /**
+     * 封装了原先的nodeData的数据处理，未修改其内容
+     */
+    handleNodeData() {
+      let copNodeData = _.cloneDeep(this.showNodeData)
+      copNodeData = copNodeData.filter((it) => {
+        if (it.type !== 'copy') {
+          return it
+        }
+      })
+      copNodeData &&
+        copNodeData.length > 0 &&
+        copNodeData.map((it, index) => {
+          let result = []
+          it.appravalList &&
+            it.appravalList.length > 0 &&
+            it.appravalList.map((item) => {
+              result.push(item.result)
+            })
+          if (it.appravalList && it.appravalList.length > 0) {
+            if (result.includes('Reject')) {
+              this.isReject = true
+            } else if (result.includes('Cancel')) {
+              this.isCancel = true
+            } else if (index === copNodeData.length - 1 && result.includes('Pass')) {
+              this.isFished = true
+            }
+          }
+          if (it.type === 'start') {
+            it.result === 'Cancel' && (this.isCancel = true)
+          }
+        })
+      if (!this.isCancel && !this.isReject && !this.isFished) {
+        this.apprUserIdList = []
+        this.recordData.forEach((item, index) => {
+          if (item.result === '' && index != 0) {
+            this.apprUserIdList.push(item.userId)
+          }
+        })
+      }
+      this.processInstanceId = this.detailData.processInstanceId
+      this.recordData.map((it) => {
+        this.$store.getters.userId === it.userId && (this.taskId = it.taskId)
       })
     },
     getRecord() {
       let params = {
-        apprNo: this.apprNo
+        apprNo: this.$route.query.apprNo
       }
       return new Promise((resolve, reject) => {
         getApplyRecord(params)
           .then((res) => {
             this.recordData = res.data
-            this.applyUserId = this.recordData[0].userId
-            this.processInstanceId = res.processInstanceId
-            this.PassApproval = JSON.parse(JSON.stringify(this.recordData))
-            this.nodeData.map((it) => {
-              it.appravalList = []
-              this.recordData.map((item) => {
-                item.nodeId == it.nodeId && it.appravalList.push(item)
-                item.nodeId === it.type && it.appravalList.push(item)
-              })
-            })
-            this.newData = this.nodeData
-            let nodeData = JSON.parse(JSON.stringify(this.nodeData))
-            nodeData = nodeData.filter((it) => {
-              if (it.type !== 'copy') {
-                return it
-              }
-            })
-            nodeData &&
-              nodeData.length > 0 &&
-              nodeData.map((it, index) => {
-                let result = []
-                it.appravalList &&
-                  it.appravalList.length > 0 &&
-                  it.appravalList.map((item) => {
-                    result.push(item.result)
-                  })
-                if (it.appravalList && it.appravalList.length > 0) {
-                  if (result.includes('Reject')) {
-                    this.isReject = true
-                    this.activeStep = index
-                  } else if (result.includes('Cancel')) {
-                    this.isCancel = true
-                    this.activeStep = index
-                  } else if (result.includes('')) {
-                    this.activeStep = index
-                  } else if (index === nodeData.length - 1 && result.includes('Pass')) {
-                    this.isFished = true
-                    this.activeStep = index
-                  }
-                }
-                if (it.type === 'start') {
-                  it.result === 'Cancel' && (this.isCancel = true)
-                }
-              })
-            if (!this.isCancel && !this.isReject && !this.isFished) {
-              this.apprUserIdList = []
-              this.recordData.forEach((item, index) => {
-                if (item.result === '' && index != 0) {
-                  this.apprUserIdList.push(item.userId)
-                }
-              })
-            }
-            this.processInstanceId = this.detailData.processInstanceId
-            this.recordData.map((it) => {
-              this.$store.getters.userId === it.userId && (this.taskId = it.taskId)
-            })
+            // 提交人跟当前用户是否同一个人
+            this.isApplyUser = this.recordData[0].userId === this.userId
+            this.getPassApproval()
+            this.handleNodeData()
             resolve(true)
           })
-          .catch(() => {
-            reject(false)
+          .catch((error) => {
+            reject(error)
           })
       })
     },
@@ -439,8 +525,8 @@ export default {
         duration: 0
       })
       createApprUrge({
-        apprNo: this.apprNo,
-        processInstanceId: this.processInstanceId
+        apprNo: this.$route.query.apprNo,
+        processInstanceId: this.detailData.processInstanceId
       })
         .then(() => {
           this.$toast.clear()
@@ -475,9 +561,10 @@ export default {
 .nav {
   height: 100px;
   margin-top: 10px;
+  margin-bottom: 10px;
   background: #fff;
   padding: 0 16px;
-  box-shadow: inset 0 1px 0 0 #dddddd, inset 0 -1px 0 0 #dddddd;
+  // box-shadow: inset 0 1px 0 0 #dddddd, inset 0 -1px 0 0 #dddddd;
 
   .hander_icon {
     display: inline-block;
@@ -556,7 +643,6 @@ export default {
   min-height: 50px;
   background: #fff;
   padding: 20px 18px;
-  box-shadow: inset 0 1px 0 0 #dddddd, inset 0 -1px 0 0 #dddddd;
 
   > div {
     font-size: 14px;
@@ -571,19 +657,13 @@ export default {
   }
 }
 
-.progress_bottom {
-  margin-bottom: 87px;
-  border-bottom: 8px solid #f5f6f6;
-}
-
 .progress_content {
   background: #fff;
-  padding: 40px 32px;
-  padding-bottom: 0;
+  padding: 40px 32px 10px;
   margin-top: 6.5px;
 
   .line {
-    border-left: 1.5px solid rgba(0, 0, 0, 0.15);
+    border-left: 1.5px dashed rgba(0, 0, 0, 0.15);
     min-height: 100px;
     position: relative;
 
@@ -591,29 +671,27 @@ export default {
       position: absolute;
       top: -30px;
       left: -30px;
-      height: 60px;
-      width: 60px;
-      line-height: 60px;
+      height: 40px;
+      width: 40px;
+      line-height: 40px;
       text-align: center;
       overflow: hidden;
-      padding: 8px 0;
+      padding: 0 8px;
       /*background: #ee0a24;*/
       background: #ffffff;
 
-      .icon_Default {
-        border-radius: 50%;
-        color: #6aafff;
-        font-size: 30px;
-        background: #edf8ff;
+      .iconImg {
+        width: 100%;
+        height: 100%;
       }
     }
 
     .personalInfo {
       position: relative;
-      top: -15px;
+      top: -25px;
       left: 30px;
       min-height: 40px;
-      padding-bottom: 100px;
+      padding-bottom: 40px;
       padding-left: 15px;
 
       .title_name {
@@ -691,7 +769,6 @@ export default {
   .active {
     border-left: 1.5px solid #207efa;
   }
-
   .record {
     border-left: 1.5px solid rgba(0, 0, 0, 0.15);
   }
@@ -702,11 +779,14 @@ export default {
 }
 
 .footer {
+  box-shadow: 0px 4px 8px 2px rgba(0, 0, 0, 0.15);
   position: fixed;
   bottom: 0;
   text-align: center;
-  line-height: 87px;
-  height: 87px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 50px;
   width: 100%;
   background: #fff;
   border: 1.5px solid #f5f6f6;
@@ -716,8 +796,8 @@ export default {
     display: inline-block;
     position: relative;
     width: 70.5px;
-    height: 47px;
-    line-height: 47px;
+    height: 32px;
+    line-height: 32px;
     background: #207efa;
     border-radius: 5px;
     color: #fff;
@@ -732,23 +812,19 @@ export default {
   }
 }
 
-.fail {
-  background: #ffd122;
+.fail,
+.success {
   border-radius: 50%;
   padding: 2px;
   position: absolute;
-  top: 18px;
-  left: 12px;
+  top: -4px;
+  left: 4px;
   font-size: 12px;
 }
-
+.fail {
+  background: #ffd122;
+}
 .success {
   background: #7ad683;
-  border-radius: 50%;
-  padding: 2px;
-  position: absolute;
-  top: 18px;
-  left: 12px;
-  font-size: 12px;
 }
 </style>

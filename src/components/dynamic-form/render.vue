@@ -23,10 +23,29 @@ function formBtns(h) {
     </div>
   )
 }
-
+// formPrivilege为2的隐藏不显示
+function spliceRenderList(elementList) {
+  let renderList = []
+  elementList.map((item) => {
+    if (item.__config__.formPrivilege !== 2) {
+      renderList.push(item)
+    }
+  })
+  return renderList
+}
 function renderFormItem(h, elementList = []) {
-  return elementList.map((scheme) => {
+  let renderList = spliceRenderList(elementList)
+  return renderList.map((scheme) => {
     const config = scheme.__config__
+    // 只读权限在发起审批时，默认值修改，删除必填校验，不可点击操作
+    if (scheme.__config__.formPrivilege === 1) {
+      scheme.__config__.defaultValue = scheme.__config__.defaultValue
+        ? scheme.__config__.defaultValue
+        : '流程设置，无需填写'
+      scheme.__config__.required = false
+      scheme.__mobile__.tag = 'van-field'
+      scheme.__mobile__.props.readonly = true
+    }
     return (
       <renderItem
         conf={scheme}

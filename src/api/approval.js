@@ -4,7 +4,7 @@ import { get, post } from '@/util/request'
  * 审批流程列表查询接口
  * @param {*} params
  */
-export const getProcessList = (params) => get('/appr/v2/appr/process/list', params)
+export const getProcessList = (params) => get('/appr/v2/appr/user/process/list', params)
 /**
  * 我发起的审批查询接口
  * @param {*} params

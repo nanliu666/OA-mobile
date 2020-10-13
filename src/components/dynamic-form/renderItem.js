@@ -37,6 +37,13 @@ export default {
       nativeOn: {}
     }
     const confClone = deepClone(this.conf)
+    // console.log('confClone==', confClone)
+    // if(confClone.__config__.formPrivilege === 1) {
+    //   confClone.__config__.defaultValue = '1'
+    //   confClone.__config__.type = 'div'
+    //   confClone.__config__.required = false
+    //   confClone.__mobile__.tag = 'van-field'
+    // }
     // const children = []
 
     // // 如果slots文件夹存在与当前tag同名的文件，则执行文件中的代码

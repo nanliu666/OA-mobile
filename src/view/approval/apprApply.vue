@@ -66,6 +66,17 @@ export default {
             this.basicSetting = obj.basicSetting
             this.formData = obj.formData
             this.processData = obj.processData
+            // 此处为提交审批内的权限，故只取第一层数据的权限
+            const formOperates = this.processData.properties.formOperates
+            if (formOperates && formOperates.length > 0) {
+              formOperates.map((item) => {
+                this.formData.fields.map((formItem) => {
+                  if (item.formId === formItem.__config__.formId) {
+                    formItem.__config__.formPrivilege = item.formPrivilege
+                  }
+                })
+              })
+            }
             this.advancedSetting = obj.advancedSetting
             this.$refs.form.init(obj.formData)
           }
@@ -75,11 +86,17 @@ export default {
         })
     },
     submit() {
-      Promise.all([this.$refs.form.validate(), this.$refs.apprPicker.validate()]).then(([data]) => {
+      Promise.all([this.$refs.form.validate(), this.$refs.apprPicker.validate()]).then(() => {
         this.submiting = true
+        // 审批提交的时候，前端会Base64存表格生成数据以及流程数据
         this.$refs.apprPicker
           .submit({
-            formData: data.formFields,
+            formData: Base64.encode(
+              JSON.stringify({
+                formData: this.$refs.form.formConfCopy,
+                processData: this.processData
+              })
+            ),
             processId: this.processId,
             processName: this.basicSetting.processName
           })
@@ -113,6 +130,8 @@ export default {
   background-color: @--color-background-gray;
   margin-bottom: 76px;
   .footer {
+    background-color: #fff;
+    box-shadow: 0px 4px 8px 2px rgba(0, 0, 0, 0.15);
     padding: 16px 16.5px;
     position: fixed;
     bottom: 0;
