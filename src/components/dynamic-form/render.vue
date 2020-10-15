@@ -27,6 +27,86 @@ function formBtns(h) {
 function renderFormItem(h, elementList = []) {
   return elementList.map((scheme) => {
     const config = scheme.__config__
+    const layout = layouts[config.layout]
+
+    if (layout) {
+      return layout.call(this, h, scheme)
+    }
+    throw new Error(`没有与${config.layout}匹配的layout`)
+  })
+}
+
+function renderItemList(h, list) {
+  if (!Array.isArray(list)) return null
+  return renderFormItem.call(this, h, list)
+}
+
+const rowTemplates = {
+  detail(h, element) {
+    return (
+      <div class="parser-item parser-item__detail">
+        {element.children.map((child, index) => (
+          <div class="parser-item__detail--item">
+            <div class="parser-item__detail--header">
+              <span class="parser-item__detail--title">
+                {element.__config__.label}
+                {element.children.length > 1 ? index + 1 : ''}
+              </span>
+              {index > 0 ? (
+                <div
+                  onClick={() => {
+                    element.children.splice(index, 1)
+                  }}
+                  class="parser-item__detail--button"
+                >
+                  删除
+                </div>
+              ) : null}
+            </div>
+            <div class="parser-item__detail--content">{renderItemList.call(this, h, child)}</div>
+          </div>
+        ))}
+        <div
+          class="parser-item__detail--footer"
+          onClick={() => {
+            addElementChild.call(this, element)
+          }}
+        >
+          ＋ 添加{element.__config__.label}
+        </div>
+      </div>
+    )
+  }
+}
+// formId最大值
+function getMaxId(fieldList) {
+  if (fieldList.length) {
+    return fieldList.reduce((maxId, cmp) => {
+      cmp.__config__.formId > maxId && (maxId = cmp.__config__.formId)
+      if (Array.isArray(cmp.children)) {
+        let children = _.flatten(cmp.children)
+        maxId = children.reduce((max, child) => Math.max(max, child.__config__.formId), maxId)
+      }
+      return maxId
+    }, 0)
+  }
+  return 0
+}
+
+function addElementChild(element) {
+  const childCopy = JSON.parse(JSON.stringify(element.__config__.children))
+  const nextId = getMaxId(this.formConfCopy.fields) + 1
+  childCopy.forEach((item, index) => {
+    let formId = nextId + index
+    item.__vModel__ = 'field' + formId
+    item.__config__.formId = formId
+  })
+  element.children.push(childCopy)
+}
+
+const layouts = {
+  colFormItem(h, scheme) {
+    const config = scheme.__config__
     return (
       <renderItem
         conf={scheme}
@@ -38,9 +118,14 @@ function renderFormItem(h, elementList = []) {
         }}
       />
     )
-  })
+  },
+  rowFormItem(h, scheme) {
+    if (rowTemplates[scheme.__config__.type]) {
+      return rowTemplates[scheme.__config__.type].call(this, h, scheme)
+    }
+    return null
+  }
 }
-
 export default {
   props: {
     formConf: {
@@ -79,8 +164,16 @@ export default {
       this.formConfCopy = deepClone(conf)
       this.initFormData(conf.fields, form)
       this.form = form
+      this.resolveFields(this.formConfCopy.fields)
       this.$nextTick(() => {
         this.$refs.form.resetValidation()
+      })
+    },
+    resolveFields(fields) {
+      fields.forEach((field) => {
+        if (field.__config__.type === 'detail') {
+          addElementChild.call(this, field)
+        }
       })
     },
     // 构建data属性
@@ -171,6 +264,7 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+@import '@/styles/variables.less';
 .page {
   background-color: #f7f9fa;
   height: 100vh;
@@ -184,6 +278,32 @@ export default {
   /deep/ .van-button {
     border-radius: 5px;
     width: calc(100% - 32px);
+  }
+}
+.parser-item {
+  &__detail {
+    &--header {
+      display: flex;
+      line-height: 32px;
+      padding: 0 10px;
+      font-size: 14px;
+      align-items: center;
+      justify-content: space-between;
+    }
+    &--button {
+      cursor: pointer;
+      color: @primaryColor;
+    }
+
+    &--footer {
+      margin: 8px 0;
+      text-align: center;
+      background: #fff;
+      line-height: 40px;
+      height: 40px;
+      border-bottom: 1px solid #ebedf0;
+      color: @primaryColor;
+    }
   }
 }
 </style>

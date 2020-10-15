@@ -114,6 +114,7 @@ export default {
   margin-bottom: 76px;
   .footer {
     padding: 16px 16.5px;
+    background-color: #fff;
     position: fixed;
     bottom: 0;
     width: 100%;
