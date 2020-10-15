@@ -88,9 +88,7 @@ export default {
   },
   created() {
     const isProduction = process.env.NODE_ENV === 'production'
-    const domain = isProduction
-      ? window.location.protocol + '//' + window.location.host
-      : 'www.bestgrand.com.cn'
+    const domain = isProduction ? window.location.host : 'www.bestgrand.com.cn'
     getTenantId({ domain }).then((res) => {
       this.$store.commit('SET_TENANRID', res.tenantId)
     })

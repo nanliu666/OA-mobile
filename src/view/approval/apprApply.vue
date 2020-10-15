@@ -133,6 +133,7 @@ export default {
     background-color: #fff;
     box-shadow: 0px 4px 8px 2px rgba(0, 0, 0, 0.15);
     padding: 16px 16.5px;
+    background-color: #fff;
     position: fixed;
     bottom: 0;
     width: 100%;
