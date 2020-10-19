@@ -205,7 +205,7 @@ export default {
           let mainflag = this.conditionNodes.some((node) => {
             let flag = true
             node.properties.conditions.forEach((condition) => {
-              if (condition.type === 'number' && condition.defaultValue) {
+              if (['money', 'number'].includes(condition.type) && condition.defaultValue) {
                 if (condition.defaultValue.type === 'bet') {
                   if (
                     _[condition.defaultValue.value[1]](

@@ -156,7 +156,7 @@ export default {
   methods: {
     checkFullfilled() {
       this.conditionFieldsFullfilled = this.conditionFields.every(
-        (field) => !_.isNil(this.formData[field])
+        (field) => !_.isEmpty(this.formData[field]) || _.isNumber(this.formData[field])
       )
       this.$nextTick(() => {
         this.conditionFullfiled = this.checkConditionFullfilled()
