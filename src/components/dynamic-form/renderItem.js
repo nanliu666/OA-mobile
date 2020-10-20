@@ -18,6 +18,7 @@ export default {
   name: 'RenderItem',
   components: {
     tips: () => import('./components/Tips'),
+    LocationPicker: () => import('./components/LocationPicker'),
     vanFieldSelectPicker: () => import('../vanFieldSelectPicker/vanFieldSelectPicker.vue'),
     vanFieldDatetimePicker: () => import('../vanFieldDatetimePicker/vanFieldDatetimePicker.vue'),
     multiPicker: () => import('../multi-picker/MultiPicker.vue'),

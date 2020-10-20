@@ -31,7 +31,12 @@
           v-for="(item, index) in formData"
           :key="index"
         >
-          <span class="text">{{ item.label }}</span>：<span>{{ item.content }}</span>
+          <template v-if="isLocation(item.content)">
+            <span class="text">{{ item.label }}</span>：<span>{{ item.content | toLocation }}</span>
+          </template>
+          <template v-else>
+            <span class="text">{{ item.label }}</span>：<span>{{ item.content }}</span>
+          </template>
         </div>
       </div>
       <div
@@ -174,6 +179,7 @@
 </template>
 
 <script>
+import provinceAndCityData from 'src/const/provinceAndCityData'
 import StickyHeader from '@/components/stickyHeader/stickyHeader'
 import { getApplyDetail, getApplyRecord, createApprUrge, createApprCancel } from '@/api/approval'
 import approIdea from './approIdea'
@@ -193,6 +199,24 @@ export default {
         Reject: '已回退'
       }
       return status[data]
+    },
+
+    // 将code转为地址字符串
+    toLocation({ location, details }) {
+      let result = ''
+      ;(function findCode(arr, locations, target) {
+        _.each(arr, (item) => {
+          if (item.value === target) {
+            locations.push(item.label)
+            result = locations.join('')
+            return false
+          } else if (!_.isEmpty(item.children)) {
+            findCode(item.children, _.concat(locations, item.label), target)
+          }
+        })
+        return
+      })(provinceAndCityData, [], location)
+      return `${result} ${details}`
     }
   },
   data() {
@@ -450,6 +474,12 @@ export default {
           this.$toast.clear()
           this.$toast('今天已经催办过了')
         })
+    },
+
+    // 判断一个对象是否是地址类型
+    isLocation(locationObj = {}) {
+      const { location, details } = locationObj
+      return !_.isNil(location && details)
     }
   }
 }
