@@ -210,12 +210,12 @@ export default {
                 if (condition.defaultValue.type === 'bet') {
                   if (
                     _[condition.defaultValue.value[1]](
-                      condition.defaultValue.value[0],
-                      this.formData[condition.vModel]
+                      +condition.defaultValue.value[0],
+                      +this.formData[condition.vModel]
                     ) &&
                     _[condition.defaultValue.value[2]](
-                      this.formData[condition.vModel],
-                      condition.defaultValue.value[3]
+                      +this.formData[condition.vModel],
+                      +condition.defaultValue.value[3]
                     )
                   ) {
                     return
@@ -223,8 +223,8 @@ export default {
                   // defaultValue.type { lt: '<', lte: '≤', gt: '>', gte: '≥', eq: '=' }
                 } else if (
                   _[condition.defaultValue.type](
-                    this.formData[condition.vModel],
-                    condition.defaultValue.value
+                    +this.formData[condition.vModel],
+                    +condition.defaultValue.value
                   )
                 ) {
                   return
