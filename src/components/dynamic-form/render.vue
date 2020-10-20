@@ -37,15 +37,6 @@ function renderFormItem(h, elementList = []) {
   let renderList = spliceRenderList(elementList)
   return renderList.map((scheme) => {
     const config = scheme.__config__
-    // 只读权限在发起审批时，默认值修改，删除必填校验，不可点击操作
-    // if (scheme.__config__.formPrivilege === 1) {
-    //   scheme.__config__.defaultValue = scheme.__config__.defaultValue
-    //     ? scheme.__config__.defaultValue
-    //     : '流程设置，无需填写'
-    //   scheme.__config__.required = false
-    //   scheme.__mobile__.tag = 'van-field'
-    //   scheme.__mobile__.props.readonly = true
-    // }
     const layout = layouts[config.layout]
 
     if (layout) {
@@ -126,7 +117,8 @@ function addElementChild(element) {
 const layouts = {
   colFormItem(h, scheme) {
     const config = scheme.__config__
-    return (
+    const formPrivilege = config.formPrivilege
+    const defaultRender = (
       <renderItem
         conf={scheme}
         rules={this.buildRules(scheme)}
@@ -137,6 +129,71 @@ const layouts = {
         }}
       />
     )
+    const fieldWrap = function(slot) {
+      return (
+        <van-field prop={scheme.__vModel__} label={`${config.label ? `${config.label}:` : ''}`}>
+          {slot}
+        </van-field>
+      )
+    }
+    const uploadImageRender = function() {
+      const fileList = scheme.__config__.defaultValue
+      return fileList.map((item) => {
+        return <van-image class="thumbnail-image" fit="fill" src={item.url} />
+      })
+    }
+    const uploadFileRender = function() {
+      const fileList = scheme.__config__.defaultValue
+      return fileList.map((item) => {
+        return (
+          <li>
+            <i class="el-icon-document" style="margin-right: 4px;" />
+            <span>{item.localName}</span>
+          </li>
+        )
+      })
+    }
+    const uploadRender = fieldWrap(
+      <div slot="input">
+        {scheme.__config__.type === 'image' ? uploadImageRender() : uploadFileRender()}
+      </div>
+    )
+    const valueRender = fieldWrap(<span>{this.getFieldContent(scheme)}</span>)
+    const uploadWrapItem = function() {
+      return <div class="upload-show-field">{uploadRender}</div>
+    }
+    const wrapItem = function() {
+      const type = ['image', 'file']
+      return _.some(type, (item) => item === scheme.__config__.type)
+        ? uploadWrapItem()
+        : valueRender
+    }
+
+    let renderJSX = ''
+    // formPrivilege表单权限验证，0可编辑(默认)，1只读，2隐藏
+    switch (formPrivilege) {
+      case 1:
+        // 是否在详情页，详情页与发起审批页展示不一
+        if (this.formConfCopy.isDetail) {
+          // 详情页，有默认值显示默认值，无默认值不显示这个标签
+          scheme.__mobile__.props.disabled = true
+          renderJSX = scheme.__config__.defaultValue ? wrapItem() : ''
+        } else {
+          // 审批发起页面，只读权限表现为置灰处理
+          scheme.__mobile__.props.disabled = true
+          renderJSX = defaultRender
+        }
+        break
+      case 2:
+        renderJSX = ''
+        break
+      default:
+        // 兼容旧版本与权限为0--可编辑
+        scheme.__mobile__.props.disabled = false
+        renderJSX = defaultRender
+        break
+    }
+    return renderJSX
   },
   rowFormItem(h, scheme) {
     if (rowTemplates[scheme.__config__.type]) {
@@ -247,8 +304,7 @@ export default {
             label: item.__config__.label,
             prop: item.__vModel__,
             value: form[item.__vModel__],
-            content: this.getFieldContent(item),
-            span: item.__pc__.span || 12
+            content: this.getFieldContent(item)
           })
         }
       })
@@ -284,6 +340,22 @@ export default {
 </script>
 <style lang="less" scoped>
 @import '@/styles/variables.less';
+.upload-show-field {
+  .van-field {
+    flex-direction: column;
+  }
+  /deep/ .van-cell__title {
+    margin-bottom: 4px;
+  }
+  .thumbnail-image {
+    margin-bottom: 10px;
+    display: block;
+    border: 1px solid #ccc;
+    padding: 4px;
+    border-radius: 4px;
+    width: calc(100vw - 40px);
+  }
+}
 .page {
   background-color: #f7f9fa;
   height: 100vh;

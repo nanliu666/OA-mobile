@@ -23,22 +23,7 @@
           </div>
         </div>
       </div>
-      <!-- 有修改权限的和无修改权限的展示原理不一样 -->
-      <div
-        v-if="!isIncludeCurrentApprove"
-        class="form_content"
-      >
-        <div
-          v-for="(item, index) in formDetailData"
-          :key="index"
-        >
-          <span class="text">{{ item.label }}</span>：<span>{{ item.defaultValue }}</span>
-        </div>
-      </div>
-      <dynamic-form
-        v-show="isIncludeCurrentApprove"
-        ref="formParser"
-      />
+      <dynamic-form ref="formParser" />
       <div class="progress_content">
         <div
           v-for="(item, index) in showNodeData"
@@ -420,7 +405,7 @@ export default {
             })
           })
         }
-        this.$refs.formParser.init(formData)
+        this.$refs.formParser.init(_.assign(formData, { isDetail: true }))
       }
     },
     /**
@@ -429,13 +414,7 @@ export default {
     initForm() {
       const { processData, formData } = JSON.parse(Base64.decode(this.detailData.formData))
       this.getIsInclude()
-      // 仅展示的数据
-      if (!this.isIncludeCurrentApprove) {
-        this.getFormDetail(formData)
-      } else {
-        //动态表格数据
-        this.handleFormData(processData, formData)
-      }
+      this.handleFormData(processData, formData)
     },
     /**
      * PassApproval存在会签/或签（即多人审批）数据处理

@@ -3,6 +3,7 @@ import { deepClone } from './util'
 const eventDict = {
   radio: 'change',
   date: 'change',
+  'image-upload': 'change',
   checkbox: 'change',
   daterange: 'change'
 }
@@ -18,10 +19,12 @@ export default {
   name: 'RenderItem',
   components: {
     tips: () => import('./components/Tips'),
+    ImageUpload: () => import('./components/imageUploader'),
     vanFieldSelectPicker: () => import('../vanFieldSelectPicker/vanFieldSelectPicker.vue'),
     vanFieldDatetimePicker: () => import('../vanFieldDatetimePicker/vanFieldDatetimePicker.vue'),
     multiPicker: () => import('../multi-picker/MultiPicker.vue'),
     dateRangePicker: () => import('../date-range-picker/DateRangePicker.vue')
+    // fileUpload: () => import('./components/fileUpload.vue')
   },
   render(h) {
     const dataObject = {
@@ -37,21 +40,11 @@ export default {
       nativeOn: {}
     }
     const confClone = deepClone(this.conf)
-    // console.log('confClone==', confClone)
-    // if(confClone.__config__.formPrivilege === 1) {
-    //   confClone.__config__.defaultValue = '1'
-    //   confClone.__config__.type = 'div'
-    //   confClone.__config__.required = false
-    //   confClone.__mobile__.tag = 'van-field'
-    // }
-    // const children = []
-
-    // // 如果slots文件夹存在与当前tag同名的文件，则执行文件中的代码
+    // 如果slots文件夹存在与当前tag同名的文件，则执行文件中的代码
     // const childFunc = componentChild[confClone.__config__.type]
     // if (childFunc) {
     //   children.push(childFunc(h, confClone))
     // }
-
     // 将json表单配置转化为vue render可以识别的 “数据对象（dataObject）”
     const privateProps = ['__config__', '__slot__', '__mobile__', '__pc__', 'renderKey']
     Object.keys(confClone).forEach((key) => {
