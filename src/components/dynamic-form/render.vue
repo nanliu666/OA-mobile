@@ -1,6 +1,7 @@
 <script>
 import renderItem from './renderItem'
 import { deepClone } from './util'
+import provinceAndCityData from 'src/const/provinceAndCityData'
 
 function renderFrom(h) {
   const { formConfCopy } = this
@@ -50,7 +51,22 @@ function renderItemList(h, list) {
   if (!Array.isArray(list)) return null
   return renderFormItem.call(this, h, list)
 }
-
+function toLocation({ location, details }) {
+  let result = ''
+  ;(function findCode(arr, locations, target) {
+    _.each(arr, (item) => {
+      if (item.value === target) {
+        locations.push(item.label)
+        result = locations.join('')
+        return false
+      } else if (!_.isEmpty(item.children)) {
+        findCode(item.children, _.concat(locations, item.label), target)
+      }
+    })
+    return
+  })(provinceAndCityData, [], location)
+  return `${result} ${details}`
+}
 const rowTemplates = {
   detail(h, element) {
     const formPrivilege = element.__config__.formPrivilege
@@ -213,6 +229,10 @@ const layouts = {
           // 详情页，有默认值显示默认值，无默认值不显示这个标签
           if (scheme.__config__.type === 'desc') {
             renderJSX = defaultRender
+          } else if (scheme.__config__.type === 'locationPicker') {
+            renderJSX = fieldWrap(
+              <span slot="input">{toLocation(scheme.__config__.defaultValue)}</span>
+            )
           } else {
             scheme.__mobile__.props.disabled = true
             renderJSX = scheme.__config__.defaultValue ? wrapItem : ''

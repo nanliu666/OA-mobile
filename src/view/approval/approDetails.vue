@@ -532,6 +532,12 @@ export default {
           this.$toast.clear()
           this.$toast('今天已经催办过了')
         })
+    },
+
+    // 判断一个对象是否是地址类型
+    isLocation(locationObj = {}) {
+      const { location, details } = locationObj
+      return !_.isNil(location && details)
     }
   }
 }

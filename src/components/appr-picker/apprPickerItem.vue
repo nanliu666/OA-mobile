@@ -94,6 +94,7 @@
 </template>
 
 <script>
+import moment from 'moment'
 import { getUserByJob, getUserByPosition, getUserByTag, getUserLeader } from '@/api/approval'
 import { mapGetters } from 'vuex'
 import MultiPicker from '@/components/multi-picker/MultiPicker'
@@ -205,16 +206,16 @@ export default {
           let mainflag = this.conditionNodes.some((node) => {
             let flag = true
             node.properties.conditions.forEach((condition) => {
-              if (condition.type === 'number' && condition.defaultValue) {
+              if (['money', 'number'].includes(condition.type) && condition.defaultValue) {
                 if (condition.defaultValue.type === 'bet') {
                   if (
                     _[condition.defaultValue.value[1]](
-                      condition.defaultValue.value[0],
-                      this.formData[condition.vModel]
+                      +condition.defaultValue.value[0],
+                      +this.formData[condition.vModel]
                     ) &&
                     _[condition.defaultValue.value[2]](
-                      this.formData[condition.vModel],
-                      condition.defaultValue.value[3]
+                      +this.formData[condition.vModel],
+                      +condition.defaultValue.value[3]
                     )
                   ) {
                     return
@@ -222,8 +223,8 @@ export default {
                   // defaultValue.type { lt: '<', lte: '≤', gt: '>', gte: '≥', eq: '=' }
                 } else if (
                   _[condition.defaultValue.type](
-                    this.formData[condition.vModel],
-                    condition.defaultValue.value
+                    +this.formData[condition.vModel],
+                    +condition.defaultValue.value
                   )
                 ) {
                   return
@@ -233,8 +234,49 @@ export default {
                   return
                 }
               } else if (condition.type === 'checkbox' && typeof condition.val !== 'undefined') {
-                if (this.formData[condition.vModel] === condition.val) {
+                if (condition.selectMode === 'some') {
+                  // 选中任意一个
+                  if (
+                    _.some(condition.val, (val) => this.formData[condition.vModel].includes(val))
+                  ) {
+                    // 防止添加了多个-1标记 , condition.val字段在设计审批的时候已经排序完成了(耦合)
+                    _(this.formData[condition.vModel])
+                      .pull(-1, [-1, ...condition.val].join())
+                      .push(-1, [-1, ...condition.val].join())
+                      .commit()
+                    return
+                  }
+                } else if (
+                  // 选中所有的项
+                  _.isEqual(
+                    _(this.formData[condition.vModel])
+                      .without(-1)
+                      .reject(_.isString)
+                      .sortBy()
+                      .value(),
+                    _.sortBy(condition.val)
+                  )
+                ) {
+                  _(this.formData[condition.vModel])
+                    .pull(-1)
+                    .remove(_.isString)
+                    .commit()
                   return
+                }
+              } else if (condition.type === 'daterange') {
+                const { defaultValue, vModel } = condition
+                const [date1, date2] = this.formData[vModel]
+                // 防止用户只选择了一个日期还没有选择第二个日期
+                if (!_.isNil(date1 && date2)) {
+                  // diff date1以免出现负数，区间计算当天（+1天）
+                  const days = moment.duration(moment(date2).diff(date1)).days() + 1
+                  if (defaultValue.type === 'bet') {
+                    const [val1, operator1, operator2, val2] = defaultValue.value
+                    // between => val1 lte days lte val2
+                    if (_[operator1](val1, days) && _[operator2](days, val2)) return
+                  } else {
+                    if (_[defaultValue.type](days, defaultValue.value)) return
+                  }
                 }
               }
               flag = false
