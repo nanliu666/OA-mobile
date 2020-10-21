@@ -229,10 +229,6 @@ const layouts = {
           // 详情页，有默认值显示默认值，无默认值不显示这个标签
           if (scheme.__config__.type === 'desc') {
             renderJSX = defaultRender
-          } else if (scheme.__config__.type === 'locationPicker') {
-            renderJSX = fieldWrap(
-              <span slot="input">{toLocation(scheme.__config__.defaultValue)}</span>
-            )
           } else {
             scheme.__mobile__.props.disabled = true
             renderJSX = scheme.__config__.defaultValue ? wrapItem : ''
@@ -348,6 +344,8 @@ export default {
           .join(',')
       } else if (field.__config__.type === 'daterange') {
         content = field.__config__.defaultValue.join(' 至 ')
+      } else if (field.__config__.type === 'locationPicker') {
+        content = toLocation(field.__config__.defaultValue)
       } else {
         content = field.__config__.defaultValue
       }
