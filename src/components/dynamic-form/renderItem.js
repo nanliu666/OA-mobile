@@ -18,15 +18,30 @@ export default {
   name: 'RenderItem',
   components: {
     tips: () => import('./components/Tips'),
+    LocationPicker: () => import('./components/LocationPicker'),
     vanFieldSelectPicker: () => import('../vanFieldSelectPicker/vanFieldSelectPicker.vue'),
     vanFieldDatetimePicker: () => import('../vanFieldDatetimePicker/vanFieldDatetimePicker.vue'),
     multiPicker: () => import('../multi-picker/MultiPicker.vue'),
     dateRangePicker: () => import('../date-range-picker/DateRangePicker.vue')
   },
   render(h) {
+    const MONEY_LABEL =
+      this.conf.__config__.type === 'money'
+        ? ` ${((currency) => {
+            switch (currency) {
+              case 'CNY':
+                return '（人民币/元）'
+              case 'USD':
+                return '（美元/元）'
+              default:
+                return ''
+            }
+          })(this.conf.__config__.currency)}`
+        : ''
+
     const dataObject = {
       attrs: {
-        label: this.conf.__config__.label,
+        label: `${this.conf.__config__.label}${MONEY_LABEL}`,
         required: this.required
       },
       props: {
