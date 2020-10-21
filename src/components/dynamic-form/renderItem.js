@@ -4,6 +4,7 @@ const eventDict = {
   radio: 'change',
   date: 'change',
   'image-upload': 'change',
+  'file-upload': 'change',
   checkbox: 'change',
   daterange: 'change'
 }
@@ -19,12 +20,12 @@ export default {
   name: 'RenderItem',
   components: {
     tips: () => import('./components/Tips'),
+    FileUpload: () => import('./components/fileUploader.vue'),
     ImageUpload: () => import('./components/imageUploader'),
     vanFieldSelectPicker: () => import('../vanFieldSelectPicker/vanFieldSelectPicker.vue'),
     vanFieldDatetimePicker: () => import('../vanFieldDatetimePicker/vanFieldDatetimePicker.vue'),
     multiPicker: () => import('../multi-picker/MultiPicker.vue'),
     dateRangePicker: () => import('../date-range-picker/DateRangePicker.vue')
-    // fileUpload: () => import('./components/fileUpload.vue')
   },
   render(h) {
     const dataObject = {
