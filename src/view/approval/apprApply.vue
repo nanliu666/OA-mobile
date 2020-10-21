@@ -73,6 +73,19 @@ export default {
                 this.formData.fields.map((formItem) => {
                   if (item.formId === formItem.__config__.formId) {
                     formItem.__config__.formPrivilege = item.formPrivilege
+                    if (formItem.__config__.children) {
+                      formItem.__config__.children.forEach((childrenItem) => {
+                        childrenItem.__config__.formPrivilege = item.formPrivilege
+                      })
+                    }
+                    if (formItem.__config__.formPrivilege === 1) {
+                      formItem.__config__.required = false
+                      if (formItem.__config__.children) {
+                        formItem.__config__.children.forEach((childrenItem) => {
+                          childrenItem.__config__.required = false
+                        })
+                      }
+                    }
                   }
                 })
               })

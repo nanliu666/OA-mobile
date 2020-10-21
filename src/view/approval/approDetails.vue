@@ -397,10 +397,27 @@ export default {
         const currentNode = this.findCurrentNode(processData)
         const formOperates = currentNode.properties.formOperates
         if (formOperates && formOperates.length > 0) {
-          formOperates.map((item) => {
-            formData.fields.map((formItem) => {
+          formOperates.forEach((item) => {
+            formData.fields.forEach((formItem) => {
               if (item.formId === formItem.__config__.formId) {
                 formItem.__config__.formPrivilege = item.formPrivilege
+                if (formItem.children) {
+                  formItem.children.forEach((childrenItem) => {
+                    childrenItem.forEach((deepItem) => {
+                      deepItem.__config__.formPrivilege = item.formPrivilege
+                    })
+                  })
+                }
+                if (formItem.__config__.formPrivilege === 1) {
+                  formItem.__config__.required = false
+                  if (formItem.children) {
+                    formItem.children.forEach((childrenItem) => {
+                      childrenItem.forEach((deepItem) => {
+                        deepItem.__config__.required = false
+                      })
+                    })
+                  }
+                }
               }
             })
           })
