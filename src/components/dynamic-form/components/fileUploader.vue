@@ -3,45 +3,53 @@
     name="uploader"
     input-align="left"
     v-bind="$attrs"
-    :rules="rules"
+    :rules="[{ validator, message: `请选择${$attrs.label}` }]"
+    validate-trigger="onChange"
   >
     <template #input>
       <van-uploader
         v-model="fileList"
         :disabled="disabled"
+        accept="*"
         multiple
-        :max-count="limit"
-        :max-size="2 * 1024 * 1024"
+        :max-size="100 * 1024 * 1024"
         :after-read="uploaderRead"
         :before-read="beforeRead"
-        :before-delete="beforeDelete"
         @oversize="onOversize"
       >
         <div class="upload-box">
           <van-icon name="plus" />
         </div>
       </van-uploader>
+      <ul class="uploader-ul">
+        <li
+          v-for="(item, index) in uploadList"
+          :key="index"
+          class="uploader-li"
+        >
+          <div class="li-left">
+            <van-icon name="description" />
+            <div class="li-title">
+              {{ item.localName }}
+            </div>
+          </div>
+          <van-icon
+            name="delete"
+            @click="deleteUpload(index)"
+          />
+        </li>
+      </ul>
     </template>
   </van-field>
 </template>
 <script>
 import { uploadQiniu } from '@/util/uploadQiniu'
 export default {
-  name: 'ImageUpload',
+  name: 'FileUpload',
   props: {
     disabled: {
       type: Boolean,
       default: false
-    },
-    limit: {
-      type: Number,
-      default: 0
-    },
-    rules: {
-      type: Array,
-      default: () => {
-        return []
-      }
     },
     value: {
       type: Array,
@@ -52,12 +60,12 @@ export default {
   },
   data() {
     return {
-      uploadList: [], // 用来传递参数
-      fileList: [] // 用来呈现当前，初始化
+      fileList: [],
+      uploadList: [] // 用来传递参数
     }
   },
   watch: {
-    fileList: {
+    uploadList: {
       handler() {
         this.$emit('input', this.uploadList)
       },
@@ -66,23 +74,20 @@ export default {
   },
   created() {
     this.fileList = _.cloneDeep(this.value)
+    this.uploadList = _.cloneDeep(this.value)
   },
   methods: {
-    beforeDelete(file) {
-      let index = _.findIndex(this.uploadList, (item) => item.localName === file.file.name)
-      if (index > -1) this.uploadList.splice(index, 1)
+    validator() {
+      return this.uploadList.length !== 0
+    },
+    deleteUpload(index) {
+      this.uploadList.splice(index, 1)
       this.fileList.splice(index, 1)
     },
     beforeRead(file) {
-      const TYPE_LIST = ['image/jpeg', 'image/jpg', 'image/png']
-      const isJPG = _.some(TYPE_LIST, (item) => file.type === item)
-      if (!isJPG) {
-        this.$toast('上传图片只能是jpeg/jpg/png格式之一!')
-        return false
-      }
       let index = _.findIndex(this.uploadList, (item) => item.localName === file.name)
       if (index > -1) {
-        this.$toast('已存在相同图片')
+        this.$toast('已存在相同文件')
         return false
       }
       return true
@@ -105,7 +110,7 @@ export default {
       })
     },
     onOversize() {
-      this.$toast('文件大小不能超过2M')
+      this.$toast('文件大小不能超过100M')
     }
   }
 }
@@ -118,6 +123,13 @@ export default {
 /deep/ .van-cell__title {
   margin-bottom: 4px;
 }
+/deep/ .van-field__control--custom {
+  flex-direction: column;
+  align-items: flex-start;
+}
+/deep/ .van-uploader__preview {
+  display: none;
+}
 .upload-box {
   width: 80px;
   height: 80px;
@@ -128,6 +140,24 @@ export default {
   margin-bottom: 8px;
   .van-icon {
     font-size: 24px;
+  }
+}
+.uploader-ul {
+  .uploader-li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: calc(100vw - 30px);
+    .li-left {
+      display: flex;
+      align-items: center;
+      .li-title {
+        max-width: calc(100vw - 30px - 40px);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
   }
 }
 </style>
