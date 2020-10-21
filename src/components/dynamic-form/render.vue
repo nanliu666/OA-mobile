@@ -1,6 +1,7 @@
 <script>
 import renderItem from './renderItem'
 import { deepClone } from './util'
+import provinceAndCityData from 'src/const/provinceAndCityData'
 
 function renderFrom(h) {
   const { formConfCopy } = this
@@ -23,9 +24,19 @@ function formBtns(h) {
     </div>
   )
 }
-
+// formPrivilege为2的隐藏不显示
+function spliceRenderList(elementList) {
+  let renderList = []
+  elementList.map((item) => {
+    if (item.__config__.formPrivilege !== 2) {
+      renderList.push(item)
+    }
+  })
+  return renderList
+}
 function renderFormItem(h, elementList = []) {
-  return elementList.map((scheme) => {
+  let renderList = spliceRenderList(elementList)
+  return renderList.map((scheme) => {
     const config = scheme.__config__
     const layout = layouts[config.layout]
 
@@ -40,42 +51,91 @@ function renderItemList(h, list) {
   if (!Array.isArray(list)) return null
   return renderFormItem.call(this, h, list)
 }
-
+function toLocation({ location, details }) {
+  let result = ''
+  ;(function findCode(arr, locations, target) {
+    _.each(arr, (item) => {
+      if (item.value === target) {
+        locations.push(item.label)
+        result = locations.join('')
+        return false
+      } else if (!_.isEmpty(item.children)) {
+        findCode(item.children, _.concat(locations, item.label), target)
+      }
+    })
+    return
+  })(provinceAndCityData, [], location)
+  return `${result} ${details}`
+}
 const rowTemplates = {
   detail(h, element) {
-    return (
-      <div class="parser-item parser-item__detail">
-        {element.children.map((child, index) => (
-          <div class="parser-item__detail--item">
-            <div class="parser-item__detail--header">
-              <span class="parser-item__detail--title">
-                {element.__config__.label}
-                {element.children.length > 1 ? index + 1 : ''}
-              </span>
-              {index > 0 ? (
-                <div
-                  onClick={() => {
-                    element.children.splice(index, 1)
-                  }}
-                  class="parser-item__detail--button"
-                >
-                  删除
-                </div>
-              ) : null}
-            </div>
-            <div class="parser-item__detail--content">{renderItemList.call(this, h, child)}</div>
-          </div>
-        ))}
-        <div
-          class="parser-item__detail--footer"
-          onClick={() => {
-            addElementChild.call(this, element)
-          }}
-        >
-          ＋ 添加{element.__config__.label}
-        </div>
+    const formPrivilege = element.__config__.formPrivilege
+    const addPart = (
+      <div
+        class="parser-item__detail--footer"
+        onClick={() => {
+          addElementChild.call(this, element)
+        }}
+      >
+        ＋ 添加{element.__config__.label}
       </div>
     )
+    const detailWrapItem = () => {
+      return (
+        <div class="parser-item parser-item__detail">
+          {element.children.map((child, index) => (
+            <div class="parser-item__detail--item">
+              <div class="parser-item__detail--header">
+                <span class="parser-item__detail--title">
+                  {element.__config__.label}
+                  {element.children.length > 1 ? index + 1 : ''}
+                </span>
+                {index > 0 && element.__config__.formPrivilege === 0 ? (
+                  <div
+                    onClick={() => {
+                      element.children.splice(index, 1)
+                    }}
+                    class="parser-item__detail--button"
+                  >
+                    删除
+                  </div>
+                ) : null}
+              </div>
+              <div class="parser-item__detail--content">{renderItemList.call(this, h, child)}</div>
+            </div>
+          ))}
+          {formPrivilege === 0 ? addPart : ''}
+        </div>
+      )
+    }
+    let renderItem = ''
+    // formPrivilege表单权限验证，0可编辑，1只读，2隐藏
+    switch (formPrivilege) {
+      case 1:
+        // 是否在详情页，详情页与发起审批页展示不一
+        if (this.formConfCopy.isDetail) {
+          // 详情页，有默认值显示默认值，无默认值不显示这个标签
+          let defaultValueList = []
+          element.children.forEach((item) => {
+            item.map((deepItem) => {
+              defaultValueList.push(deepItem.__config__.defaultValue)
+            })
+          })
+          renderItem = _.some(defaultValueList, Boolean) ? detailWrapItem() : ''
+        } else {
+          // 审批发起页面，只读权限表现为置灰处理
+          renderItem = detailWrapItem()
+        }
+        break
+      case 2:
+        renderItem = ''
+        break
+      default:
+        // 兼容旧版本
+        renderItem = detailWrapItem()
+        break
+    }
+    return renderItem
   }
 }
 // formId最大值
@@ -107,7 +167,8 @@ function addElementChild(element) {
 const layouts = {
   colFormItem(h, scheme) {
     const config = scheme.__config__
-    return (
+    const formPrivilege = config.formPrivilege
+    const defaultRender = (
       <renderItem
         conf={scheme}
         rules={this.buildRules(scheme)}
@@ -118,6 +179,80 @@ const layouts = {
         }}
       />
     )
+    const fieldWrap = function(slot) {
+      return (
+        <van-field prop={scheme.__vModel__} label={`${config.label ? `${config.label}:` : ''}`}>
+          {slot}
+        </van-field>
+      )
+    }
+    const uploadImageRender = function() {
+      const fileList = scheme.__config__.defaultValue
+      return fileList.map((item) => {
+        return <van-image class="thumbnail-image" fit="fill" src={item.url} />
+      })
+    }
+    const uploadFileRender = function() {
+      const fileList = scheme.__config__.defaultValue
+      return fileList.map((item) => {
+        return (
+          <li class="file-li">
+            <van-icon name="description" style="margin-right: 4px;" />
+            <div class="file-name">{item.localName}</div>
+          </li>
+        )
+      })
+    }
+    const isUpload = function() {
+      const type = ['image', 'file']
+      return _.some(type, (item) => item === scheme.__config__.type)
+    }
+    const valueRender = fieldWrap(<span slot="input">{this.getFieldContent(scheme)}</span>)
+    let wrapItem = valueRender
+    if (isUpload()) {
+      const uploadRender = fieldWrap(
+        <div slot="input">
+          {scheme.__config__.type === 'image' ? uploadImageRender() : uploadFileRender()}
+        </div>
+      )
+      const uploadWrapItem = function() {
+        return <div class="upload-show-field">{uploadRender}</div>
+      }
+      wrapItem = uploadWrapItem()
+    }
+    let renderJSX = ''
+    // formPrivilege表单权限验证，0可编辑(默认)，1只读，2隐藏
+    switch (formPrivilege) {
+      case 1:
+        // 是否在详情页，详情页与发起审批页展示不一
+        if (this.formConfCopy.isDetail) {
+          // 详情页，有默认值显示默认值，无默认值不显示这个标签
+          if (scheme.__config__.type === 'desc') {
+            renderJSX = defaultRender
+          } else if (scheme.__config__.type === 'locationPicker') {
+            renderJSX = fieldWrap(
+              <span slot="input">{toLocation(scheme.__config__.defaultValue)}</span>
+            )
+          } else {
+            scheme.__mobile__.props.disabled = true
+            renderJSX = scheme.__config__.defaultValue ? wrapItem : ''
+          }
+        } else {
+          // 审批发起页面，只读权限表现为置灰处理
+          scheme.__mobile__.props.disabled = true
+          renderJSX = defaultRender
+        }
+        break
+      case 2:
+        renderJSX = ''
+        break
+      default:
+        // 兼容旧版本与权限为0--可编辑
+        scheme.__mobile__.props.disabled = false
+        renderJSX = defaultRender
+        break
+    }
+    return renderJSX
   },
   rowFormItem(h, scheme) {
     if (rowTemplates[scheme.__config__.type]) {
@@ -171,7 +306,7 @@ export default {
     },
     resolveFields(fields) {
       fields.forEach((field) => {
-        if (field.__config__.type === 'detail') {
+        if (field.__config__.type === 'detail' && !this.formConfCopy.isDetail) {
           addElementChild.call(this, field)
         }
       })
@@ -201,21 +336,20 @@ export default {
     getFieldContent(field) {
       let options = field.__slot__.options
       let content
-      const form = this.form
-      if (options && Array.isArray(form[field.__vModel__])) {
+      if (options && Array.isArray(field.__config__.defaultValue)) {
         content = options
-          .filter((option) => form[field.__vModel__].includes(option.value))
+          .filter((option) => field.__config__.defaultValue.includes(option.value))
           .map((option) => option.label)
           .join(',')
       } else if (options) {
         content = options
-          .filter((option) => form[field.__vModel__] === option.value)
+          .filter((option) => field.__config__.defaultValue === option.value)
           .map((option) => option.label)
           .join(',')
       } else if (field.__config__.type === 'daterange') {
-        content = form[field.__vModel__].join(' 至 ')
+        content = field.__config__.defaultValue.join(' 至 ')
       } else {
-        content = form[field.__vModel__]
+        content = field.__config__.defaultValue
       }
       return content
     },
@@ -228,8 +362,7 @@ export default {
             label: item.__config__.label,
             prop: item.__vModel__,
             value: form[item.__vModel__],
-            content: this.getFieldContent(item),
-            span: item.__pc__.span || 12
+            content: this.getFieldContent(item)
           })
         }
       })
@@ -265,6 +398,38 @@ export default {
 </script>
 <style lang="less" scoped>
 @import '@/styles/variables.less';
+.upload-show-field {
+  .van-field {
+    flex-direction: column;
+  }
+  /deep/ .van-cell__title {
+    margin-bottom: 4px;
+  }
+  .file-li {
+    margin-bottom: 10px;
+    list-style: none;
+    width: calc(100vw - 30px);
+    display: flex;
+    align-items: center;
+    .file-name {
+      max-width: calc(100% - 20px);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+  .file-li:last-child {
+    margin-bottom: 0;
+  }
+  .thumbnail-image {
+    margin-bottom: 10px;
+    display: block;
+    border: 1px solid #ccc;
+    padding: 4px;
+    border-radius: 4px;
+    width: calc(100vw - 40px);
+  }
+}
 .page {
   background-color: #f7f9fa;
   height: 100vh;

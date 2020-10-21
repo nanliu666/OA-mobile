@@ -2511,11 +2511,6 @@ check-types@^8.0.3:
   resolved "https://registry.npm.taobao.org/check-types/download/check-types-8.0.3.tgz?cache=0&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fcheck-types%2Fdownload%2Fcheck-types-8.0.3.tgz#3356cca19c889544f2d7a95ed49ce508a0ecf552"
   integrity sha1-M1bMoZyIlUTy16le1JzlCKDs9VI=
 
-china-area-data@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.npm.taobao.org/china-area-data/download/china-area-data-4.0.0.tgz#95c27bf4dff8b99ee92f972b1739d551da7f303b"
-  integrity sha1-lcJ79N/4uZ7pL5crFznVUdp/MDs=
-
 chokidar@^2.1.8:
   version "2.1.8"
   resolved "https://registry.npm.taobao.org/chokidar/download/chokidar-2.1.8.tgz?cache=0&sync_timestamp=1584609518131&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fchokidar%2Fdownload%2Fchokidar-2.1.8.tgz#804b3a7b6a99358c3c5c61e71d8728f041cff917"
@@ -3828,14 +3823,6 @@ elegant-spinner@^1.0.1:
   version "1.0.1"
   resolved "https://registry.npm.taobao.org/elegant-spinner/download/elegant-spinner-1.0.1.tgz#db043521c95d7e303fd8f345bedc3349cfb0729e"
   integrity sha1-2wQ1IcldfjA/2PNFvtwzSc+wcp4=
-
-element-china-area-data@4.1.2:
-  version "4.1.2"
-  resolved "https://registry.npm.taobao.org/element-china-area-data/download/element-china-area-data-4.1.2.tgz?cache=0&sync_timestamp=1601348231529&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Felement-china-area-data%2Fdownload%2Felement-china-area-data-4.1.2.tgz#3185e6c930a019103527c2a96b3df8cca1069ae2"
-  integrity sha1-MYXmyTCgGRA1J8Kpaz34zKEGmuI=
-  dependencies:
-    china-area-data "^4.0.0"
-    lodash "^4.17.10"
 
 elliptic@^6.0.0:
   version "6.5.2"
