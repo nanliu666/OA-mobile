@@ -1,11 +1,11 @@
 <template>
-  <div class="appr-user-item__box">
+  <div :class="['appr-user-item__box', { 'appr-user-item__parallel': isParallel }]">
     <div
       v-show="!(data && data.noData) && !loading"
       class="appr-user-item"
     >
       <div
-        v-if="!isLast"
+        v-if="!(isLast || isLastParallelNode)"
         class="appr-user-item__tail"
       />
       <div class="appr-user-item__node" />
@@ -80,14 +80,40 @@
       :form-data="formData"
       :full-org-id="fullOrgId"
       :condition-nodes="data.conditionNodes"
+      :parallel-nodes="data.parallelNodes"
+      :is-in-parallel="isParallel || isInParallel"
     />
+    <div
+      v-if="parallelNodes"
+      class="appr-user-item__parallel--wrapper"
+    >
+      <div class="appr-user-item__tail" />
+      <div class="appr-user-item__node" />
+      <div class="appr-user-item__header">
+        <span class="appr-user-item__title"> 并行审批 </span>
+        <span class="appr-user-item__tips">需全部并行审批完成后才可继续流转</span>
+      </div>
+
+      <appr-picker-item
+        v-for="(node, index) of parallelNodes"
+        :key="index"
+        type="parallel"
+        :path="`${path}-1.${index}`"
+        :form-data="formData"
+        :full-org-id="fullOrgId"
+        :child-node="node"
+        :is-parallel="true"
+      />
+    </div>
     <appr-picker-item
       v-if="nextNode"
       :form-data="formData"
-      :path="`${path}-1`"
+      :path="`${path}-2`"
       :full-org-id="fullOrgId"
       :child-node="nextNode.childNode"
       :condition-nodes="nextNode.conditionNodes"
+      :parallel-nodes="nextNode.parallelNodes"
+      :is-in-parallel="isParallel || isInParallel"
       :type="nextNode.type"
     />
   </div>
@@ -99,6 +125,7 @@ import { getUserByJob, getUserByPosition, getUserByTag, getUserLeader } from '@/
 import { mapGetters } from 'vuex'
 import MultiPicker from '@/components/multi-picker/MultiPicker'
 
+const apprTypes = ['approver', 'parallel']
 export default {
   name: 'ApprPickerItem',
   components: {
@@ -121,6 +148,21 @@ export default {
       type: Object,
       default: null
     },
+    // 并行审批
+    parallelNodes: {
+      type: Array,
+      default: null
+    },
+    // 是否并行审批节点
+    isParallel: {
+      type: Boolean,
+      default: false
+    },
+    // 当前节点是否在并行审批分支里
+    isInParallel: {
+      type: Boolean,
+      default: false
+    },
     // 当前用户所选组织全路径
     fullOrgId: {
       type: String,
@@ -137,6 +179,7 @@ export default {
       nextNode: null,
       watcher: null,
       isLast: false,
+      isLastParallelNode: false,
       conditionOrgId: null,
       noMatchOrg: false,
       loading: false,
@@ -155,7 +198,7 @@ export default {
       return _.get(this.data, 'properties.counterSign', false)
     },
     optionList() {
-      return this.data.type === 'approver'
+      return apprTypes.includes(_.get(this.data, 'type'))
         ? _.get(this.data, 'properties.approvers', [])
         : this.data.type === 'copy'
         ? _.get(this.data, 'properties.members', [])
@@ -166,12 +209,12 @@ export default {
     },
     selectable() {
       return (
-        _.get(this.data, 'properties.assigneeType', null) &&
+        apprTypes.includes(_.get(this.data, 'type')) &&
         _.get(this.data, 'properties.assigneeType', null) !== 'user'
       )
     },
     tips() {
-      if (_.get(this.data, 'type') === 'approver') {
+      if (apprTypes.includes(_.get(this.data, 'type'))) {
         if (
           (this.selectable && !this.isMulti) ||
           (!this.selectable && this.optionList.length == 1)
@@ -281,6 +324,9 @@ export default {
               }
               flag = false
             })
+            if (node.properties.idDefault) {
+              flag = true
+            }
             if (!_.isEmpty(node.properties.initiator)) {
               if (this.fullOrgId) {
                 this.conditionOrgId = (
@@ -324,16 +370,28 @@ export default {
             }, 0)
           }
           this.updateLast()
+          this.updateLastParallelNode()
         },
         { deep: true, immediate: true }
       )
+    } else if (!_.isEmpty(this.parallelNodes)) {
+      this.data = { noData: true }
+      if (this.childNode && this.childNode.type !== 'empty') {
+        this.nextNode = { childNode: this.childNode, type: this.childNode.type }
+      } else {
+        this.nextNode = this.childNode
+      }
     } else {
       this.watcher = this.$watch(
         'childNode',
         () => {
           this.data = JSON.parse(JSON.stringify(this.childNode))
           this.data && this.initUserList(this.data)
+          if (this.data.type === 'empty') {
+            this.$set(this.data, 'noData', true)
+          }
           this.updateLast()
+          this.updateLastParallelNode()
         },
         { deep: true, immediate: true }
       )
@@ -346,11 +404,21 @@ export default {
         that.isLast = that.isLastNode(that.path)
       }, 0)
     },
+    // 判断当前节点是否是并行审批分支的最后一个节点
+    updateLastParallelNode() {
+      if (!this.isInParallel && !this.isParallel) {
+        this.isLastParallelNode = false
+        return
+      }
+      setTimeout(() => {
+        this.isLastParallelNode = !this.$children.some((item) => item.isInParallel)
+      })
+    },
     initUserList(data) {
       let userList
       if (data.type === 'copy') {
         userList = _.get(data, 'properties.members', [])
-      } else if (data.type === 'approver') {
+      } else if (apprTypes.includes(data.type)) {
         if (this.selectable) {
           userList = []
         } else {
@@ -439,6 +507,7 @@ export default {
     width: 8px;
     height: 8px;
     top: 4px;
+    left: -1px;
   }
   &__header {
     color: #323233;
@@ -511,6 +580,26 @@ export default {
       height: 40px;
       font-size: 20px;
     }
+  }
+}
+.appr-user-item__parallel--wrapper {
+  padding-left: 20px;
+  position: relative;
+  padding-bottom: 10px;
+  .appr-user-item__header {
+    top: -3px;
+    position: relative;
+  }
+}
+.appr-user-item__parallel {
+  margin-bottom: 12px;
+  background-color: #f7f8fa;
+  padding-top: 12px;
+  &:last-of-type {
+    margin-bottom: 0;
+  }
+  .appr-user-item {
+    margin-left: 20px;
   }
 }
 </style>
