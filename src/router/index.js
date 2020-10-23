@@ -43,8 +43,10 @@ router.beforeEach(async (to, from, next) => {
     document.title = to.meta.title
   }
   if (!store.state.user.userInfo.user_id && ['/login', '/forget'].indexOf(to.path) === -1) {
-    router.replace({ path: '/login' })
-    // window.location.reload()
+    const path = { path: '/login' }
+    const previewUrl = to.query.type ? encodeURI(to.fullPath) : ''
+    const toPath = previewUrl ? _.assign(path, { query: { previewUrl } }) : path
+    router.replace(toPath)
   }
   next()
 })

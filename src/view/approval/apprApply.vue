@@ -10,7 +10,10 @@
       :process-data="processData"
       :form-data="form"
     />
-    <div class="footer">
+    <div
+      v-if="hasHandle"
+      class="footer"
+    >
       <van-button
         size="medium"
         type="info"
@@ -37,6 +40,7 @@ export default {
   },
   data() {
     return {
+      hasHandle: true,
       basicSetting: {},
       formData: {},
       form: {},
@@ -51,6 +55,9 @@ export default {
   created() {
     this.processId = this.$route.query.processId
     this.getProcess()
+    if (this.$route.query.type && this.$route.query.type === 'preview') {
+      this.hasHandle = false
+    }
   },
   methods: {
     getProcess() {

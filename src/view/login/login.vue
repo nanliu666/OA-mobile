@@ -152,7 +152,10 @@ export default {
         .then((res) => {
           this.$store.commit('SET_USER_INFO', res)
           this.loading = false
-          this.$router.replace('/work/index')
+          let path = this.$route.query.previewUrl
+            ? decodeURI(this.$route.query.previewUrl)
+            : '/work/index'
+          this.$router.replace({ path })
         })
         .catch(() => {
           this.loading = false
