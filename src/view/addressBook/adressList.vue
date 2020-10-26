@@ -147,7 +147,7 @@ export default {
         this.tipsText = '部门内无成员'
         isShowEmty = true
       }
-      if (_.every(flagArr, Boolean)) {
+      if (!_.every(flagArr, Boolean)) {
         isShowEmty = true
         this.tipsText = '无下级部门与成员'
       }
