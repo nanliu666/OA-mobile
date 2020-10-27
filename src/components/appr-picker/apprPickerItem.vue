@@ -516,7 +516,7 @@ export default {
   &__wrapper {
     position: relative;
     padding-left: 16px;
-    top: -3px;
+    top: -2px;
   }
   &__title {
     font-size: 14px;
@@ -564,7 +564,7 @@ export default {
     margin: 8px;
   }
   &__plusWr {
-    margin: 8px 0 24px;
+    margin-top: 4px;
   }
   &__plus {
     width: 40px;
@@ -583,7 +583,7 @@ export default {
   }
 }
 .appr-user-item__parallel--wrapper {
-  padding-left: 20px;
+  padding-left: 16px;
   position: relative;
   padding-bottom: 10px;
   .appr-user-item__header {
@@ -599,7 +599,7 @@ export default {
     margin-bottom: 0;
   }
   .appr-user-item {
-    margin-left: 20px;
+    margin-left: 12px;
   }
 }
 </style>
