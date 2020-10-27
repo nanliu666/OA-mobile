@@ -28,27 +28,27 @@ export const FormKeysCN = {
 export const STATUS_TO_TEXT = {
   Approve: {
     text: '审批中',
-    color: '#4d84f4',
-    backgroundColor: '#ecf3ff'
+    color: '#6AAFFF',
+    backgroundColor: '#EDF8FF'
   },
   Pass: {
     text: '已通过',
-    color: '#52c300',
-    backgroundColor: '#eaf9e7'
+    color: '#7AD683',
+    backgroundColor: '#F0FFF0'
   },
   Reject: {
     text: '已拒绝',
-    color: '#e2393e',
-    backgroundColor: '#f7e7e7'
+    color: '#FF8B8A',
+    backgroundColor: '#FFF2F1'
   },
   Corvidae: {
     text: '待完善',
-    color: '#c124ff',
-    backgroundColor: '#f6deff'
+    color: '#FFD122',
+    backgroundColor: '#FFFBE6'
   },
   Cancel: {
     text: '已撤回',
-    color: '#999999',
-    backgroundColor: '#d9d9d9'
+    color: '#718199',
+    backgroundColor: '#F2F5F7'
   }
 }
