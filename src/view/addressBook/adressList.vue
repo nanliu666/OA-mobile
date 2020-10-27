@@ -141,13 +141,15 @@ export default {
      * 判断当前下属部门或者员工都为空
      */
     getEmpty() {
-      let flagArr = [this.adressOptions.orgData.length, this.adressOptions.pingyinSortData.length]
       let isShowEmty = false // 是否展示空白图片
       if (this.adressOptions.pingyinSortData.length === 0) {
         this.tipsText = '部门内无成员'
         isShowEmty = true
       }
-      if (!_.every(flagArr, Boolean)) {
+      if (
+        this.adressOptions.orgData.length === 0 &&
+        this.adressOptions.pingyinSortData.length === 0
+      ) {
         isShowEmty = true
         this.tipsText = '无下级部门与成员'
       }

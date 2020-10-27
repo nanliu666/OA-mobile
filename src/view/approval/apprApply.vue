@@ -1,45 +1,78 @@
 <template>
-  <div class="appr-apply">
-    <sticky-header :title="'发起' + basicSetting.processName + '申请'" />
-    <dynamic-form
-      ref="form"
-      :form-data.sync="form"
-    />
-    <appr-picker
-      ref="apprPicker"
-      :process-data="processData"
-      :form-data="form"
-    />
-    <div
-      v-if="hasHandle"
-      class="footer"
-    >
-      <van-button
-        size="medium"
-        type="info"
-        :loading="submiting"
-        @click="submit"
+  <div
+    class="appr-apply"
+    :style="{ 'margin-bottom': hasHandle ? '76px' : 0 }"
+  >
+    <div v-show="!initor.isShowInitiator">
+      <sticky-header :title="'发起' + basicSetting.processName + '申请'" />
+      <div class="appr-preview">
+        <van-field
+          v-if="!hasHandle"
+          is-link
+          readonly
+          input-align="right"
+          label-width="15em"
+          clickable
+          name="picker"
+          :label="`正在模拟发起人：${initor.currentInitor}`"
+          placeholder="切换发起人"
+          @click="switchInitiator"
+        />
+      </div>
+      <dynamic-form
+        ref="form"
+        :form-data.sync="form"
+      />
+      <appr-picker
+        ref="apprPicker"
+        :process-data="processData"
+        :form-data="form"
+      />
+      <div
+        v-if="hasHandle"
+        class="footer"
       >
-        提交
-      </van-button>
+        <van-button
+          size="medium"
+          type="info"
+          :loading="submiting"
+          @click="submit"
+        >
+          提交
+        </van-button>
+      </div>
     </div>
+    <SelectInitor
+      v-model="initor"
+      @search="onSearch"
+    />
   </div>
 </template>
 
 <script>
+import { getOrgUserTree } from '@/api/addressBook'
 import { getProcessDetail } from '@/api/approval'
 import ApprPicker from '@/components/appr-picker/apprPicker'
 import DynamicForm from '@/components/dynamic-form/render'
 import { Base64 } from 'js-base64'
-
+import { mapGetters } from 'vuex'
+import SelectInitor from './selectInitor'
 export default {
   name: 'ApprApply',
   components: {
     ApprPicker,
+    SelectInitor,
     DynamicForm
   },
+
   data() {
     return {
+      initor: {
+        isShowInitiator: false,
+        currentInitor: '',
+        skeletonLoading: false,
+        orgData: []
+      },
       hasHandle: true,
       basicSetting: {},
       formData: {},
@@ -52,7 +85,18 @@ export default {
       submiting: false
     }
   },
+  computed: {
+    ...mapGetters(['userInfo', 'orgDataVuex', 'initiator'])
+  },
+  watch: {
+    initiator(nVal) {
+      this.initor.currentInitor = _.isEmpty(nVal) ? this.userInfo.nick_name : nVal.name
+      this.initor.isShowInitiator = false
+      document.body.scrollTop = document.documentElement.scrollTop = 0
+    }
+  },
   created() {
+    this.initor.currentInitor = this.userInfo.nick_name
     this.processId = this.$route.query.processId
     this.getProcess()
     if (this.$route.query.type && this.$route.query.type === 'preview') {
@@ -60,6 +104,33 @@ export default {
     }
   },
   methods: {
+    // 选择发起人的搜索
+    onSearch(searchParams) {
+      this.initor.orgData = []
+      getOrgUserTree(searchParams).then((result) => {
+        this.initor.orgData = result
+      })
+    },
+    /**
+     * 打开搜索页面
+     * 发起人为所有人
+     * 发起人全都是个人
+     * 发起人同时存在部门和个人
+     */
+    switchInitiator() {
+      // console.log('this.basicSetting==', this.basicSetting.initiator)
+      this.initor.isShowInitiator = true
+      if (!_.isEmpty(this.orgDataVuex)) {
+        this.initor.orgData = this.orgDataVuex
+      } else {
+        this.initor.skeletonLoading = true
+        getOrgUserTree().then((result) => {
+          this.initor.skeletonLoading = false
+          this.initor.orgData = result
+          this.$store.commit('SET_ORG_DATA', result)
+        })
+      }
+    },
     getProcess() {
       if (!this.processId) {
         return
@@ -146,9 +217,23 @@ export default {
 
 <style lang="less" scoped>
 @import '@/styles/variables.less';
+.appr-preview {
+  margin: 10px 0 15px 0;
+  /deep/ .van-field {
+    background-color: #6e9afd;
+    width: 100vw;
+    color: #ffffff;
+    .van-field__value,
+    .van-cell__right-icon {
+      color: #ffffff;
+    }
+    input::-webkit-input-placeholder {
+      color: #ffffff;
+    }
+  }
+}
 .appr-apply {
   background-color: @--color-background-gray;
-  margin-bottom: 76px;
   .footer {
     background-color: #fff;
     box-shadow: 0px 4px 8px 2px rgba(0, 0, 0, 0.15);

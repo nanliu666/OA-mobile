@@ -1,5 +1,10 @@
 export default [
   {
+    path: '/approval/selectInitor',
+    meta: { title: '选择发起人' },
+    component: () => import(/* webpackChunkName: "view" */ '@/view/approval/selectInitor.vue')
+  },
+  {
     path: '/approval/apprHome',
     meta: { title: '审批' },
     component: () => import(/* webpackChunkName: "view" */ '@/view/approval/apprHome.vue')

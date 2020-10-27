@@ -108,10 +108,8 @@ export default {
       getAddressOrg(orgParmas).then((res) => {
         this.orgData = res
       })
-      // this.filterAddressUser()
       getAddressuser(userParmas).then((res) => {
         this.userData = res
-        // console.log('res==', res)
       })
     },
     handleClickOrg(item) {
