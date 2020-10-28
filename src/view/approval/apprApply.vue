@@ -141,7 +141,6 @@ export default {
 @import '@/styles/variables.less';
 .appr-apply {
   background-color: @--color-background-gray;
-  margin-bottom: 76px;
   .footer {
     background-color: #fff;
     box-shadow: 0px 4px 8px 2px rgba(0, 0, 0, 0.15);
@@ -153,6 +152,9 @@ export default {
     .van-button {
       width: calc(100% - 32px);
     }
+  }
+  .appr-picker {
+    margin-bottom: 76px;
   }
 }
 </style>
