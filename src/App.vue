@@ -13,14 +13,16 @@ export default {
   data() {
     return {}
   },
-  created() {
+  mounted() {
     // 当在开发环境并且是移动端时候开启移动调试台
     let isMobile =
       /Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent) &&
       navigator.platform !== 'Win32' &&
       process.env.NODE_ENV === 'development'
     if (isMobile) {
-      window.eruda.init()
+      const src = 'https://cdn.bootcss.com/eruda/1.5.5/eruda.min.js'
+      document.write('<scr' + 'ipt src="' + src + '"></scr' + 'ipt>')
+      document.write('<scr' + 'ipt>eruda.init();</scr' + 'ipt>')
     }
   }
 }
