@@ -45,7 +45,10 @@ export const createApprCancel = (params) => post('/appr/v2/appr/apply/cancel', p
  * @param {String} params.processId - 流程ID
  * */
 export const getProcessDetail = (params) => get('/appr/v2/appr/process', params)
-
+/**
+ * 获取预览数据
+ */
+export const getApprRreview = (params) => get('/appr/v2/appr/process/preview', params)
 /**
  * 审批申请提交接口
  * */

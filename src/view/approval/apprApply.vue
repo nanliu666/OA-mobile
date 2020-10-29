@@ -51,7 +51,7 @@
 
 <script>
 import { getOrgUserTree } from '@/api/addressBook'
-import { getProcessDetail } from '@/api/approval'
+import { getProcessDetail, getApprRreview } from '@/api/approval'
 import ApprPicker from '@/components/appr-picker/apprPicker'
 import DynamicForm from '@/components/dynamic-form/render'
 import { Base64 } from 'js-base64'
@@ -79,7 +79,6 @@ export default {
       form: {},
       processData: null,
       advancedSetting: {},
-      json: '',
       loading: false,
       processId: null,
       submiting: false
@@ -119,26 +118,36 @@ export default {
      */
     switchInitiator() {
       // console.log('this.basicSetting==', this.basicSetting.initiator)
+      // 发起人为所有人时
+      if (this.basicSetting.initiator.length === 0) {
+        this.setInitiatorByAll()
+      }
+    },
+    async setInitiatorByAll() {
+      // 开启选择发起人页面
       this.initor.isShowInitiator = true
       if (!_.isEmpty(this.orgDataVuex)) {
         this.initor.orgData = this.orgDataVuex
       } else {
         this.initor.skeletonLoading = true
-        getOrgUserTree().then((result) => {
-          this.initor.skeletonLoading = false
-          this.initor.orgData = result
-          this.$store.commit('SET_ORG_DATA', result)
-        })
+        let result = await this.getOrgTree()
+        this.initor.skeletonLoading = false
+        this.initor.orgData = result
+        this.$store.commit('SET_ORG_DATA', result)
       }
+    },
+    getOrgTree(params) {
+      return getOrgUserTree(params)
     },
     getProcess() {
       if (!this.processId) {
         return
       }
       this.loading = true
-      getProcessDetail({ processId: this.processId })
+      let loadFun = this.$route.query.type !== 'preview' ? getProcessDetail : getApprRreview
+      loadFun({ processId: this.processId })
         .then((res) => {
-          this.json = res.baseJson
+          // const obj = JSON.parse(Base64.decode(JSONObj))
           const obj = JSON.parse(Base64.decode(res.baseJson))
           if (typeof obj === 'object') {
             this.basicSetting = obj.basicSetting
