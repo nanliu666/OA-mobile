@@ -35,11 +35,7 @@
           <van-image
             class="iconImg"
             :src="imgModules.approve"
-          >
-            <template v-slot:error>
-              加载失败
-            </template>
-          </van-image>
+          />
           <div class="title">
             审批
           </div>
@@ -51,11 +47,7 @@
           <van-image
             class="iconImg"
             :src="imgModules.todo"
-          >
-            <template v-slot:error>
-              加载失败
-            </template>
-          </van-image>
+          />
           <div class="title">
             待办
           </div>
@@ -67,11 +59,7 @@
           <van-image
             class="iconImg"
             :src="imgModules.schedule"
-          >
-            <template v-slot:error>
-              加载失败
-            </template>
-          </van-image>
+          />
           <div class="title">
             日程
           </div>
@@ -83,13 +71,21 @@
           <van-image
             class="iconImg"
             :src="imgModules.task"
-          >
-            <template v-slot:error>
-              加载失败
-            </template>
-          </van-image>
+          />
           <div class="title">
             任务
+          </div>
+        </div>
+        <div
+          class="iconItem"
+          @click="handleClickIcon('scan')"
+        >
+          <van-image
+            class="iconImg"
+            :src="imgModules.scan"
+          />
+          <div class="title">
+            扫描
           </div>
         </div>
       </div>
@@ -584,20 +580,24 @@ export default {
      * 点击icon图标
      */
     handleClickIcon(iconName) {
-      const obj = {
-        todo: '/work/todo',
-        schedule: '/todaySchedule/calendar',
-        task: '/work/task',
-        approve: '/approval/apprHome'
+      if (iconName === 'scan') {
+        // console.log('11')
+      } else {
+        const obj = {
+          todo: '/work/todo',
+          schedule: '/todaySchedule/calendar',
+          task: '/work/task',
+          approve: '/approval/apprHome'
+        }
+        // 当点击任务icon时，重置nav标签
+        if (iconName === 'task') {
+          this.$store.commit('RESET_TASK_NAV')
+        }
+        if (iconName === 'todo') {
+          this.$store.commit('RESET_TODO_NAV')
+        }
+        this.$router.push(obj[iconName])
       }
-      // 当点击任务icon时，重置nav标签
-      if (iconName === 'task') {
-        this.$store.commit('RESET_TASK_NAV')
-      }
-      if (iconName === 'todo') {
-        this.$store.commit('RESET_TODO_NAV')
-      }
-      this.$router.push(obj[iconName])
     },
     handleClickCell(item) {
       todoJumpFun(item, this.$router)
