@@ -76,18 +76,6 @@
             任务
           </div>
         </div>
-        <div
-          class="iconItem"
-          @click="handleClickIcon('scan')"
-        >
-          <van-image
-            class="iconImg"
-            :src="imgModules.scan"
-          />
-          <div class="title">
-            扫描
-          </div>
-        </div>
       </div>
     </div>
     <van-skeleton
@@ -580,24 +568,20 @@ export default {
      * 点击icon图标
      */
     handleClickIcon(iconName) {
-      if (iconName === 'scan') {
-        // console.log('11')
-      } else {
-        const obj = {
-          todo: '/work/todo',
-          schedule: '/todaySchedule/calendar',
-          task: '/work/task',
-          approve: '/approval/apprHome'
-        }
-        // 当点击任务icon时，重置nav标签
-        if (iconName === 'task') {
-          this.$store.commit('RESET_TASK_NAV')
-        }
-        if (iconName === 'todo') {
-          this.$store.commit('RESET_TODO_NAV')
-        }
-        this.$router.push(obj[iconName])
+      const obj = {
+        todo: '/work/todo',
+        schedule: '/todaySchedule/calendar',
+        task: '/work/task',
+        approve: '/approval/apprHome'
       }
+      // 当点击任务icon时，重置nav标签
+      if (iconName === 'task') {
+        this.$store.commit('RESET_TASK_NAV')
+      }
+      if (iconName === 'todo') {
+        this.$store.commit('RESET_TODO_NAV')
+      }
+      this.$router.push(obj[iconName])
     },
     handleClickCell(item) {
       todoJumpFun(item, this.$router)
