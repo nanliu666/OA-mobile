@@ -5,8 +5,8 @@
       clickable
       name="area"
       label="关联审批"
-      placeholder="请选择"
-      @click="visible = true"
+      :placeholder="`${hasOperate ? '请选择' : ''}`"
+      @click="fieldClick"
     />
     <ul v-if="value.length > 0">
       <li
@@ -25,6 +25,7 @@
             v-text="getStatus(item.status).text"
           />
           <i
+            v-if="hasOperate"
             class="icon-tips-close-outlined"
             @click="handleDelete(item)"
           />
@@ -49,6 +50,10 @@ export default {
     RelevantApprPicker
   },
   props: {
+    hasOperate: {
+      type: Boolean,
+      default: true
+    },
     apprTypes: {
       type: Array,
       default: () => []
@@ -65,6 +70,10 @@ export default {
     }
   },
   methods: {
+    fieldClick() {
+      if (!this.hasOperate) return
+      this.visible = true
+    },
     getStatus(status) {
       return STATUS_TO_TEXT[status]
     },

@@ -229,6 +229,10 @@ const layouts = {
           // 详情页，有默认值显示默认值，无默认值不显示这个标签
           if (scheme.__config__.type === 'desc') {
             renderJSX = defaultRender
+          } else if (scheme.__config__.type === 'relevant') {
+            // 关联审批
+            scheme.__mobile__.props.hasOperate = false
+            renderJSX = defaultRender
           } else {
             scheme.__mobile__.props.disabled = true
             renderJSX = scheme.__config__.defaultValue ? wrapItem : ''
