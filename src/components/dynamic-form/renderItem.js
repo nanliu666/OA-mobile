@@ -26,7 +26,8 @@ export default {
     vanFieldSelectPicker: () => import('../vanFieldSelectPicker/vanFieldSelectPicker.vue'),
     vanFieldDatetimePicker: () => import('../vanFieldDatetimePicker/vanFieldDatetimePicker.vue'),
     multiPicker: () => import('../multi-picker/MultiPicker.vue'),
-    dateRangePicker: () => import('../date-range-picker/DateRangePicker.vue')
+    dateRangePicker: () => import('../date-range-picker/DateRangePicker.vue'),
+    relevantAppr: () => import('./components/RelevantAppr')
   },
   render(h) {
     const MONEY_LABEL =
@@ -70,6 +71,8 @@ export default {
       }
       if (key === '__vModel__') {
         vModel(this, dataObject, confClone.__config__.defaultValue, confClone)
+      } else if (dataObject[key]) {
+        dataObject[key] = { ...dataObject[key], ...confClone[key] }
       } else {
         dataObject.attrs[key] = val
       }

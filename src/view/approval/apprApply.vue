@@ -255,5 +255,8 @@ export default {
       width: calc(100% - 32px);
     }
   }
+  .appr-picker {
+    margin-bottom: 76px;
+  }
 }
 </style>
